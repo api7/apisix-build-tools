@@ -14,9 +14,8 @@ mkdir -p /tmp/apisix/usr/bin/
 mkdir -p /tmp/rpm/
 
 cp /tmp/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/$version-0/bin/apisix /tmp/apisix/usr/bin/
-bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/share/lua/5.1/?.lua;" .. package.path\npackage.cpath = "/usr/lib64/lua/5.1/?.so;" .. package.cpath'
+bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/lua/?.lua;" .. package.path'
 sed -i "1s@.*@$bin@" /tmp/apisix/usr/bin/apisix
-# sed -i 's@"/usr/local/apisix/deps/share/lua/" .. lua_ver .. "/apisix/lua/?.lua;"@"/usr/local/apisix/lua/?.lua;"@' /tmp/apisix/usr/bin/apisix
 
 # for conf, log and dashboard dirs
 cp -r /usr/local/apisix/* /tmp/apisix/usr/local/apisix/
