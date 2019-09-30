@@ -23,6 +23,8 @@ cp -r /usr/local/apisix/* /tmp/apisix/usr/local/apisix/
 # code base
 mv /tmp/apisix/usr/local/apisix/deps/share/lua/5.1/apisix/lua /tmp/apisix/usr/local/apisix
 
+cp /tmp/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/$version-$iteration/conf/COPYRIGHT /tmp/apisix/usr/local/apisix
+cp /tmp/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/0.8-0/conf/README.md /tmp/apisix/usr/local/apisix
 rm -rf /tmp/apisix/usr/local/apisix/deps/lib64/luarocks
 
 fpm -f -s dir -t rpm -n apisix -a all -v $version --iteration $iteration -d 'openresty >= 1.15.8.1' --description 'APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' --license "ASL 2.0"  -C /tmp/apisix/ -p /tmp/rpm/ --url 'https://www.iresty.com'
