@@ -1,4 +1,5 @@
-version=1.0
+# version=1.1
+version=master
 iteration=0
 
 sudo luarocks remove apisix
@@ -18,8 +19,8 @@ sed -i "1s@.*@$bin@" /tmp/apisix/usr/bin/apisix
 
 # for conf, log and dashboard dirs
 cp -r /usr/local/apisix/* /tmp/apisix/usr/local/apisix/
-mkdir /tmp/apisix/usr/local/apisix/dashboard
-cp -r /home/centos/incubator-apisix-dashboard/dist/* /tmp/apisix/usr/local/apisix/dashboard
+# mkdir /tmp/apisix/usr/local/apisix/dashboard
+# cp -r /home/centos/incubator-apisix-dashboard/dist/* /tmp/apisix/usr/local/apisix/dashboard
 
 # code base
 mv /tmp/apisix/usr/local/apisix/deps/share/lua/5.1/apisix/lua /tmp/apisix/usr/local/apisix
