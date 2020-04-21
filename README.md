@@ -5,6 +5,7 @@
 https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
 
 ### install OpenResty
+https://openresty.org/en/installation.html
 
 ### install fpm
 ```
