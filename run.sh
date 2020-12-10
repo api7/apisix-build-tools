@@ -10,7 +10,7 @@ sudo luarocks remove apisix --local || true
 sudo rm -rf /usr/local/apisix/
 rm -rf /tmp/apisix
 
-wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec
+wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec -O apisix-master-0.rockspec
 sudo luarocks install apisix-$version-$iteration.rockspec --tree=/tmp/apisix/usr/local/apisix/deps --local
 sudo chown -R $USER:$USER /tmp/apisix
 
