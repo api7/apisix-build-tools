@@ -65,7 +65,7 @@ sudo mkdir gopath
 
 ### run build tool script for apisix-dashboard:
 ```
-sudo ./run.sh
+sudo ./dashboard-rpm.sh
 ```
 
 The RPM package will be in `/tmp/rpm`.
