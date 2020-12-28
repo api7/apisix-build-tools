@@ -48,7 +48,7 @@ tar -xzf go1.15.2.linux-amd64.tar.gz
 sudo mv go /usr/local
 ```
 
-### gdjust the Path Variable for golang
+### adjust the Path Variable for golang
 appending the following line to the `/etc/profile` file
 ```
 export GO111MODULE=on
@@ -67,3 +67,5 @@ sudo mkdir gopath
 ```
 sudo ./run.sh
 ```
+
+The RPM package will be in `/tmp/rpm`.
