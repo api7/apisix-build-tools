@@ -2,18 +2,17 @@
 
 set -ex
 
-#version=2.1
+# set the code branch
 version=v2.2
 
 # clear the environment
 rm -rf /tmp/apisix/
 rm -rf /tmp/apisix-dashboard/
 
-mkdir -p /tmp/rpm/
 mkdir -p /tmp/apisix/dashboard/usr/bin/
 mkdir -p /tmp/apisix/dashboard/usr/local/apisix/dashboard/
 
-# build the rpm for dashboard
+# build dashboard
 cd /tmp/
 git clone -b $version https://github.com/apache/apisix-dashboard.git
 cd apisix-dashboard
@@ -24,4 +23,12 @@ ln -s /usr/local/apisix/dashboard/manager-api /tmp/apisix/dashboard/usr/bin/mana
 cd ../..
 rm -rf apisix-dashboard
 
-fpm -f -s dir -t rpm -n apisix-dashboard -a `uname -i` -v $version  --description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  -C /tmp/apisix/dashboard/ -p /tmp/rpm/ --url 'https://github.com/apache/apisix-dashboard'
+# build the rpm for dashboard
+fpm -f \
+-s dir \
+-t rpm \
+-n apisix-dashboard -a `uname -i` -v $version  \
+--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
+-C /tmp/apisix/dashboard/ \
+-p ./output/ \
+--url 'https://github.com/apache/apisix-dashboard'

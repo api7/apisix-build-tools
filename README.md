@@ -29,8 +29,6 @@ The version of APISIX is hard-code in `run.sh` now, you can change it by yoursel
 ./run.sh
 ```
 
-The RPM package will be in `/tmp/rpm`.
-
 
 ## build apisix-dashboard RPM for CentOS 7
 
@@ -53,24 +51,27 @@ appending the following line to the `/etc/profile` file
 ```
 export GO111MODULE=on
 export GOROOT=/usr/local/go 
-export GOPATH=/home/gopath
+export GOPATH=$HOME/gopath
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+```
+
+### load the new PATH environment variable with the following command:
+```
+source /etc/profile
 ```
 
 ### create the workspace directory for golang
 ```
-cd /home
-sudo mkdir gopath
+cd ~
+mkdir gopath
 ```
 
-### run build tool script for apisix-dashboard:
+### run build tool script for apisix-dashboard (must use root privileges):
 ```
-sudo ./dashboard-rpm.sh
+./dashboard-rpm.sh
 ```
 
-The RPM package will be in `/tmp/rpm`.
-
-### after you installed the rpm of apisix-dashboard, run apisix-dashboard like this (must use root privileges):
+### after you installed the rpm of apisix-dashboard, run apisix-dashboard like this:
 ```
 sudo manager-api -p /usr/local/apisix/dashboard/
 ```
