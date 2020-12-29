@@ -69,3 +69,8 @@ sudo ./dashboard-rpm.sh
 ```
 
 The RPM package will be in `/tmp/rpm`.
+
+### after you installed the rpm of apisix-dashboard, run apisix-dashboard like this (must use root privileges):
+```
+sudo manager-api -p /usr/local/apisix/dashboard/
+```
