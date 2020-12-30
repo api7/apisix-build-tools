@@ -35,7 +35,7 @@ The version of APISIX is hard-code in `run.sh` now, you can change it by yoursel
 ### install Yarn、nodejs
 ```
 curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
+sudo sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
 sudo yum install –y nodejs yarn
 ```
 

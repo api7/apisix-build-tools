@@ -3,12 +3,13 @@
 set -ex
 
 # set the code branch
-version=v2.2
+version=master
 
 # clear the environment
 rm -rf /tmp/apisix/
 rm -rf /tmp/apisix-dashboard/
 
+mkdir -p /tmp/rpm/
 mkdir -p /tmp/apisix/dashboard/usr/bin/
 mkdir -p /tmp/apisix/dashboard/usr/local/apisix/dashboard/
 
@@ -25,10 +26,13 @@ rm -rf apisix-dashboard
 
 # build the rpm for dashboard
 fpm -f \
--s dir \
--t rpm \
--n apisix-dashboard -a `uname -i` -v $version  \
---description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
--C /tmp/apisix/dashboard/ \
--p ./output/ \
---url 'https://github.com/apache/apisix-dashboard'
+    -s dir \
+    -t rpm \
+    -n apisix-dashboard -a `uname -i` -v $version  \
+    --description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
+    -C /tmp/apisix/dashboard/ \
+    -p /tmp/rpm/ \
+    --url 'https://github.com/apache/apisix-dashboard'
+
+# copy rpm package to the `output`
+cp -r /tmp/rpm/* ~/output
