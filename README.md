@@ -1,5 +1,5 @@
 
-## RPM for CentOS 7
+## build apisix RPM for CentOS 7
 
 ### install Luarocks
 https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
@@ -22,15 +22,6 @@ Then you can install `fpm`:
 gem install --no-ri --no-rdoc fpm
 ```
 
-### install yarn for build dashboard
-```
-curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
-sudo yum clean all && sudo yum makecache fast
-sudo yum install -y nodejs
-sudo yum install yarn
-```
-
 ### run build tool script:
 The version of APISIX is hard-code in `run.sh` now, you can change it by yourself.
 
@@ -38,4 +29,49 @@ The version of APISIX is hard-code in `run.sh` now, you can change it by yoursel
 ./run.sh
 ```
 
-The RPM package will be in `/tmp/rpm`.
+
+## build apisix-dashboard RPM for CentOS 7
+
+### install Yarn、nodejs
+```
+curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+sudo sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
+sudo yum install –y nodejs yarn
+```
+
+### install golang
+```
+wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
+tar -xzf go1.15.2.linux-amd64.tar.gz
+sudo mv go /usr/local
+```
+
+### adjust the Path Variable for golang
+appending the following line to the `/etc/profile` file
+```
+export GO111MODULE=on
+export GOROOT=/usr/local/go 
+export GOPATH=$HOME/gopath
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+```
+
+### load the new PATH environment variable with the following command:
+```
+source /etc/profile
+```
+
+### create the workspace directory for golang
+```
+cd ~
+mkdir gopath
+```
+
+### run build tool script for apisix-dashboard (must use root privileges):
+```
+./dashboard-rpm.sh
+```
+
+### after you installed the rpm of apisix-dashboard, run apisix-dashboard like this:
+```
+sudo manager-api -p /usr/local/apisix/dashboard/
+```
