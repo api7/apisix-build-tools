@@ -35,7 +35,7 @@ fpm -f \
     -p /tmp/rpm/ \
     --url 'https://github.com/apache/apisix-dashboard'
 
-# copy rpm package to the `output`
+# copy rpm package to the `output` directory
 sleep 1
 cd $curdir
 cp -r /tmp/rpm/* ./output
