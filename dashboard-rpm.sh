@@ -4,6 +4,7 @@ set -ex
 
 # set the code branch
 version=master
+curdir=$(pwd)
 
 # clear the environment
 rm -rf /tmp/apisix/
@@ -35,4 +36,6 @@ fpm -f \
     --url 'https://github.com/apache/apisix-dashboard'
 
 # copy rpm package to the `output`
-cp -r /tmp/rpm/* ~/output
+sleep 1
+cd $curdir
+cp -r /tmp/rpm/* ./output
