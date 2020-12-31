@@ -66,7 +66,7 @@ cd ~
 mkdir gopath
 ```
 
-### run build tool script for apisix-dashboard (must use root privileges):
+### run build tool script for apisix-dashboard:
 ```
 ./dashboard-rpm.sh
 ```
