@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:     
+  build:
+    runs-on: ubuntu-latest
+    container: docker.io/centos:7
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: intall deps for fpm
+      run: |
+        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O epel-release-latest-7.noarch.rpm
+        sudo rpm -ivh epel-release-latest-7.noarch.rpm
+
+        sudo yum install -y yum-utils
+        sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        sudo yum check-update
+
+        sudo yum install -y openresty luarocks git
+        sudo yum install -y centos-release-scl
+
+        sudo yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
+        sudo yum install -y git autoconf automake libtool pcre-devel gcc-c++ rubygems gcc rpm-build lua-devel cmake3
+
+        scl enable rh-ruby23 bash
+        gem install --no-ri --no-rdoc fpm
+
+    - name: intall deps for apisix
+      run: |
+        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        sudo rpm -ivh epel-release-latest-7.noarch.rpm
+
+        sudo yum install yum-utils
+        sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        sudo yum install -y openresty curl git gcc luarocks lua-devel
+
+    - name: build apisix
+      run: |
+        ./run.sh
+
+    - name: intall deps for apisix-dashboard
+      run: |
+        curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+        sudo sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
+        sudo yum install –y nodejs yarn
+
+        wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
+        tar -xzf go1.15.2.linux-amd64.tar.gz
+        sudo mv go /usr/local
+
+        export GO111MODULE=on
+        export GOROOT=/usr/local/go 
+        export GOPATH=$HOME/gopath
+        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+        mkdir gopath
+
+
+    - name: build apisix-dashboard
+      run: |
+        ./dashboard-rpm.sh
