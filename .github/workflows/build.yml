@@ -14,13 +14,13 @@ jobs:
 
     - name: intall deps for fpm
       run: |
-        apt-get install ruby ruby-dev rubygems build-essential
-        gem install --no-document fpm
+        sudo apt-get install ruby ruby-dev rubygems build-essential
+        sudo gem install --no-document fpm
 
     - name: intall deps for apisix-dashboard
       run: |
-        curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-        apt-get install -y nodejs
+        sudo curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+        sudo apt-get install -y nodejs
 
         wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
         tar -xzf go1.15.2.linux-amd64.tar.gz
