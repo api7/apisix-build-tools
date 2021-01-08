@@ -18,9 +18,8 @@ jobs:
         yum install -y centos-release-scl
         yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
         yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
-        scl enable rh-ruby23 bash
+        scl enable rh-ruby23 bash | gem install --no-ri --no-rdoc fpm
         ruby -v
-        gem install --no-ri --no-rdoc fpm
 
     - name: intall deps for apisix
       run: |
