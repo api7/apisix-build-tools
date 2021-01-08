@@ -1,12 +1,16 @@
+#!/bin/bash
+
+set -ex
+
 version=1.5
 # version=master
 iteration=0
 
-sudo luarocks remove apisix --local
+sudo rm -rf /tmp/apisix/usr/local/apisix/deps
 sudo rm -rf /usr/local/apisix/
 rm -rf /tmp/apisix
 
-wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec
+wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec -O apisix-$version-$iteration.rockspec
 sudo luarocks install apisix-$version-$iteration.rockspec --tree=/tmp/apisix/usr/local/apisix/deps --local
 sudo chown -R $USER:$USER /tmp/apisix
 
