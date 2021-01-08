@@ -15,7 +15,7 @@ jobs:
 
     - name: intall deps for fpm
       run: |
-        yum install -y gcc-c++ curl patch readline readline-devel zlib zlib-devel openssl-devel make
+        yum install -y gcc-c++ curl patch readline readline-devel zlib zlib-devel openssl-devel make which
         yum install -y bzip2 autoconf automake libtool bison iconv-devel sqlite-devel libyaml-devel libffi-devel
         curl -sSL https://rvm.io/mpapis.asc | gpg --import -
         curl -sSL https://get.rvm.io | bash -s stable
