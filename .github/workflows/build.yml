@@ -15,21 +15,21 @@ jobs:
 
     - name: intall deps for fpm
       run: |
-        sudo yum install -y centos-release-scl
-        sudo yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
-        sudo yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
+        yum install -y centos-release-scl
+        yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
+        yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
         scl enable rh-ruby23 bash
         gem install --no-ri --no-rdoc fpm
 
     - name: intall deps for apisix
       run: |
-        sudo yum install -y yum-utils wget
+        yum install -y yum-utils wget
         wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O epel-release-latest-7.noarch.rpm
-        sudo rpm -ivh epel-release-latest-7.noarch.rpm
-        sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        sudo yum check-update
+        rpm -ivh epel-release-latest-7.noarch.rpm
+        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        yum check-update
 
-        sudo yum install -y openresty curl git gcc luarocks lua-devel
+        yum install -y openresty curl git gcc luarocks lua-devel
 
     - name: build apisix
       run: |
@@ -37,13 +37,13 @@ jobs:
 
     - name: intall deps for apisix-dashboard
       run: |
-        curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-        sudo sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
-        sudo yum install –y nodejs yarn
+        curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
+        sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
+        yum install –y nodejs yarn
 
         wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
         tar -xzf go1.15.2.linux-amd64.tar.gz
-        sudo mv go /usr/local
+        mv go /usr/local
 
         export GO111MODULE=on
         export GOROOT=/usr/local/go 
@@ -51,7 +51,6 @@ jobs:
         export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
         mkdir gopath
-
 
     - name: build apisix-dashboard
       run: |
