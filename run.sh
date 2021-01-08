@@ -6,7 +6,6 @@ version=1.5
 # version=master
 iteration=0
 
-sudo rm -rf /tmp/apisix/usr/local/apisix/deps
 sudo rm -rf /usr/local/apisix/
 rm -rf /tmp/apisix
 
