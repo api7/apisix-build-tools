@@ -24,7 +24,7 @@ jobs:
 
         wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
         tar -xzf go1.15.2.linux-amd64.tar.gz
-        mv go /usr/local
+        sudo mv go /usr/local
 
         export GO111MODULE=on
         export GOROOT=/usr/local/go 
