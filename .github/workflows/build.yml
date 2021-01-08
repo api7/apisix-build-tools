@@ -9,43 +9,18 @@ on:
 jobs:     
   build:
     runs-on: ubuntu-latest
-    container: docker.io/centos:7
     steps:
     - uses: actions/checkout@v2
 
     - name: intall deps for fpm
       run: |
-        yum install -y gcc-c++ curl patch readline readline-devel zlib zlib-devel openssl-devel make which
-        yum install -y bzip2 autoconf automake libtool bison iconv-devel sqlite-devel libyaml-devel libffi-devel
-        gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-        curl -sSL https://get.rvm.io | bash -s stable
-        source /etc/profile.d/rvm.sh
-        rvm reload
-        rvm install 2.3.3
-        rvm use 2.3.3 --default
-        ruby --version
-        yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
-        gem install --no-ri --no-rdoc fpm
-        
-    - name: intall deps for apisix
-      run: |
-        yum install -y yum-utils wget
-        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O epel-release-latest-7.noarch.rpm
-        rpm -ivh epel-release-latest-7.noarch.rpm
-        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        yum check-update
-
-        yum install -y openresty curl git gcc luarocks lua-devel
-
-    - name: build apisix
-      run: |
-        ./run.sh
+        apt-get install ruby ruby-dev rubygems build-essential
+        gem install --no-document fpm
 
     - name: intall deps for apisix-dashboard
       run: |
-        curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
-        sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
-        yum install –y nodejs yarn
+        curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+        apt-get install -y nodejs
 
         wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
         tar -xzf go1.15.2.linux-amd64.tar.gz
