@@ -15,11 +15,16 @@ jobs:
 
     - name: intall deps for fpm
       run: |
-        yum install -y centos-release-scl
-        yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
+        yum install -y curl
+        gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+        curl -sSL https://get.rvm.io | bash -s stable
+        source /etc/profile.d/rvm.sh
+        rvm reload
+        rvm install 2.3.3
+        rvm use 2.3.3 --default
+        ruby --version
         yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
-        scl enable rh-ruby23 bash && ruby -v
-        scl enable rh-ruby23 bash && gem install --no-ri --no-rdoc fpm
+        gem install --no-ri --no-rdoc fpm
         
     - name: intall deps for apisix
       run: |
