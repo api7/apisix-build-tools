@@ -15,28 +15,20 @@ jobs:
 
     - name: intall deps for fpm
       run: |
-        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O epel-release-latest-7.noarch.rpm
-        sudo rpm -ivh epel-release-latest-7.noarch.rpm
-
-        sudo yum install -y yum-utils
-        sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        sudo yum check-update
-
-        sudo yum install -y openresty luarocks git
         sudo yum install -y centos-release-scl
-
         sudo yum install -y rh-ruby23 rh-ruby23-ruby-devel.x86_64
-        sudo yum install -y git autoconf automake libtool pcre-devel gcc-c++ rubygems gcc rpm-build lua-devel cmake3
-
+        sudo yum install -y autoconf automake libtool pcre-devel gcc-c++ rubygems rpm-build cmake3
         scl enable rh-ruby23 bash
         gem install --no-ri --no-rdoc fpm
 
     - name: intall deps for apisix
       run: |
-        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        sudo yum install -y yum-utils wget
+        wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -O epel-release-latest-7.noarch.rpm
         sudo rpm -ivh epel-release-latest-7.noarch.rpm
-        sudo yum install yum-utils
         sudo yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+        sudo yum check-update
+
         sudo yum install -y openresty curl git gcc luarocks lua-devel
 
     - name: build apisix
