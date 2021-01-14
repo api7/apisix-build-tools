@@ -103,12 +103,12 @@ build-rpm-dashboard: run-centos build-dashboard
 
 ### build deb for dasnboard:
 .PHONY: build-deb-dashboard
-build-deb-dashboard: run-centos build-dashboard
+build-deb-dashboard: run-ubuntu build-dashboard
 	fpm -f \
 		-s dir \
 		-t deb \
 		-n apisix-dashboard \
-		-a `uname -i \
+		-a `uname -i` \
 		--iteration $(iteration) \
 		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
 		--license "ASL 2.0" \
