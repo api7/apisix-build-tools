@@ -38,8 +38,6 @@ apisix-dashboard_1.0-0_amd64.deb
 
 ### Details
 
-The Docker files in the dockerfiles directory build on each other in the following manner:
-
 - `Makefile` the entrance of the packager
 - `build` used to store the compiled temporary files generated during the packaging process
 - `build-deb.sh & build-rpm.sh` they are mapped to the docker image to perform the compilation action
