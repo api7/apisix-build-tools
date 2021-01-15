@@ -12,6 +12,12 @@ ls output/
 apisix-0.0-0.x86_64.rpm
 ```
 
+### If you want to specify the branch of code and the version of the package, you should input the parameter like this:
+
+```sh
+make build-rpm-apisix branch=v2.3 version=10.10
+```
+
 ### Packaging an Ubuntu bionic package of Apache APISIX
 
 ```sh

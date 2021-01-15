@@ -16,6 +16,7 @@
 #
 
 version=0.0
+branch=master
 iteration=0
 
 ### run centos:
@@ -42,13 +43,13 @@ run-ubuntu:
 .PHONY: build-apisix
 build-apisix:
 	docker exec dockerInstance bash -c "/tmp/build/build.sh install_dependencies"
-	docker exec dockerInstance bash -c "/tmp/build/build.sh build_apisix"
+	docker exec dockerInstance bash -c "/tmp/build/build.sh build_apisix $(branch)"
 
 ### build dashboard:
 .PHONY: build-dashboard
 build-dashboard:
 	docker exec dockerInstance bash -c "/tmp/build/build.sh install_dependencies_dashboard"
-	docker exec dockerInstance bash -c "/tmp/build/build.sh build_dashboard"
+	docker exec dockerInstance bash -c "/tmp/build/build.sh build_dashboard $(branch)"
 
 ### build rpm for apisix:
 .PHONY: build-rpm-apisix
@@ -73,6 +74,7 @@ build-deb-apisix: run-ubuntu build-apisix
 	fpm -f -s dir -t deb \
 		-n apisix \
 		-a `uname -i` \
+		-v $(version) \
 		--iteration $(iteration) \
 		-d 'openresty >= 1.15.8.1' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
@@ -109,6 +111,7 @@ build-deb-dashboard: run-ubuntu build-dashboard
 		-t deb \
 		-n apisix-dashboard \
 		-a `uname -i` \
+		-v $(version) \
 		--iteration $(iteration) \
 		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
 		--license "ASL 2.0" \

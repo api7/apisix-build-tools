@@ -20,9 +20,8 @@
 
 set -ex
 
-apisix_branch=master
+branch=$2
 apisix_repository=https://github.com/apache/apisix
-dashboard_branch=master
 dashboard_repository=https://github.com/apache/apisix-dashboard.git
 iteration=0
 
@@ -47,19 +46,22 @@ build_apisix() {
     rm -rf apisix
     mkdir -p /tmp/build/output/apisix/usr/bin/
 
-    git clone -b $apisix_branch $apisix_repository
+    git clone -b $branch $apisix_repository
 
     # set the code source
-    sed -i 's/url.*/url = ".\/apisix"/'  apisix/rockspec/apisix-$apisix_branch-$iteration.rockspec
-    sed -i 's/branch.*//' apisix/rockspec/apisix-$apisix_branch-$iteration.rockspec
+    if [ ${branch:0:1} = "v" ];then
+        branch=${branch:1}
+    fi
+    sed -i 's/url.*/url = ".\/apisix",/'  apisix/rockspec/apisix-$branch-$iteration.rockspec
+    sed -i 's/branch.*//' apisix/rockspec/apisix-$branch-$iteration.rockspec
 
     cd ./apisix
-    luarocks make ./rockspec/apisix-$apisix_branch-$iteration.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
+    luarocks make ./rockspec/apisix-$branch-$iteration.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R $USER:$USER /tmp/build/output
     cd ..
 
-    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/$apisix_branch-$iteration/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
-    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks/apisix/$apisix_branch-$iteration/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
+    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/$branch-$iteration/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
+    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks/apisix/$branch-$iteration/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'
     sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix
 
@@ -111,7 +113,7 @@ build_dashboard() {
 
     # build dashboard
     cd /tmp/
-    git clone -b $dashboard_branch $dashboard_repository
+    git clone -b $branch $dashboard_repository
     cd apisix-dashboard
     make build
 
