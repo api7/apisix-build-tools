@@ -1,0 +1,36 @@
+ARG image_base="centos"
+ARG image_tag="7"
+ARG apisix_branch="2.2"
+ARG iteration="0"
+ARG apisix_repo="https://github.com/apache/apisix"
+
+FROM ${image_base}:${image_tag}
+
+RUN set -x \
+    && yum -y install wget tar gcc automake autoconf libtool make curl git which \
+    && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+    && rpm -ivh epel-release-latest-7.noarch.rpm \
+    && yum install -y luarocks lua-devel yum-utils \
+    && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
+    && yum install -y openresty
+
+ARG apisix_branch
+ARG iteration
+ARG apisix_repo
+RUN set -x \
+    && mkdir -p /tmp/build/output/apisix/usr/bin/ \
+    && git clone -b "v"${apisix_branch} ${apisix_repo} \
+    && sed -i 's/url.*/url = ".\/apisix",/'  apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && sed -i 's/branch.*//' apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && cd ./apisix \
+    && luarocks make ./rockspec/apisix-${apisix_branch}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
+    && chown -R $USER:$USER /tmp/build/output \
+    && cd .. \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path' \
+    && sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix \
+    && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
+    && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/doc

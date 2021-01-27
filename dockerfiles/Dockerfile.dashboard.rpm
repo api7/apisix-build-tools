@@ -1,0 +1,36 @@
+ARG image_base="centos"
+ARG image_tag="7"
+ARG dashboard_branch="2.3"
+ARG iteration="0"
+ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
+
+FROM ${image_base}:${image_tag}
+
+RUN set -x \
+    && yum install -y wget curl git which gcc make \
+    && curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo \
+    && sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)" \
+    && yum install -y nodejs yarn \
+    && wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz \
+    && tar -xzf go1.15.2.linux-amd64.tar.gz \
+    && mv go /usr/local
+
+ARG dashboard_branch
+ARG iteration
+ARG dashboard_repo
+RUN set -x \
+    && mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/ \
+    && mkdir -p /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
+    && export GO111MODULE=on \
+    && export GOROOT=/usr/local/go \
+    && export GOPATH=$HOME/gopath \
+    && export PATH=$PATH:$GOROOT/bin:$GOPATH/bin \
+    && cd $HOME \
+    && mkdir gopath \
+    && go env -w GOPROXY=https://goproxy.cn,direct \
+    && cd /tmp/ \
+    && git clone -b "v"${dashboard_branch} ${dashboard_repo} \
+    && cd apisix-dashboard \
+    && make build \
+    && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \
+    && ln -s /usr/local/apisix/dashboard/manager-api /tmp/build/output/apisix/dashboard/usr/bin/manager-api

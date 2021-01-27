@@ -1,0 +1,38 @@
+ARG image_base="ubuntu"
+ARG image_tag="bionic"
+ARG apisix_branch="master"
+ARG iteration="0"
+ARG apisix_repo="https://github.com/apache/apisix"
+
+FROM ${image_base}:${image_tag}
+
+RUN set -x \
+    && apt-get update \
+    && apt-get -y install wget curl git gnupg2 \
+    && wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add - \
+    && apt-get update \
+    && apt-get -y install software-properties-common \
+    && add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" \
+    && apt-get update \
+    && apt-get install -y openresty gcc luarocks make
+
+ARG apisix_branch
+ARG iteration
+ARG apisix_repo
+RUN set -x \
+    && mkdir -p /tmp/build/output/apisix/usr/bin/ \
+    && git clone -b "v"${apisix_branch} ${apisix_repo} \
+    && sed -i 's/url.*/url = ".\/apisix",/'  apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && sed -i 's/branch.*//' apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && cd ./apisix \
+    && luarocks make ./rockspec/apisix-${apisix_branch}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
+    && chown -R $USER:$USER /tmp/build/output \
+    && cd .. \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path' \
+    && sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix \
+    && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
+    && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/doc
