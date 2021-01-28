@@ -6,7 +6,7 @@
 
 ### Parameters:
 |Parameter      |Required   |Description        |Example|
-|---------|---------|----|-----------|----|
+|---------|---------|----|-----------|
 |type     |True |it can be deb or rpm |type=rpm|
 |app      |True |it can be apisix or dashboard |app=apisix|
 |branch   |False |the code branch of the app which you want to package, it can not be "master", default value is 2.2 |branch="2.1"|
