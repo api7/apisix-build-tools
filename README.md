@@ -7,12 +7,12 @@
 ### Parameters:
 |Parameter      |Required   |Description        |Example|
 |---------|---------|----|-----------|
-|type     |True |it can be deb or rpm |type=rpm|
-|app      |True |it can be apisix or dashboard |app=apisix|
-|branch   |False |the code branch of the app which you want to package, it can not be "master", default value is 2.2 |branch="2.1"|
-|version  |False |the version of the package, default value is "2.2"|version=10.10|
-|image_base|False |the environment for packaging|image_base="centos"|
-|image_tag|False |the environment for packaging|image_tag="7"|
+|type     |True |it can be `deb` or `rpm` |type=rpm|
+|app      |True |it can be `apisix` or `dashboard` |app=apisix|
+|branch   |False |the code branch of the app which you want to package, it can not be `master`, default value is `2.2` |branch=2.1|
+|version  |False |the version of the package, default value is `2.2`|version=10.10|
+|image_base|False |the environment for packaging|image_base=centos|
+|image_tag|False |the environment for packaging|image_tag=7|
 
 ### Example
 Packaging a Centos 7 package of Apache APISIX
