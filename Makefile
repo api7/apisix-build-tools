@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 
-version=2.2
-branch=2.2
+version=0
+branch=0
+app=0
+type=0
 image_base="centos"
 image_tag="7"
-app="apisix"
-type="rpm"
 iteration=0
 
 ### build apisix:
@@ -124,8 +124,19 @@ package-dashboard-deb:
 
 	rm -rf ${PWD}/build
 
+ifeq ($(filter $(app),apisix dashboard),)
+$(info  the app's value have to be apisix or dashboard!)
 
-ifeq ($(app)_$(type),apisix_rpm)
+else ifeq ($(filter $(type),rpm deb),)
+$(info  the type's value have to be rpm or deb!)
+
+else ifeq ($(version), 0)
+$(info  you have to input a version value)
+
+else ifeq ($(branch), 0)
+$(info  you have to input a branch value)
+
+else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
 
