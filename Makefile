@@ -23,6 +23,8 @@ image_base="centos"
 image_tag="7"
 iteration=0
 
+# todo: optimize the code, too much duplicate code now.
+
 ### build apisix:
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
