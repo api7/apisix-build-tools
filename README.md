@@ -4,47 +4,33 @@
 - fpm
 - Make
 
-### Packaging a Centos 7 package of Apache APISIX
+### Parameters:
+|Parameter      |Required   |Description        |Example|
+|---------|---------|----|-----------|----|
+|type     |True |it can be deb or rpm |type=rpm|
+|app      |True |it can be apisix or dashboard |app=apisix|
+|branch   |False |the code branch of the app which you want to package, it can not be "master", default value is 2.2 |branch="2.1"|
+|version  |False |the version of the package, default value is "2.2"|version=10.10|
+|image_base|False |the environment for packaging|image_base="centos"|
+|image_tag|False |the environment for packaging|image_tag="7"|
 
+### Example
+Packaging a Centos 7 package of Apache APISIX
 ```sh
-make build-rpm-apisix
+make package type=rpm app=apisix version=10.10 branch=2.2
 ls output/
-apisix-0.0-0.x86_64.rpm
+apisix-10.10-0.x86_64.rpm
 ```
 
-### If you want to specify the branch of code and the version of the package, you should input the parameter like this:
-
+Packaging an Ubuntu bionic package of Apache APISIX Dashboard
 ```sh
-make build-rpm-apisix branch=v2.3 version=10.10
-```
-
-### Packaging an Ubuntu bionic package of Apache APISIX
-
-```sh
-make build-deb-apisix
+make package type=deb app=dashboard version=11.11 branch=2.3
 ls output/
-apisix_1.0-0_amd64.deb
+apisix-dashboard_11.11-0_amd64.deb
 ```
 
-### Packaging a Centos 7 package of Apache APISIX Dashboard
-
-```sh
-make build-rpm-dashboard
-ls output/
-apisix-dashboard-0.0-0.x86_64.rpm
-```
-
-### Packaging an Ubuntu bionic package of Apache APISIX Dashboard
-
-```sh
-make build-deb-dashboard
-ls output/
-apisix-dashboard_1.0-0_amd64.deb
-```
-
-### Details
+### Details:
 
 - `Makefile` the entrance of the packager
-- `build` used to store the compiled temporary files generated during the packaging process
-- `build-deb.sh & build-rpm.sh` they are mapped to the docker image to perform the compilation action
-- `output` directory for packages 
+- `dockerfiles` directory for dockerfiles
+- `output` directory for packages

@@ -15,8 +15,12 @@
 # limitations under the License.
 #
 
-version=0.0
+version=2.2
 branch=2.2
+image_base="centos"
+image_tag="7"
+app="apisix"
+type="rpm"
 iteration=0
 
 ### build apisix:
@@ -55,7 +59,7 @@ build-dashboard-deb:
 
 ### build rpm for apisix:
 .PHONY: package-apisix-rpm
-package-apisix-rpm: build-apisix-rpm
+package-apisix-rpm:
 	fpm -f -s dir -t rpm \
 		-n apisix \
 		-a `uname -i` \
@@ -72,7 +76,7 @@ package-apisix-rpm: build-apisix-rpm
 
 ### build deb for apisix: version can't be letter
 .PHONY: package-apisix-deb
-package-apisix-deb: build-apisix-deb
+package-apisix-deb:
 	fpm -f -s dir -t deb \
 		-n apisix \
 		-a `uname -i` \
@@ -89,7 +93,7 @@ package-apisix-deb: build-apisix-deb
 
 ### build rpm for apisix dashboard:
 .PHONY: package-dashboard-rpm
-package-dashboard-rpm: build-dashboard-rpm
+package-dashboard-rpm:
 	fpm -f -s dir -t rpm \
 		-n apisix-dashboard \
 		-a `uname -i` \
@@ -105,7 +109,7 @@ package-dashboard-rpm: build-dashboard-rpm
 
 ### build deb for apisix: version can't be letter
 .PHONY: package-dashboard-deb
-package-dashboard-deb: build-dashboard-deb
+package-dashboard-deb:
 	fpm -f -s dir -t deb \
 		-n apisix-dashboard \
 		-a `uname -i` \
@@ -119,3 +123,22 @@ package-dashboard-deb: build-dashboard-deb
 		--url 'https://github.com/apache/apisix-dashboard'
 
 	rm -rf ${PWD}/build
+
+
+ifeq ($(app)_$(type),apisix_rpm)
+package: build-apisix-rpm
+package: package-apisix-rpm
+
+else ifeq ($(app)_$(type),dashboard_rpm)
+package: build-dashboard-rpm
+package: package-dashboard-rpm
+
+else ifeq ($(app)_$(type),apisix_deb)
+package: build-apisix-deb
+package: package-apisix-deb
+
+else ifeq ($(app)_$(type),dashboard_deb)
+package: build-dashboard-deb
+package: package-dashboard-deb
+
+endif
