@@ -11,8 +11,8 @@
 |app      |True |it can be `apisix` or `dashboard` |app=apisix|
 |branch   |True |the code branch of the app which you want to package, it can not be `master`|branch=2.1|
 |version  |True |the version of the package|version=10.10|
-|image_base|False |the environment for packaging, it's value can be `centos|ubuntu` , default value is `centos` |image_base=centos|
-|image_tag|False |the environment for packaging, it's value can be `xenial|bionic|focal|6|7|8` , default value is `7`|image_tag=7|
+|image_base|False |the environment for packaging, it's value can be `centos<code>&#124;</code>ubuntu` , default value is `centos` |image_base=centos|
+|image_tag|False |the environment for packaging, it's value can be `xenial<code>&#124;</code>bionic<code>&#124;</code>focal<code>&#124;</code>6<code>&#124;</code>7<code>&#124;</code>8` , default value is `7`|image_tag=7|
 
 ### Example
 Packaging a Centos 7 package of Apache APISIX
