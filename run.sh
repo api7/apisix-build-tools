@@ -42,4 +42,8 @@ mv /tmp/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/apisix/usr/local/
 rm -rf /tmp/apisix/usr/local/apisix/deps/lib64/luarocks
 rm -rf /tmp/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/$version-$iteration/doc
 
-fpm -f -s dir -t rpm -n apisix -a `uname -i` -v $version --iteration $iteration -d 'openresty >= 1.15.8.1' --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' --license "ASL 2.0"  -C /tmp/apisix/ -p /tmp/rpm/ --url 'http://apisix.apache.org/'
+fpm -f -s dir -t rpm -n apisix -a `uname -i` -v $version --iteration $iteration \
+    -d 'openresty >= 1.15.8.1' \
+    -d 'openresty-openssl-devel' \
+    --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
+    --license "ASL 2.0"  -C /tmp/apisix/ -p /tmp/rpm/ --url 'http://apisix.apache.org/'

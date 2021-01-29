@@ -1,11 +1,9 @@
 
 ## build apisix RPM for CentOS 7
 
-### install Luarocks
-https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
+### install OpenResty & Luarocks
 
-### install OpenResty
-https://openresty.org/en/installation.html
+https://github.com/apache/apisix/blob/master/doc/install-dependencies.md
 
 ### install fpm
 ```
