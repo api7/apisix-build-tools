@@ -3,6 +3,7 @@
 - Docker
 - fpm
 - Make
+- rpm (if your host is Ubuntu, should install rpmbuild by `sudo apt-get install rpm`)
 
 ### Parameters
 |Parameter      |Required   |Description        |Example|
