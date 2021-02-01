@@ -10,6 +10,8 @@ sudo rm -rf /usr/local/apisix/
 rm -rf /tmp/apisix
 
 wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec -O apisix-$version-$iteration.rockspec
+sudo luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl/lib/
+sudo luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl/include/
 sudo luarocks install apisix-$version-$iteration.rockspec --tree=/tmp/apisix/usr/local/apisix/deps --local
 sudo chown -R $USER:$USER /tmp/apisix
 
