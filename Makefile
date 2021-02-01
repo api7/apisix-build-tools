@@ -133,10 +133,10 @@ else ifeq ($(filter $(type),rpm deb),)
 $(info  the type's value have to be rpm or deb!)
 
 else ifeq ($(version), 0)
-$(info  you have to input a version value)
+$(info  you have to input a version value!)
 
 else ifeq ($(branch), 0)
-$(info  you have to input a branch value)
+$(info  you have to input a branch value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
