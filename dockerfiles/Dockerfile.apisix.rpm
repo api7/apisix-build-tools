@@ -7,12 +7,23 @@ ARG apisix_repo="https://github.com/apache/apisix"
 FROM ${image_base}:${image_tag}
 
 RUN set -x \
-    && yum -y install wget tar gcc automake autoconf libtool make curl git which \
+    && yum -y install wget tar gcc automake autoconf libtool make curl git which unzip \
     && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm -ivh epel-release-latest-7.noarch.rpm \
-    && yum install -y luarocks lua-devel yum-utils \
+    && yum install -y yum-utils \
     && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
-    && yum install -y openresty
+    && yum install -y openresty openresty-openssl-devel \
+    && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
+    && tar -xf v3.4.0.tar.gz \
+    && cd luarocks-3.4.0 || exit \
+    && ./configure --prefix=/usr --with-lua=/usr/local/openresty/luajit > build.log 2>&1 || (cat build.log && exit 1) \
+    && make build > build.log 2>&1 || (cat build.log && exit 1) \
+    && make install > build.log 2>&1 || (cat build.log && exit 1) \
+    && cd .. || exit \
+    && rm -rf luarocks-3.4.0 \
+    && mkdir ~/.luarocks || true \
+    && luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl/lib \
+    && luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl/include
 
 ARG apisix_branch
 ARG iteration
@@ -26,8 +37,8 @@ RUN set -x \
     && luarocks make ./rockspec/apisix-${apisix_branch}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
     && chown -R $USER:$USER /tmp/build/output \
     && cd .. \
-    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
-    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
     && bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path' \
     && sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix \
     && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
