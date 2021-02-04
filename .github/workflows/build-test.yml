@@ -18,7 +18,8 @@ jobs:
       run: |
         sudo apt-get install ruby ruby-dev rubygems build-essential rpm
         sudo gem install --no-document fpm
-    # should download the corresponding package from the specified address then test?
+
+    # should download the corresponding package from the specified address then test? how to know which package should download?
     - name: build apisix package
       run: |
         make package type=rpm app=apisix version=2.3 branch=2.3
