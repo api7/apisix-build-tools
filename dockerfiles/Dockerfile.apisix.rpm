@@ -16,7 +16,7 @@ RUN set -x \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
-    && ./configure --prefix=/usr --with-lua=/usr/local/openresty/luajit > build.log 2>&1 || (cat build.log && exit 1) \
+    && ./configure --with-lua=/usr/local/openresty/luajit > build.log 2>&1 || (cat build.log && exit 1) \
     && make build > build.log 2>&1 || (cat build.log && exit 1) \
     && make install > build.log 2>&1 || (cat build.log && exit 1) \
     && cd .. || exit \
@@ -39,8 +39,7 @@ RUN set -x \
     && cd .. \
     && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
     && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_branch}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
-    && bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path' \
-    && sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix \
+    && (if [ "${apisix_branch}" = "master" ] || [ "${apisix_branch}" \> "2.2" ]; then echo 'use shell ';else bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /usr/bin/apisix ; fi;) \
     && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
     && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
     && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
