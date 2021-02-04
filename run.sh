@@ -6,11 +6,12 @@ version=1.5
 # version=master
 iteration=0
 
-sudo rm -rf /tmp/apisix/usr/local/apisix/deps
 sudo rm -rf /usr/local/apisix/
 rm -rf /tmp/apisix
 
 wget https://github.com/apache/apisix/raw/master/rockspec/apisix-$version-$iteration.rockspec -O apisix-$version-$iteration.rockspec
+sudo luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl/lib/
+sudo luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl/include/
 sudo luarocks install apisix-$version-$iteration.rockspec --tree=/tmp/apisix/usr/local/apisix/deps --local
 sudo chown -R $USER:$USER /tmp/apisix
 
@@ -43,4 +44,8 @@ mv /tmp/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/apisix/usr/local/
 rm -rf /tmp/apisix/usr/local/apisix/deps/lib64/luarocks
 rm -rf /tmp/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/$version-$iteration/doc
 
-fpm -f -s dir -t rpm -n apisix -a `uname -i` -v $version --iteration $iteration -d 'openresty >= 1.15.8.1' --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' --license "ASL 2.0"  -C /tmp/apisix/ -p /tmp/rpm/ --url 'http://apisix.apache.org/'
+fpm -f -s dir -t rpm -n apisix -a `uname -i` -v $version --iteration $iteration \
+    -d 'openresty >= 1.15.8.1' \
+    -d 'openresty-openssl-devel' \
+    --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
+    --license "ASL 2.0"  -C /tmp/apisix/ -p /tmp/rpm/ --url 'http://apisix.apache.org/'
