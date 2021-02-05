@@ -14,7 +14,7 @@ RUN set -x \
     && apt-get -y install software-properties-common \
     && add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" \
     && apt-get update \
-    && apt-get install -y openresty gcc luarocks make openresty-openssl-dev \
+    && apt-get install -y openresty gcc make openresty-openssl-dev \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
