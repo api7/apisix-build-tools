@@ -68,12 +68,12 @@ package-apisix-rpm:
 		-v $(version) \
 		--iteration $(iteration) \
 		-d 'openresty >= 1.15.8.1' \
+		-d 'openresty-openssl' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/rpm/output/apisix/ \
 		-p ${PWD}/output/ \
 		--url 'http://apisix.apache.org/'
-
 	rm -rf ${PWD}/build
 
 ### build deb for apisix: version can't be letter
@@ -85,12 +85,12 @@ package-apisix-deb:
 		-v $(version) \
 		--iteration $(iteration) \
 		-d 'openresty >= 1.15.8.1' \
+		-d 'openresty-openssl' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/deb/output/apisix/ \
 		-p ${PWD}/output/ \
 		--url 'http://apisix.apache.org/'
-
 	rm -rf ${PWD}/build
 
 ### build rpm for apisix dashboard:
