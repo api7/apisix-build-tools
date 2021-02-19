@@ -14,7 +14,7 @@ RUN set -x \
     && apt-get -y install software-properties-common \
     && add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" \
     && apt-get update \
-    && apt-get install -y openresty gcc make openresty-openssl-dev \
+    && apt-get install -y openresty gcc make openresty-openssl111-dev \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
@@ -24,8 +24,8 @@ RUN set -x \
     && cd .. || exit \
     && rm -rf luarocks-3.4.0 \
     && mkdir ~/.luarocks || true \
-    && luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl/lib \
-    && luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl/include
+    && luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib \
+    && luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
 
 ARG apisix_branch
 ARG iteration

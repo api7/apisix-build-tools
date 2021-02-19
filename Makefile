@@ -68,7 +68,6 @@ package-apisix-rpm:
 		-v $(version) \
 		--iteration $(iteration) \
 		-d 'openresty >= 1.15.8.1' \
-		-d 'openresty-openssl' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/rpm/output/apisix/ \
@@ -85,13 +84,32 @@ package-apisix-deb:
 		-v $(version) \
 		--iteration $(iteration) \
 		-d 'openresty >= 1.15.8.1' \
-		-d 'openresty-openssl' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/deb/output/apisix/ \
 		-p ${PWD}/output/ \
 		--url 'http://apisix.apache.org/'
 	rm -rf ${PWD}/build
+
+.PHONY: smoketest-apisix-rpm
+smoketest-apisix-rpm:
+	docker run -itd --rm \
+		-v ${PWD}/output/:/tmp/output \
+		-v ${PWD}/smoketest_apisix.sh:/tmp/smoketest_apisix.sh \
+		--name smoketestInstance \
+		--net="host" \
+		docker.io/centos:7 /bin/bash
+	docker exec smoketestInstance bash -c "/tmp/smoketest_apisix.sh rpm $(shell find ${PWD}/output/ -name *.rpm -not -name apisix-dashboard* |sed 's#.*/##')"
+
+.PHONY: smoketest-apisix-deb
+smoketest-apisix-deb:
+	docker run -itd --rm \
+		-v ${PWD}/output/:/tmp/output \
+		-v ${PWD}/smoketest_apisix.sh:/tmp/smoketest_apisix.sh \
+		--name smoketestInstance \
+		--net="host" \
+		ubuntu:bionic /bin/bash
+	docker exec smoketestInstance bash -c "/tmp/smoketest_apisix.sh deb $(shell find ${PWD}/output/ -name *.deb -not -name apisix-dashboard* |sed 's#.*/##')"
 
 ### build rpm for apisix dashboard:
 .PHONY: package-dashboard-rpm
@@ -141,6 +159,7 @@ $(info  you have to input a branch value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
+package: smoketest-apisix-rpm
 
 else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-dashboard-rpm
@@ -149,6 +168,7 @@ package: package-dashboard-rpm
 else ifeq ($(app)_$(type),apisix_deb)
 package: build-apisix-deb
 package: package-apisix-deb
+package: smoketest-apisix-deb
 
 else ifeq ($(app)_$(type),dashboard_deb)
 package: build-dashboard-deb
