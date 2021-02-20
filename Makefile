@@ -67,7 +67,7 @@ package-apisix-rpm:
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
-		-d 'openresty == 1.19.3.1' \
+		-d 'openresty >= 1.17.8.2' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/rpm/output/apisix/ \
@@ -83,7 +83,7 @@ package-apisix-deb:
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
-		-d 'openresty == 1.19.3.1' \
+		-d 'openresty >= 1.17.8.2' \
 		--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/deb/output/apisix/ \
@@ -135,7 +135,7 @@ package-dashboard-deb:
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
-		-d 'openresty >= 1.15.8.1' \
+		-d 'openresty >= 1.17.8.2' \
 		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/deb/output/apisix/dashboard/ \

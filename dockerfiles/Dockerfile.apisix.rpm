@@ -7,16 +7,24 @@ ARG apisix_repo="https://github.com/apache/apisix"
 FROM ${image_base}:${image_tag}
 
 RUN set -x \
-    && yum -y install wget tar gcc automake autoconf libtool make curl git which unzip \
+    && yum install pcre-devel openssl-devel gcc curl wget tar automake autoconf libtool make git which unzip
+    && wget https://openresty.org/download/openresty-1.17.8.2.tar.gz
+    && tar -xzvf openresty-1.17.8.2.tar.gz
+    && cd openresty-1.17.8.2/
+    && ./configure
+    && make
+    && sudo make install
+    && export PATH=/usr/local/openresty/bin:$PATH
+    && cd ..
     && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm -ivh epel-release-latest-7.noarch.rpm \
     && yum install -y yum-utils \
     && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
-    && yum install -y openresty openresty-openssl111-devel \
+    && yum install -y openresty-openssl111-devel \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
-    && ./configure --with-lua=/usr/local/openresty/luajit > build.log 2>&1 || (cat build.log && exit 1) \
+    && ./configure \
     && make build > build.log 2>&1 || (cat build.log && exit 1) \
     && make install > build.log 2>&1 || (cat build.log && exit 1) \
     && cd .. || exit \
