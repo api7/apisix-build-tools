@@ -100,6 +100,7 @@ smoketest-apisix-rpm:
 		--net="host" \
 		docker.io/centos:7 /bin/bash
 	docker exec smoketestInstance bash -c "/tmp/smoketest_apisix.sh rpm $(shell find ${PWD}/output/ -name *.rpm -not -name apisix-dashboard* |sed 's#.*/##')"
+	docker rm -f smoketestInstance
 
 .PHONY: smoketest-apisix-deb
 smoketest-apisix-deb:
@@ -110,6 +111,7 @@ smoketest-apisix-deb:
 		--net="host" \
 		ubuntu:bionic /bin/bash
 	docker exec smoketestInstance bash -c "/tmp/smoketest_apisix.sh deb $(shell find ${PWD}/output/ -name *.deb -not -name apisix-dashboard* |sed 's#.*/##')"
+	docker rm -f smoketestInstance
 
 ### build rpm for apisix dashboard:
 .PHONY: package-dashboard-rpm

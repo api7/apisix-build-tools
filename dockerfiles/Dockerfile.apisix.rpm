@@ -7,24 +7,21 @@ ARG apisix_repo="https://github.com/apache/apisix"
 FROM ${image_base}:${image_tag}
 
 RUN set -x \
-    && yum install pcre-devel openssl-devel gcc curl wget tar automake autoconf libtool make git which unzip
-    && wget https://openresty.org/download/openresty-1.17.8.2.tar.gz
-    && tar -xzvf openresty-1.17.8.2.tar.gz
-    && cd openresty-1.17.8.2/
-    && ./configure
-    && make
-    && sudo make install
-    && export PATH=/usr/local/openresty/bin:$PATH
-    && cd ..
+    && yum -y install wget tar gcc automake autoconf libtool make curl git which unzip \
     && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm -ivh epel-release-latest-7.noarch.rpm \
-    && yum install -y yum-utils \
+    && yum install -y yum-utils readline-dev readline-devel \
+    && wget http://www.lua.org/ftp/lua-5.1.4.tar.gz \
+    && tar -zxvf lua-5.1.4.tar.gz \
+    && cd lua-5.1.4/ \
+    && make linux \
+    && make install \
     && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
-    && yum install -y openresty-openssl111-devel \
+    && yum install -y openresty openresty-openssl111-devel \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
-    && ./configure \
+    && ./configure --with-lua=/usr/local --with-lua-include=/usr/local/include > build.log 2>&1 || (cat build.log && exit 1) \
     && make build > build.log 2>&1 || (cat build.log && exit 1) \
     && make install > build.log 2>&1 || (cat build.log && exit 1) \
     && cd .. || exit \
@@ -38,10 +35,11 @@ ARG iteration
 ARG apisix_repo
 RUN set -x \
     && mkdir -p /tmp/build/output/apisix/usr/bin/ \
-    && git clone -b "v"${apisix_branch} ${apisix_repo} \
-    && sed -i 's/url.*/url = ".\/apisix",/'  apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
-    && sed -i 's/branch.*//' apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
-    && cd ./apisix \
+    && git clone ${apisix_repo} \
+    && cd apisix \
+    && git checkout ${apisix_branch} \
+    && sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && sed -i 's/branch.*//' rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
     && luarocks make ./rockspec/apisix-${apisix_branch}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
     && chown -R $USER:$USER /tmp/build/output \
     && cd .. \

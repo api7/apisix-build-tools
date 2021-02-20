@@ -8,7 +8,7 @@ FROM ${image_base}:${image_tag}
 
 RUN set -x \
     && apt-get update \
-    && apt-get -y install wget curl git gnupg2 unzip \
+    && apt-get -y install wget curl git gnupg2 unzip liblua5.1-0-dev lua5.1 \
     && wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add - \
     && apt-get update \
     && apt-get -y install software-properties-common \
@@ -18,7 +18,7 @@ RUN set -x \
     && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
     && tar -xf v3.4.0.tar.gz \
     && cd luarocks-3.4.0 || exit \
-    && ./configure --with-lua=/usr/local/openresty/luajit > build.log 2>&1 || (cat build.log && exit 1) \
+    && ./configure --with-lua=/usr > build.log 2>&1 || (cat build.log && exit 1) \
     && make build > build.log 2>&1 || (cat build.log && exit 1) \
     && make install > build.log 2>&1 || (cat build.log && exit 1) \
     && cd .. || exit \
@@ -32,10 +32,11 @@ ARG iteration
 ARG apisix_repo
 RUN set -x \
     && mkdir -p /tmp/build/output/apisix/usr/bin/ \
-    && git clone -b "v"${apisix_branch} ${apisix_repo} \
-    && sed -i 's/url.*/url = ".\/apisix",/'  apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
-    && sed -i 's/branch.*//' apisix/rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
-    && cd ./apisix \
+    && git clone ${apisix_repo} \
+    && cd apisix \
+    && git checkout ${apisix_branch} \
+    && sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
+    && sed -i 's/branch.*//' rockspec/apisix-${apisix_branch}-${iteration}.rockspec \
     && luarocks make ./rockspec/apisix-${apisix_branch}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
     && chown -R $USER:$USER /tmp/build/output \
     && cd .. \

@@ -26,9 +26,9 @@ rpm() {
 }
 
 deb() {
-    wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add -
     apt-get update
-    apt-get -y install software-properties-common
+    apt-get install -y software-properties-common curl wrk wget
+    wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add -
     add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main"
     apt-get update
     apt-get install -y /tmp/output/$package
@@ -59,8 +59,6 @@ other(){
             printf "result_code: %s\n" "$result_code"
             exit 125
     fi
-
-    docker system prune -a -f
 }
 
 case_opt=$1
