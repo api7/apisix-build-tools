@@ -21,5 +21,5 @@ jobs:
 
       - name: run test
         run: |
-          cd apisix-build-tools
+          ls
           make package type=rpm app=apisix version=2.3 code_tag=2.3
