@@ -1,0 +1,53 @@
+ARG image_base="centos"
+ARG image_tag="7"
+ARG apisix_tag="2.2"
+ARG iteration="0"
+ARG apisix_repo="https://github.com/apache/apisix"
+
+FROM ${image_base}:${image_tag}
+
+RUN set -x \
+    && yum -y install wget tar gcc automake autoconf libtool make curl git which unzip \
+    && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+    && rpm -ivh epel-release-latest-7.noarch.rpm \
+    && yum install -y yum-utils readline-dev readline-devel \
+    && wget http://www.lua.org/ftp/lua-5.1.4.tar.gz \
+    && tar -zxvf lua-5.1.4.tar.gz \
+    && cd lua-5.1.4/ \
+    && make linux \
+    && make install \
+    && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
+    && yum install -y openresty openresty-openssl111-devel \
+    && wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz \
+    && tar -xf v3.4.0.tar.gz \
+    && cd luarocks-3.4.0 || exit \
+    && ./configure --with-lua=/usr/local --with-lua-include=/usr/local/include > build.log 2>&1 || (cat build.log && exit 1) \
+    && make build > build.log 2>&1 || (cat build.log && exit 1) \
+    && make install > build.log 2>&1 || (cat build.log && exit 1) \
+    && cd .. || exit \
+    && rm -rf luarocks-3.4.0 \
+    && mkdir ~/.luarocks || true \
+    && luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib \
+    && luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
+
+ARG apisix_tag
+ARG iteration
+ARG apisix_repo
+RUN set -x \
+    && mkdir -p /tmp/build/output/apisix/usr/bin/ \
+    && git clone ${apisix_repo} \
+    && cd apisix \
+    && git checkout ${apisix_tag} \
+    && sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-${apisix_tag}-${iteration}.rockspec \
+    && sed -i 's/branch.*//' rockspec/apisix-${apisix_tag}-${iteration}.rockspec \
+    && luarocks make ./rockspec/apisix-${apisix_tag}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
+    && chown -R $USER:$USER /tmp/build/output \
+    && cd .. \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then echo 'use shell ';else bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix ; fi;) \
+    && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
+    && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
+    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua ; else echo ''; fi;) \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/doc
