@@ -50,17 +50,6 @@ package-apisix-rpm:
 		--url 'http://apisix.apache.org/'
 	rm -rf ${PWD}/build
 
-.PHONY: smoketest-apisix-rpm
-smoketest-apisix-rpm:
-	docker run -itd --rm \
-		-v ${PWD}/output/:/tmp/output \
-		-v ${PWD}/smoketest_apisix.sh:/tmp/smoketest_apisix.sh \
-		--name smoketestInstance \
-		--net="host" \
-		docker.io/centos:7 /bin/bash
-	docker exec smoketestInstance bash -c "/tmp/smoketest_apisix.sh $(shell find ${PWD}/output/ -name *.rpm -not -name apisix-dashboard* |sed 's#.*/##')"
-	docker rm -f smoketestInstance
-
 ifeq ($(filter $(app),apisix dashboard),)
 $(info  the app's value have to be apisix or dashboard!)
 
@@ -76,6 +65,5 @@ $(info  you have to input a code_tag value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
-package: smoketest-apisix-rpm
 
 endif
