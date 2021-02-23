@@ -18,7 +18,7 @@
 ## Example
 Packaging a Centos 7 package of Apache APISIX
 ```sh
-make package type=rpm app=apisix version=10.10 code_tag=2.2
+make package type=rpm app=apisix version=2.2 code_tag=2.2
 ls output/
 apisix-10.10-0.x86_64.rpm
 ```
