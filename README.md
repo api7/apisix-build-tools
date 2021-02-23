@@ -73,3 +73,12 @@ mkdir gopath
 ```
 sudo manager-api -p /usr/local/apisix/dashboard/
 ```
+
+## build apisix's OpenResty
+
+```shell
+OR_PREFIX=/tmp ./build-apisix-openresty.sh
+```
+
+The default `OR_PREFIX` is `/usr/local/openresty`
+
