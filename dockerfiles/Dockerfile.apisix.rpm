@@ -48,6 +48,6 @@ RUN set -x \
     && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then echo 'use shell ';else bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix ; fi;) \
     && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
     && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
-    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua ; else echo ''; fi;) \
+    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then bin='package.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua ; else echo ''; fi;) \
     && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
     && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/doc
