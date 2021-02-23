@@ -28,3 +28,11 @@ apisix-2.2-0.x86_64.rpm
 - `Makefile` the entrance of the packager
 - `dockerfiles` directory for dockerfiles
 - `output` directory for packages
+
+## build apisix's OpenResty
+
+```shell
+OR_PREFIX=/tmp ./build-apisix-openresty.sh
+```
+
+The default `OR_PREFIX` is `/usr/local/openresty`
