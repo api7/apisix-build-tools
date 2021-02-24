@@ -34,7 +34,7 @@ RUN set -x \
     # get source code and build
     && git clone ${dashboard_repo} \
     && cd apisix-dashboard \
-    && git checkout ${dashboard_tag} \
+    && git checkout "v"${dashboard_tag} \
     && make build \
     # copy the compiled files to the specified directory for packaging
     && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \
