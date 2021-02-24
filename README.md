@@ -1,78 +1,33 @@
+## Prerequisites
 
-## build apisix RPM for CentOS 7
+- Docker
+- fpm
+- Make
+- rpm (if your host system is Ubuntu, should install rpmbuild by `sudo apt-get install rpm`)
 
-### install OpenResty & Luarocks
+## Parameters
+|Parameter      |Required   |Description        |Example|
+|---------|---------|----|-----------|
+|type     |True |it can be `deb` or `rpm` |type=rpm|
+|app      |True |it can be `apisix` or `dashboard` |app=apisix|
+|code_tag   |True |the code tag of the app which you want to package, it can not be `master`|code_tag=2.1|
+|version  |True |the version of the package|version=10.10|
+|image_base|False |the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`|image_base=centos|
+|image_tag|False |the environment for packaging, it's value can be `xenial\|bionic\|focal\|6\|7\|8` , if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `bionic`|image_tag=7|
 
-https://github.com/apache/apisix/blob/master/doc/install-dependencies.md
-
-### install fpm
-```
-sudo yum -y install git autoconf automake libtool pcre-devel gcc-c++ ruby ruby-devel rubygems gcc rpm-build lua-devel cmake3
-```
-
-If your server in China mainland, please add source for Ruby:
-```
-gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/
-```
-
-Then you can install `fpm`:
-```
-gem install --no-ri --no-rdoc fpm
-```
-
-### run build tool script:
-The version of APISIX is hard-code in `run.sh` now, you can change it by yourself.
-
-```
-./run.sh
+## Example
+Packaging a Centos 7 package of Apache APISIX
+```sh
+make package type=rpm app=apisix version=2.2 code_tag=2.2
+ls output/
+apisix-2.2-0.x86_64.rpm
 ```
 
+## Details
 
-## build apisix-dashboard RPM for CentOS 7
-
-### install Yarn、nodejs
-```
-curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-sudo sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_10.x)"
-sudo yum install –y nodejs yarn
-```
-
-### install golang
-```
-wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz 
-tar -xzf go1.15.2.linux-amd64.tar.gz
-sudo mv go /usr/local
-```
-
-### adjust the Path Variable for golang
-appending the following line to the `/etc/profile` file
-```
-export GO111MODULE=on
-export GOROOT=/usr/local/go 
-export GOPATH=$HOME/gopath
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-```
-
-### load the new PATH environment variable with the following command:
-```
-source /etc/profile
-```
-
-### create the workspace directory for golang
-```
-cd ~
-mkdir gopath
-```
-
-### run build tool script for apisix-dashboard:
-```
-./dashboard-rpm.sh
-```
-
-### after you installed the rpm of apisix-dashboard, run apisix-dashboard like this:
-```
-sudo manager-api -p /usr/local/apisix/dashboard/
-```
+- `Makefile` the entrance of the packager
+- `dockerfiles` directory for dockerfiles
+- `output` directory for packages
 
 ## build apisix's OpenResty
 
@@ -81,4 +36,3 @@ OR_PREFIX=/tmp ./build-apisix-openresty.sh
 ```
 
 The default `OR_PREFIX` is `/usr/local/openresty`
-
