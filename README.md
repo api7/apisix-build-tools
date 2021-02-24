@@ -23,6 +23,13 @@ ls output/
 apisix-2.2-0.x86_64.rpm
 ```
 
+Packaging a Centos 7 package of Apache APISIX Dashboard
+```sh
+make package type=rpm app=dashboard version=2.4 code_tag=2.4
+ls output/
+apisix-dashboard-2.4-0.x86_64.rpm
+```
+
 ## Details
 
 - `Makefile` the entrance of the packager
