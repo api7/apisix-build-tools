@@ -19,6 +19,10 @@ jobs:
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 
-      - name: run test
+      - name: run apisix packaging test
         run: |
           make package type=rpm app=apisix version=2.3 code_tag=2.3
+
+      - name: run apisix-dashboard packaging test
+        run: |
+          make package type=rpm app=dashboard version=2.4 code_tag=2.4

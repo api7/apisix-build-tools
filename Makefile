@@ -50,6 +50,31 @@ package-apisix-rpm:
 		--url 'http://apisix.apache.org/'
 	rm -rf ${PWD}/build
 
+### build dashboard:
+.PHONY: build-dashboard-rpm
+build-dashboard-rpm:
+	mkdir -p ${PWD}/build/rpm
+	docker build -t apache/apisix-dashboard:$(code_tag) --build-arg dashboard_tag=$(code_tag) -f ./dockerfiles/Dockerfile.dashboard.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(code_tag)
+	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
+	docker system prune -a -f
+
+### build rpm for apisix dashboard:
+.PHONY: package-dashboard-rpm
+package-dashboard-rpm:
+	fpm -f -s dir -t rpm \
+		-n apisix-dashboard \
+		-a `uname -i` \
+		-v $(version) \
+		--iteration $(iteration) \
+		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
+		--license "ASL 2.0" \
+		-C ${PWD}/build/rpm/output/apisix/dashboard/ \
+		-p ${PWD}/output/ \
+		--url 'https://github.com/apache/apisix-dashboard'
+
+	rm -rf ${PWD}/build
+
 ifeq ($(filter $(app),apisix dashboard),)
 $(info  the app's value have to be apisix or dashboard!)
 
@@ -65,5 +90,9 @@ $(info  you have to input a code_tag value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
+
+else ifeq ($(app)_$(type),dashboard_rpm)
+package: build-dashboard-rpm
+package: package-dashboard-rpm
 
 endif
