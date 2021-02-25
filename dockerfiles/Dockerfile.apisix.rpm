@@ -1,6 +1,6 @@
 ARG image_base="centos"
 ARG image_tag="7"
-ARG apisix_tag="2.2"
+ARG checkout_v="2.2"
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
 
@@ -34,7 +34,7 @@ RUN set -x \
     && luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib \
     && luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
 
-ARG apisix_tag
+ARG checkout_v
 ARG iteration
 ARG apisix_repo
 RUN set -x \
@@ -42,22 +42,22 @@ RUN set -x \
     # get source code
     && git clone ${apisix_repo} \
     && cd apisix \
-    && git checkout ${apisix_tag} \
+    && git checkout ${checkout_v} \
     # remove useless code for build
-    && sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-${apisix_tag}-${iteration}.rockspec \
-    && sed -i 's/branch.*//' rockspec/apisix-${apisix_tag}-${iteration}.rockspec \
+    && sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-master-${iteration}.rockspec \
+    && sed -i 's/branch.*//' rockspec/apisix-master-${iteration}.rockspec \
     # build the lib and specify the storage path of the package installed
-    && luarocks make ./rockspec/apisix-${apisix_tag}-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
+    && luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local \
     && chown -R $USER:$USER /tmp/build/output \
     && cd .. \
     # copy the compiled files to the package install directory
-    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
-    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
+    && cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true \
     # modify the apisix entry shell to be compatible with version 2.2 and 2.3
-    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then echo 'use shell ';else bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix ; fi;) \
+    && (if [ "${checkout_v}" = "master" ] || [ "${checkout_v:0:1}" != "v" -a "${checkout_v}" \> "2.2" ] || [ "${checkout_v:0:1}" = "v" -a "${checkout_v:1}" \> "2.2" ]; then echo 'use shell ';else bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix ; fi;) \
     && cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/ \
     && mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/ \
-    && (if [ "${apisix_tag}" = "master" ] || [ "${apisix_tag}" \> "2.2" ]; then bin='package.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua ; else echo ''; fi;) \
+    && (if [ "${checkout_v}" = "master" ] || [ "${checkout_v:0:1}" != "v" -a "${checkout_v}" \> "2.2" ] || [ "${checkout_v:0:1}" = "v" -a "${checkout_v:1}" \> "2.2" ]; then bin='package.path = "/usr/local/apisix/?.lua;" .. package.path'; sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua ; else echo ''; fi;) \
     # delete unnecessary files
     && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks \
-    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/${apisix_tag}-${iteration}/doc
+    && rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/doc

@@ -16,7 +16,7 @@
 #
 
 version=0
-code_tag=0
+checkout=0
 app=0
 type=0
 image_base="centos"
@@ -29,8 +29,8 @@ iteration=0
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix:$(code_tag) --build-arg apisix_tag=$(code_tag) -f ./dockerfiles/Dockerfile.apisix.rpm .
-	docker run -d --name dockerInstance --net="host" apache/apisix:$(code_tag)
+	docker build -t apache/apisix:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix:$(checkout)
 	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
 	docker system prune -a -f
 
@@ -50,6 +50,31 @@ package-apisix-rpm:
 		--url 'http://apisix.apache.org/'
 	rm -rf ${PWD}/build
 
+### build dashboard:
+.PHONY: build-dashboard-rpm
+build-dashboard-rpm:
+	mkdir -p ${PWD}/build/rpm
+	docker build -t apache/apisix-dashboard:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.dashboard.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(checkout)
+	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
+	docker system prune -a -f
+
+### build rpm for apisix dashboard:
+.PHONY: package-dashboard-rpm
+package-dashboard-rpm:
+	fpm -f -s dir -t rpm \
+		-n apisix-dashboard \
+		-a `uname -i` \
+		-v $(version) \
+		--iteration $(iteration) \
+		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
+		--license "ASL 2.0" \
+		-C ${PWD}/build/rpm/output/apisix/dashboard/ \
+		-p ${PWD}/output/ \
+		--url 'https://github.com/apache/apisix-dashboard'
+
+	rm -rf ${PWD}/build
+
 ifeq ($(filter $(app),apisix dashboard),)
 $(info  the app's value have to be apisix or dashboard!)
 
@@ -59,11 +84,15 @@ $(info  the type's value have to be rpm or deb!)
 else ifeq ($(version), 0)
 $(info  you have to input a version value!)
 
-else ifeq ($(code_tag), 0)
-$(info  you have to input a code_tag value!)
+else ifeq ($(checkout), 0)
+$(info  you have to input a checkout value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
+
+else ifeq ($(app)_$(type),dashboard_rpm)
+package: build-dashboard-rpm
+package: package-dashboard-rpm
 
 endif
