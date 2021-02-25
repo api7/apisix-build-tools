@@ -25,7 +25,7 @@ apisix-2.2-0.x86_64.rpm
 
 Packaging a Centos 7 package of Apache APISIX Dashboard
 ```sh
-make package type=rpm app=dashboard version=2.4 checkout=2.4
+make package type=rpm app=dashboard version=2.4 checkout=v2.4
 ls output/
 apisix-dashboard-2.4-0.x86_64.rpm
 ```
