@@ -1,6 +1,6 @@
 ARG image_base="centos"
 ARG image_tag="7"
-ARG dashboard_tag="2.3"
+ARG checkout_v="v2.3"
 ARG iteration="0"
 ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
 
@@ -16,7 +16,7 @@ RUN set -x \
     && tar -xzf go1.15.2.linux-amd64.tar.gz \
     && mv go /usr/local
 
-ARG dashboard_tag
+ARG checkout_v
 ARG iteration
 ARG dashboard_repo
 RUN set -x \
@@ -34,7 +34,7 @@ RUN set -x \
     # get source code and build
     && git clone ${dashboard_repo} \
     && cd apisix-dashboard \
-    && git checkout "v"${dashboard_tag} \
+    && git checkout ${checkout_v} \
     && make build \
     # copy the compiled files to the specified directory for packaging
     && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \

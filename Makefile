@@ -16,7 +16,7 @@
 #
 
 version=0
-code_tag=0
+checkout=0
 app=0
 type=0
 image_base="centos"
@@ -29,8 +29,8 @@ iteration=0
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix:$(code_tag) --build-arg apisix_tag=$(code_tag) -f ./dockerfiles/Dockerfile.apisix.rpm .
-	docker run -d --name dockerInstance --net="host" apache/apisix:$(code_tag)
+	docker build -t apache/apisix:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix:$(checkout)
 	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
 	docker system prune -a -f
 
@@ -54,8 +54,8 @@ package-apisix-rpm:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix-dashboard:$(code_tag) --build-arg dashboard_tag=$(code_tag) -f ./dockerfiles/Dockerfile.dashboard.rpm .
-	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(code_tag)
+	docker build -t apache/apisix-dashboard:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.dashboard.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(checkout)
 	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
 	docker system prune -a -f
 
@@ -84,8 +84,8 @@ $(info  the type's value have to be rpm or deb!)
 else ifeq ($(version), 0)
 $(info  you have to input a version value!)
 
-else ifeq ($(code_tag), 0)
-$(info  you have to input a code_tag value!)
+else ifeq ($(checkout), 0)
+$(info  you have to input a checkout value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
