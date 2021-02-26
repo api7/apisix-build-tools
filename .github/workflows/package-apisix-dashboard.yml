@@ -1,4 +1,4 @@
-name: CI for packaging
+name: package apisix-dashabord
 
 on:
   push:
@@ -18,12 +18,6 @@ jobs:
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
-
-      - name: run apisix packaging test
-        run: |
-          make package type=rpm app=apisix version=2.3 checkout=2.3
-          make package type=rpm app=apisix version=2.2 checkout=v2.2
-          make package type=rpm app=apisix version=master checkout=master
 
       - name: run apisix-dashboard packaging test
         run: |
