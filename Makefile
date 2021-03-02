@@ -29,8 +29,8 @@ iteration=0
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix.rpm .
-	docker run -d --name dockerInstance --net="host" apache/apisix:$(checkout)
+	docker build -t apache/apisix:$(version) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix:$(version)
 	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
 	docker system prune -a -f
 
@@ -54,8 +54,8 @@ package-apisix-rpm:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix-dashboard:$(checkout) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.dashboard.rpm .
-	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(checkout)
+	docker build -t apache/apisix-dashboard:$(version) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.dashboard.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix-dashboard:$(version)
 	docker cp dockerInstance:/tmp/build/output/ ${PWD}/build/rpm
 	docker system prune -a -f
 
