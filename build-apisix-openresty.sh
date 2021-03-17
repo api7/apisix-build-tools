@@ -5,12 +5,14 @@ set -x
 if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
+    debug_args="--with-debug"
+    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty/debug"}
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
+    debug_args=
+    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
-
-OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
@@ -29,14 +31,13 @@ cd ngx_multi_upstream_module || exit 1
 cd ..
 
 cd apisix-nginx-module/patch || exit 1
-cp ~/git/apisix-nginx-module/patch/1.19.3/lua-resty-core-tlshandshake.patch 1.19.3/
-~/git/apisix-nginx-module/patch/patch.sh ../../openresty-1.19.3.1
+./patch.sh ../../openresty-1.19.3.1
 cd ../..
 
 cd openresty-1.19.3.1 || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --add-module=../mod_dubbo --add-module=../ngx_multi_upstream_module \
-    --with-debug \
+    $debug_args \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
