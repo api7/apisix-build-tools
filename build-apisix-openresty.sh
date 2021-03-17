@@ -2,6 +2,14 @@
 set -euo pipefail
 set -x
 
+if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
+    ngx_multi_upstream_module_ver=""
+    mod_dubbo_ver=""
+else
+    ngx_multi_upstream_module_ver="-b 1.0.0"
+    mod_dubbo_ver="-b 1.0.0"
+fi
+
 OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 
 workdir=$(mktemp -d)
@@ -10,13 +18,22 @@ cd "$workdir" || exit 1
 wget https://openresty.org/download/openresty-1.19.3.1.tar.gz
 tar -zxvpf openresty-1.19.3.1.tar.gz
 
-git clone --depth=1 -b 1.0.0 https://github.com/api7/ngx_multi_upstream_module.git
+git clone --depth=1 $ngx_multi_upstream_module_ver \
+    git@github.com:api7/ngx_multi_upstream_module.git
+git clone --depth=1 $mod_dubbo_ver \
+    git@github.com:api7/mod_dubbo.git
+git clone --depth=1 git@github.com:api7/apisix-nginx-module.git
+
 cd ngx_multi_upstream_module || exit 1
 ./patch.sh ../openresty-1.19.3.1
+cd ..
 
-git clone --depth=1 -b 1.0.0 https://github.com/api7/mod_dubbo.git ../mod_dubbo
+cd apisix-nginx-module/patch || exit 1
+cp ~/git/apisix-nginx-module/patch/1.19.3/lua-resty-core-tlshandshake.patch 1.19.3/
+~/git/apisix-nginx-module/patch/patch.sh ../../openresty-1.19.3.1
+cd ../..
 
-cd ../openresty-1.19.3.1 || exit 1
+cd openresty-1.19.3.1 || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --add-module=../mod_dubbo --add-module=../ngx_multi_upstream_module \
     --with-debug \
