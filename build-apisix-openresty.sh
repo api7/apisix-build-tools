@@ -19,10 +19,10 @@ wget https://openresty.org/download/openresty-1.19.3.1.tar.gz
 tar -zxvpf openresty-1.19.3.1.tar.gz
 
 git clone --depth=1 $ngx_multi_upstream_module_ver \
-    git@github.com:api7/ngx_multi_upstream_module.git
+    https://github.com/api7/ngx_multi_upstream_module.git
 git clone --depth=1 $mod_dubbo_ver \
-    git@github.com:api7/mod_dubbo.git
-git clone --depth=1 git@github.com:api7/apisix-nginx-module.git
+    https://github.com/api7/mod_dubbo.git
+git clone --depth=1 https://github.com/api7/apisix-nginx-module.git
 
 cd ngx_multi_upstream_module || exit 1
 ./patch.sh ../openresty-1.19.3.1
