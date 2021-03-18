@@ -6,7 +6,7 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
     debug_args="--with-debug"
-    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty/debug"}
+    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
