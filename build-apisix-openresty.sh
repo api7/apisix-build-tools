@@ -5,11 +5,13 @@ set -x
 if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
+    apisix_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
+    apisix_nginx_module_ver="-b 1.0.0"
     debug_args=
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
@@ -39,7 +41,8 @@ fi
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 https://github.com/api7/apisix-nginx-module.git
+    git clone --depth=1 $apisix_nginx_module_ver \
+        https://github.com/api7/apisix-nginx-module.git
 fi
 
 cd ngx_multi_upstream_module || exit 1
