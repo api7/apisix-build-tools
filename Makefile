@@ -69,6 +69,7 @@ package-dashboard-rpm:
 		--iteration $(iteration) \
 		--description 'Apache APISIX Dashboard is designed to make it as easy as possible for users to operate Apache APISIX through a frontend interface.'  \
 		--license "ASL 2.0" \
+		--after-install =(echo "systemctl daemon-reload && systemctl enable manager-api.service && chown -R nobody: /usr/local/apisix/dashboard/logs") \
 		-C ${PWD}/build/rpm/output/apisix/dashboard/ \
 		-p ${PWD}/output/ \
 		--url 'https://github.com/apache/apisix-dashboard'

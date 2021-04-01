@@ -20,8 +20,9 @@ ARG checkout_v
 ARG iteration
 ARG dashboard_repo
 RUN set -x \
-    && mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/ \
-    && mkdir -p /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/bin/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/lib/systemd/system \
     # config golang
     && export GO111MODULE=on \
     && export GOROOT=/usr/local/go \
@@ -31,6 +32,8 @@ RUN set -x \
     && mkdir gopath \
     && go env -w GOPROXY=https://goproxy.cn,direct \
     && cd /tmp/ \
+    # add startup script
+    && curl --silent --location https://raw.githubusercontent.com/totemofwolf/apisix-build-tools/service/deps/manager-api.service | tee /tmp/build/output/apisix/dashboard/usr/lib/systemd/system/manager-api.service \
     # get source code and build
     && git clone ${dashboard_repo} \
     && cd apisix-dashboard \
