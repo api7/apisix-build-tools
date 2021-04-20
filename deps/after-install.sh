@@ -1,3 +1,3 @@
 systemctl daemon-reload \
-&& systemctl enable manager-api.service \
+&& systemctl enable apisix-dashboard.service \
 && chown -R nobody: /usr/local/apisix/dashboard/logs

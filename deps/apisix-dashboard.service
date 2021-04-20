@@ -1,5 +1,5 @@
 [Unit]
-Description=APACHE APISIX Manager-api Service
+Description=APACHE APISIX Dashboard Service
 After=network.target
 
 [Service]
