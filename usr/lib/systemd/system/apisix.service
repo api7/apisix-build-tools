@@ -1,0 +1,11 @@
+[Unit]
+Description=apisix
+Conflicts=apisix.service
+After=network.target
+
+[Service]
+Type=forking
+WorkingDirectory=/usr/bin
+ExecStart=/usr/bin/apisix start
+ExecStop=/usr/bin/apisix stop
+ExecReload=/usr/bin/apisix restart
