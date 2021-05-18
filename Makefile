@@ -47,7 +47,8 @@ package-apisix-rpm:
 		--license "ASL 2.0" \
 		-C ${PWD}/build/rpm/output/apisix/ \
 		-p ${PWD}/output/ \
-		--url 'http://apisix.apache.org/'
+		--url 'http://apisix.apache.org/' \
+		--config-files usr/lib/systemd/system/apisix.service
 	rm -rf ${PWD}/build
 
 ### build dashboard:
