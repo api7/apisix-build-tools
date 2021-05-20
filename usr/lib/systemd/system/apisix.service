@@ -1,7 +1,3 @@
-# Another copy of apisix.service locates at
-#   https://github.com/apache/apisix/blob/master/utils/apisix.service
-# If you change this file, please also change that copy
-
 [Unit]
 Description=apisix
 Conflicts=apisix.service
