@@ -86,11 +86,8 @@ package-apisix-openresty-centos7-rpm:
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
-		-d 'openssl-devel' \
-		-d 'pcre-devel' \
-		-d 'gcc' \
-		-d 'curl' \
-		--description 'OpenResty distributions that include the APISIX patch.' \
+		-d 'openresty-openssl111' \
+		--description 'APISIX's OpenResty distribution.' \
 		--license "ASL 2.0" \
 		-C /usr/local/openresty/ \
 		-p ${PWD}/output/ \
