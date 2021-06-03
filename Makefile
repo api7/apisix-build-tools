@@ -98,7 +98,6 @@ package-apisix-openresty-rpm:
 		--conflicts openresty \
 		--config-files usr/lib/systemd/system/openresty.service \
 		--prefix=/usr/local/openresty
-
 	rm -rf ${PWD}/build
 
 ifeq ($(filter $(app),apisix dashboard),)
