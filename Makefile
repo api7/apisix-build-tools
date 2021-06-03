@@ -76,6 +76,31 @@ package-dashboard-rpm:
 
 	rm -rf ${PWD}/build
 
+### build rpm for apisix-openresty:
+.PHONY: package-apisix-openresty-rpm
+package-apisix-openresty-rpm:
+	chmod +x ./build-apisix-openresty.sh
+	./build-apisix-openresty.sh
+	fpm -f -s dir -t rpm \
+		-n apisix-openresty \
+		-a `uname -i` \
+		-v $(version) \
+		--iteration $(iteration) \
+		-d 'openssl-devel' \
+		-d 'pcre-devel' \
+		-d 'gcc' \
+		-d 'curl' \
+		--description 'OpenResty distributions that include the APISIX patch.' \
+		--license "ASL 2.0" \
+		-C /usr/local/openresty/ \
+		-p ${PWD}/output/ \
+		--url 'http://apisix.apache.org/' \
+		--conflicts openresty \
+		--config-files usr/lib/systemd/system/openresty.service \
+		--prefix=/usr/local/openresty
+
+	rm -rf ${PWD}/build
+
 ifeq ($(filter $(app),apisix dashboard),)
 $(info  the app's value have to be apisix or dashboard!)
 
@@ -91,6 +116,7 @@ $(info  you have to input a checkout value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
+package: package-apisix-openresty-rpm
 
 else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-dashboard-rpm
