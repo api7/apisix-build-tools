@@ -21,6 +21,7 @@ else
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
+openssl_prefix=$OR_PREFIX/openssl111
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
