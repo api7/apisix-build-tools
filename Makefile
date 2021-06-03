@@ -77,10 +77,10 @@ package-dashboard-rpm:
 	rm -rf ${PWD}/build
 
 ### build rpm for apisix-openresty:
-.PHONY: package-apisix-openresty-rpm
-package-apisix-openresty-rpm:
-	chmod +x ./build-apisix-openresty.sh
-	./build-apisix-openresty.sh
+.PHONY: package-apisix-openresty-centos7-rpm
+package-apisix-openresty-centos7-rpm:
+	chmod +x ./build-apisix-openresty-centos7.sh
+	./build-apisix-openresty-centos7.sh
 	fpm -f -s dir -t rpm \
 		-n apisix-openresty \
 		-a `uname -i` \
@@ -115,7 +115,7 @@ $(info  you have to input a checkout value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
-package: package-apisix-openresty-rpm
+#package: package-apisix-openresty-centos7-rpm
 
 else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-dashboard-rpm

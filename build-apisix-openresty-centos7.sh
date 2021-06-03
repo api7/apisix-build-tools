@@ -2,12 +2,17 @@
 set -euo pipefail
 set -x
 
+yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+yum -y install pcre-devel openssl-devel gcc curl gcc-c++ patch
+yum -y install openresty-openssl111-devel.x86_64
+
 if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
     apisix_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
+    mv /usr/local/openresty/openssl111 $OR_PREFIX
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
@@ -16,6 +21,7 @@ else
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
+openssl_prefix=$OR_PREFIX/openssl111
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
@@ -55,6 +61,8 @@ cd ../..
 
 cd openresty-1.19.3.1 || exit 1
 ./configure --prefix="$OR_PREFIX" \
+    --with-cc-opt="-I$openssl_prefix/include" \
+    --with-ld-opt="-L$openssl_prefix/lib -Wl,-rpath,$openssl_prefix/lib" \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
