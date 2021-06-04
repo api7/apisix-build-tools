@@ -79,7 +79,6 @@ package-dashboard-rpm:
 ### build rpm for apisix-openresty:
 .PHONY: package-apisix-openresty-centos7-rpm
 package-apisix-openresty-centos7-rpm:
-	chmod +x ./build-apisix-openresty-centos7.sh
 	./build-apisix-openresty-centos7.sh
 	fpm -f -s dir -t rpm \
 		-n apisix-openresty \
