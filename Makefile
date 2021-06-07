@@ -76,27 +76,34 @@ package-dashboard-rpm:
 
 	rm -rf ${PWD}/build
 
+### build apisix-openresty:
+.PHONY: build-apisix-openresty-rpm
+build-apisix-openresty-rpm:
+	mkdir -p ${PWD}/build/rpm
+	docker build -t apache/apisix-openresty:$(version) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix-openresty.rpm .
+	docker run -d --name dockerInstance --net="host" apache/apisix-openresty:$(version)
+	docker cp dockerInstance:/usr/local/openresty/ ${PWD}/build/rpm
+	docker system prune -a -f
+
 ### build rpm for apisix-openresty:
-.PHONY: package-apisix-openresty-centos7-rpm
-package-apisix-openresty-centos7-rpm:
-	./build-apisix-openresty-centos7.sh
+.PHONY: package-apisix-openresty-rpm
+package-apisix-openresty-rpm:
 	fpm -f -s dir -t rpm \
 		-n apisix-openresty \
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
-		-d 'openresty-openssl111' \
-		--description 'APISIX's OpenResty distribution.' \
+		--description "APISIX's OpenResty distribution." \
 		--license "ASL 2.0" \
-		-C /usr/local/openresty/ \
+		-C ${PWD}/build/rpm \
 		-p ${PWD}/output/ \
 		--url 'http://apisix.apache.org/' \
 		--conflicts openresty \
 		--config-files usr/lib/systemd/system/openresty.service \
-		--prefix=/usr/local/openresty
+		--prefix=/usr/local
 	rm -rf ${PWD}/build
 
-ifeq ($(filter $(app),apisix dashboard),)
+ifeq ($(filter $(app),apisix dashboard apisix-openresty),)
 $(info  the app's value have to be apisix or dashboard!)
 
 else ifeq ($(filter $(type),rpm deb),)
@@ -111,10 +118,13 @@ $(info  you have to input a checkout value!)
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-apisix-rpm
 package: package-apisix-rpm
-#package: package-apisix-openresty-centos7-rpm
 
 else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-dashboard-rpm
 package: package-dashboard-rpm
+
+else ifeq ($(app)_$(type),apisix-openresty_rpm)
+package: build-apisix-openresty-rpm
+package: package-apisix-openresty-rpm
 
 endif

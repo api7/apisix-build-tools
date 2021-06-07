@@ -9,7 +9,7 @@
 |Parameter      |Required   |Description        |Example|
 |---------|---------|----|-----------|
 |type     |True |it can be `deb` or `rpm` |type=rpm|
-|app      |True |it can be `apisix` or `dashboard` |app=apisix|
+|app      |True |it can be `apisix`, `dashboard` or `apisix-openresty`|app=apisix|
 |checkout   |True |the code branch or tag of the app which you want to package|checkout=2.1 or checkout=v2.1|
 |version  |True |the version of the package|version=10.10|
 |image_base|False |the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`|image_base=centos|
@@ -28,6 +28,13 @@ Packaging a Centos 7 package of Apache APISIX Dashboard
 make package type=rpm app=dashboard version=2.4 checkout=v2.4
 ls output/
 apisix-dashboard-2.4-0.x86_64.rpm
+```
+
+Packaging a Centos 7 package of APISIX's OpenResty distribution
+```sh
+make package type=rpm app=apisix-openresty version=1.19.3.1 checkout=1.19.3.1
+ls output/
+apisix-openresty-1.19.3.1-0.x86_64.rpm
 ```
 
 ## Details
