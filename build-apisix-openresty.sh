@@ -21,8 +21,9 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-wget https://openresty.org/download/openresty-1.19.3.1.tar.gz
-tar -zxvpf openresty-1.19.3.1.tar.gz
+or_ver="1.19.3.2"
+wget https://openresty.org/download/openresty-${or_ver}.tar.gz
+tar -zxvpf openresty-${or_ver}.tar.gz
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
@@ -46,11 +47,11 @@ else
 fi
 
 cd ngx_multi_upstream_module || exit 1
-./patch.sh ../openresty-1.19.3.1
+./patch.sh ../openresty-${or_ver}
 cd ..
 
 cd apisix-nginx-module/patch || exit 1
-./patch.sh ../../openresty-1.19.3.1
+./patch.sh ../../openresty-${or_ver}
 cd ../..
 
 cc_opt=${cc_opt:-}
