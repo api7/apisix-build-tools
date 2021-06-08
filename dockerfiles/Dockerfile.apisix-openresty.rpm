@@ -7,27 +7,24 @@ ARG checkout_v="1.19.3.1"
 
 RUN set -x \
     # install dependency
-    && yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo \
-    && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-    && rpm -ivh epel-release-latest-7.noarch.rpm \
-    && yum install -y yum-utils readline-dev readline-devel \
-    # install openssl111
+    && yum -y install wget git patch make gcc gcc-c++ \
+    # install dependency needed to compile openresty
     && yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo \
-    && yum install -y openresty-openssl111-devel \
+    && yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel \
     # compile apisix-openresty
-    && yum -y install pcre-devel openssl-devel gcc-c++ patch \
-    && cd $(mktemp -d) || exit 1  \
+    && cd /tmp || exit 1  \
     && wget https://openresty.org/download/openresty-"${checkout_v}".tar.gz \
     && tar -zxvpf openresty-"${checkout_v}".tar.gz \
-    # add apisix modules
+    # clone apisix modules
     && git clone --depth=1 https://github.com/api7/ngx_multi_upstream_module.git \
     && git clone --depth=1 https://github.com/api7/mod_dubbo.git \
     && git clone --depth=1 https://github.com/api7/apisix-nginx-module.git \
     && cd ngx_multi_upstream_module || exit 1 && ./patch.sh ../openresty-"${checkout_v}" && cd .. \
     && cd apisix-nginx-module/patch || exit 1 && ./patch.sh ../../openresty-"${checkout_v}" && cd ../.. \
     && cd openresty-"${checkout_v}" || exit 1 \
-    && ./configure --prefix=/usr/local/openresty --with-cc-opt="-I/usr/local/openresty/openssl111/include" \
-                   --with-ld-opt="-L/usr/local/openresty/openssl111/lib -Wl,-rpath,/usr/local/openresty/openssl111/lib" \
+    && ./configure --prefix=/usr/local/openresty \
+                   --with-cc-opt="-DNGX_LUA_ABORT_AT_PANIC -I/usr/local/openresty/zlib/include -I/usr/local/openresty/pcre/include -I/usr/local/openresty/openssl111/include" \
+                   --with-ld-opt="-L/usr/local/openresty/zlib/lib -L/usr/local/openresty/pcre/lib -L/usr/local/openresty/openssl111/lib -Wl,-rpath,/usr/local/openresty/zlib/lib:/usr/local/openresty/pcre/lib:/usr/local/openresty/openssl111/lib" \
                    --add-module=../mod_dubbo \
                    --add-module=../ngx_multi_upstream_module \
                    --add-module=../apisix-nginx-module \
@@ -59,4 +56,4 @@ RUN set -x \
                    --with-threads \
                    --with-compat \
                    --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
-    && make && sudo make install
+    && gmake && gmake install
