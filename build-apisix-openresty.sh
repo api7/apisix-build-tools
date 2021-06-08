@@ -57,7 +57,7 @@ cd ../..
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
 
-cd openresty-1.19.3.1 || exit 1
+cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="$cc_opt" \
     --with-ld-opt="$ld_opt" \
