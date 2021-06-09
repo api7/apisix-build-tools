@@ -6,12 +6,14 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
     apisix_nginx_module_ver=""
+    lua_var_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
     apisix_nginx_module_ver="-b 1.0.0"
+    lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
@@ -46,6 +48,13 @@ else
         https://github.com/api7/apisix-nginx-module.git
 fi
 
+if [ "$repo" == lua-var-nginx-module ]; then
+    cp -r "$prev_workdir" .
+else
+    git clone --depth=1 $lua_var_nginx_module_ver \
+        https://github.com/api7/lua-var-nginx-module
+fi
+
 cd ngx_multi_upstream_module || exit 1
 ./patch.sh ../openresty-${or_ver}
 cd ..
@@ -64,6 +73,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
+    --add-module=../lua-var-nginx-module \
     $debug_args \
     --with-poll_module \
     --with-pcre-jit \
