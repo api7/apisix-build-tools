@@ -80,7 +80,7 @@ package-dashboard-rpm:
 .PHONY: build-apisix-openresty-rpm
 build-apisix-openresty-rpm:
 	mkdir -p ${PWD}/build/rpm
-	docker build -t apache/apisix-openresty:$(version) --build-arg checkout_v=$(checkout) -f ./dockerfiles/Dockerfile.apisix-openresty.rpm .
+	docker build -t apache/apisix-openresty:$(version) -f ./dockerfiles/Dockerfile.apisix-openresty.rpm .
 	docker run -d --name dockerInstance --net="host" apache/apisix-openresty:$(version)
 	docker cp dockerInstance:/usr/local/openresty/ ${PWD}/build/rpm
 	docker system prune -a -f
