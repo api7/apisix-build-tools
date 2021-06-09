@@ -1,0 +1,11 @@
+ARG image_base="centos"
+ARG image_tag="7"
+
+FROM ${image_base}:${image_tag}
+
+COPY build-apisix-openresty-centos7.sh /tmp/build-apisix-openresty-centos7.sh
+COPY build-apisix-openresty.sh /tmp/build-apisix-openresty.sh
+
+WORKDIR /tmp
+
+RUN ["/bin/sh", "-c", "./build-apisix-openresty-centos7.sh"]

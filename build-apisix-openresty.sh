@@ -54,8 +54,13 @@ cd apisix-nginx-module/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
+cc_opt=${cc_opt:-}
+ld_opt=${ld_opt:-}
+
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
+    --with-cc-opt="$cc_opt" \
+    --with-ld-opt="$ld_opt" \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
