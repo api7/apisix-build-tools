@@ -93,6 +93,12 @@ package-apisix-openresty-rpm:
 		-a `uname -i` \
 		-v $(version) \
 		--iteration $(iteration) \
+		-x openresty/zlib \
+		-x openresty/openssl111 \
+		-x openresty/pcre \
+		-d 'openresty-zlib >= 1.2.11-3' \
+		-d 'openresty-openssl111 >= 1.1.1h-1' \
+		-d 'openresty-pcre >= 8.44-1' \
 		--description "APISIX's OpenResty distribution." \
 		--license "ASL 2.0" \
 		-C ${PWD}/build/rpm \
