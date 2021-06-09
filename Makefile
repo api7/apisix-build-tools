@@ -112,6 +112,10 @@ $(info  the type's value have to be rpm or deb!)
 else ifeq ($(version), 0)
 $(info  you have to input a version value!)
 
+else ifeq ($(app)_$(type),apisix-openresty_rpm)
+package: build-apisix-openresty-rpm
+package: package-apisix-openresty-rpm
+
 else ifeq ($(checkout), 0)
 $(info  you have to input a checkout value!)
 
@@ -122,9 +126,5 @@ package: package-apisix-rpm
 else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-dashboard-rpm
 package: package-dashboard-rpm
-
-else ifeq ($(app)_$(type),apisix-openresty_rpm)
-package: build-apisix-openresty-rpm
-package: package-apisix-openresty-rpm
 
 endif
