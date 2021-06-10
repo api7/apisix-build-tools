@@ -22,9 +22,9 @@ jobs:
         run: |
           make package type=rpm app=apisix-openresty version=1.0.0
 
-      - name: run centos7 docker and mapping apisix-build-tools into container
+      - name: run centos7 docker and mapping apisix-openresty rpm into container
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/output:/apisix-build-tools/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
       - name: install dependencies in container
         run: |
@@ -33,4 +33,4 @@ jobs:
 
       - name: install rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /apisix-build-tools/output/apisix-openresty-1.0.0-0.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-1.0.0-0.x86_64.rpm"
