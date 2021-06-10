@@ -32,9 +32,9 @@ apisix-dashboard-2.4-0.x86_64.rpm
 
 Packaging a Centos 7 package of APISIX's OpenResty distribution
 ```sh
-make package type=rpm app=apisix-openresty version=1.19.3.2
+make package type=rpm app=apisix-openresty version=1.0.0
 ls output/
-apisix-openresty-1.19.3.2-0.x86_64.rpm
+apisix-openresty-1.0.0-0.x86_64.rpm
 ```
 
 ## Details
