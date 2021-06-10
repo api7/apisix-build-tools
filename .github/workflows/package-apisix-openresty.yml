@@ -1,0 +1,36 @@
+name: package apisix-openresty
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+          sudo apt-get install -y rpm
+
+      - name: build apisix-openresty rpm
+        run: |
+          make package type=rpm app=apisix-openresty version=1.0.0
+
+      - name: run centos7 docker and mapping apisix-build-tools into container
+        run: |
+          docker run -itd -v /home/runner/work/apisix-build-tools/output:/apisix-build-tools/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+
+      - name: install dependencies in container
+        run: |
+          docker exec centos7Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+          docker exec centos7Instance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"
+
+      - name: install rpm in container
+        run: |
+          docker exec centos7Instance bash -c "yum -y localinstall /apisix-build-tools/output/apisix-openresty-*.rpm"
