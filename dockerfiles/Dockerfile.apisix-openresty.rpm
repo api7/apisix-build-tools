@@ -8,4 +8,5 @@ COPY build-apisix-openresty.sh /tmp/build-apisix-openresty.sh
 
 WORKDIR /tmp
 
-RUN ["/bin/sh", "-c", "./build-apisix-openresty-centos7.sh"]
+ARG version
+RUN version=${version} ./build-apisix-openresty-centos7.sh
