@@ -1,0 +1,23 @@
+name: package apisix-openresty
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+          sudo apt-get install -y rpm
+
+      - name: run apisix-openresty packaging test
+        run: |
+          make package type=rpm app=apisix-openresty version=1.19.3.2
