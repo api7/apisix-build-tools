@@ -33,4 +33,4 @@ jobs:
 
       - name: install rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /apisix-build-tools/output/apisix-openresty-*.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /apisix-build-tools/output/apisix-openresty-1.0.0-0.x86_64.rpm"
