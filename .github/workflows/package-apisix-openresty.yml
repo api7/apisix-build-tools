@@ -39,7 +39,7 @@ jobs:
 
       - name: check and ensure openresty is installed
         run: |
-          docker exec centos7Instance bash -c "/usr/local/openresty/bin/openresty -V 2>&1 | tee /output/configure.txt"
-          docker exec centos7Instance bash -c "export APISIX_OPENRESTY_VER=$(awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' /output/configure.txt)"
+          docker exec centos7Instance bash -c "/usr/local/openresty/bin/openresty -V 2>&1 | tee /tmp/configure.txt"
+          docker exec centos7Instance bash -c "export APISIX_OPENRESTY_VER=$(awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' /tmp/configure.txt)"
           docker exec centos7Instance bash -c "[[ $APISIX_OPENRESTY_VER != "-DAPISIX_OPENRESTY_VER=${BUILD_APISIX_OR_VERSION}" ]] ||  exit 1"
 
