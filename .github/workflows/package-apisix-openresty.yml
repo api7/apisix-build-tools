@@ -34,3 +34,7 @@ jobs:
       - name: install rpm in container
         run: |
           docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-1.0.0-0.x86_64.rpm"
+
+      - name: check and ensure openresty is installed
+        run: |
+          docker exec centos7Instance bash -c "/usr/local/openresty/nginx/sbin/nginx"
