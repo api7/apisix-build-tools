@@ -38,3 +38,4 @@ jobs:
       - name: check and ensure openresty is installed
         run: |
           docker exec centos7Instance bash -c "/usr/local/openresty/nginx/sbin/nginx"
+          docker exec centos7Instance bash -c "/usr/local/openresty/bin/openresty -V"
