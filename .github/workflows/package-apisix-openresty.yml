@@ -39,5 +39,5 @@ jobs:
         run: |
           docker exec centos7Instance bash -c "/usr/local/openresty/bin/openresty -V 2>&1 | tee /output/configure.txt"
           docker exec centos7Instance bash -c "export APISIX_OPENRESTY_VER=$(awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' /output/configure.txt)"
-          docker exec centos7Instance bash -c "[[ $APISIX_OPENRESTY_VER != "-DAPISIX_OPENRESTY_VER=1.0.0" ]] ||  exit 1"
+          docker exec centos7Instance bash -c "[[ $APISIX_OPENRESTY_VER != "-DAPISIX_OPENRESTY_VER=1.0.1" ]] ||  exit 1"
 
