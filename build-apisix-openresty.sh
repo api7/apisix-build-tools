@@ -66,11 +66,16 @@ cd ../..
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
+nproc=${nproc:-}
+luajit_xcflags=${luajit_xcflags:-"-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
+cc=${cc:-}
+no_pool_patch=${no_pool_patch:-}
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_OPENRESTY_VER=$version $cc_opt" \
     --with-ld-opt="$ld_opt" \
+    "$cc" \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
@@ -102,8 +107,10 @@ cd openresty-${or_ver} || exit 1
     --with-http_gunzip_module \
     --with-threads \
     --with-compat \
-    --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT'
-make
+    --with-luajit-xcflags="$luajit_xcflags" \
+    $no_pool_patch \
+    $nproc
+make $nproc
 sudo make install
 cd ..
 
