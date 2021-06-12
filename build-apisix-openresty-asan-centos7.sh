@@ -20,7 +20,6 @@ export luajit_xcflags="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT -DLUAJIT_U
 export nproc="-j`nproc`"
 export no_pool_patch="--with-no-pool-patch"
 
-
 ./build-apisix-openresty.sh latest
 
 ln -sf /usr/local/openresty-debug/nginx/sbin/nginx /usr/bin/openresty-asan
