@@ -9,14 +9,12 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     lua_var_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
-    cc=
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
     apisix_nginx_module_ver="-b 1.0.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=
-    cc=
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
@@ -68,15 +66,15 @@ cd ../..
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
-nproc=${nproc:-}
-luajit_xcflags=${luajit_xcflags:-"-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
+luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
+cc=${cc:-}
 no_pool_patch=${no_pool_patch:-}
+nproc=${nproc:-}
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_OPENRESTY_VER=$version $cc_opt" \
     --with-ld-opt="$ld_opt" \
-    $cc \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
@@ -109,8 +107,10 @@ cd openresty-${or_ver} || exit 1
     --with-threads \
     --with-compat \
     --with-luajit-xcflags="$luajit_xcflags" \
+    $cc \
     $no_pool_patch \
     $nproc
+
 make $nproc
 sudo make install
 cd ..
