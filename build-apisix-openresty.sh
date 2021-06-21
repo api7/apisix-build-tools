@@ -14,7 +14,7 @@ else
     mod_dubbo_ver="-b 1.0.0"
     apisix_nginx_module_ver="-b 1.1.0"
     lua_var_nginx_module_ver="-b v0.5.2"
-    debug_args=
+    debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
