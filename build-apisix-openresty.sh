@@ -69,7 +69,6 @@ ld_opt=${ld_opt:-}
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
 cc=${cc:-}
 no_pool_patch=${no_pool_patch:-}
-nproc=${nproc:-}
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
@@ -109,9 +108,9 @@ cd openresty-${or_ver} || exit 1
     --with-luajit-xcflags="$luajit_xcflags" \
     $cc \
     $no_pool_patch \
-    $nproc
+    -j`nproc`
 
-make $nproc
+make -j`nproc`
 sudo make install
 cd ..
 
