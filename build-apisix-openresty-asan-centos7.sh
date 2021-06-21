@@ -11,12 +11,14 @@ export zlib_prefix=/usr/local/openresty/zlib
 export pcre_prefix=/usr/local/openresty/pcre
 
 export ASAN_OPTIONS=detect_leaks=0
-export OR_PREFIX="/usr/local/openresty-asan"
 export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include -O1"
 export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
 export cc='--with-cc="ccache clang -fsanitize=address -fcolor-diagnostics -Qunused-arguments"'
 export luajit_xcflags="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT -DLUAJIT_USE_VALGRIND -O1 -fno-omit-frame-pointer"
 export no_pool_patch="--with-no-pool-patch"
+export OR_PREFIX=/usr/local/openresty-debug
+export debug_args=--with-debug
+
 
 ./build-apisix-openresty.sh
 
