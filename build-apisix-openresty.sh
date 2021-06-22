@@ -67,7 +67,6 @@ version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
-cc=${cc:-}
 no_pool_patch=${no_pool_patch:-}
 
 cd openresty-${or_ver} || exit 1
@@ -106,7 +105,6 @@ cd openresty-${or_ver} || exit 1
     --with-threads \
     --with-compat \
     --with-luajit-xcflags="$luajit_xcflags" \
-    $cc \
     $no_pool_patch \
     -j`nproc`
 
