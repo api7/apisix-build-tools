@@ -17,5 +17,3 @@ export OR_PREFIX=/usr/local/openresty-debug
 export debug_args=--with-debug
 
 ./build-apisix-openresty.sh
-
-ln -sf /usr/local/openresty-debug/nginx/sbin/nginx /usr/bin/openresty-debug
