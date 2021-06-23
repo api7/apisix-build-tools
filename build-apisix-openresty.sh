@@ -14,7 +14,7 @@ else
     mod_dubbo_ver="-b 1.0.0"
     apisix_nginx_module_ver="-b 1.1.0"
     lua_var_nginx_module_ver="-b v0.5.2"
-    debug_args=
+    debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
@@ -66,6 +66,8 @@ cd ../..
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
+luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
+no_pool_patch=${no_pool_patch:-}
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
@@ -102,8 +104,11 @@ cd openresty-${or_ver} || exit 1
     --with-http_gunzip_module \
     --with-threads \
     --with-compat \
-    --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT'
-make
+    --with-luajit-xcflags="$luajit_xcflags" \
+    $no_pool_patch \
+    -j`nproc`
+
+make -j`nproc`
 sudo make install
 cd ..
 
