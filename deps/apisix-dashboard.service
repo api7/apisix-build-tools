@@ -1,0 +1,13 @@
+[Unit]
+Description=APACHE APISIX Dashboard Service
+After=network.target
+
+[Service]
+Type=simple
+User=nobody
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/manager-api -p /usr/local/apisix/dashboard
+
+[Install]
+WantedBy=multi-user.target

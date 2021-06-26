@@ -6,6 +6,8 @@ ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
 
 FROM ${image_base}:${image_tag}
 
+COPY ./deps/apisix-dashboard.service /tmp/build/output/apisix/dashboard/usr/lib/systemd/system/apisix-dashboard.service
+
 RUN set -x \
     # install dependency
     && yum install -y wget curl git which gcc make \
@@ -20,8 +22,9 @@ ARG checkout_v
 ARG iteration
 ARG dashboard_repo
 RUN set -x \
-    && mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/ \
-    && mkdir -p /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/bin/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
+    && mkdir -pv /tmp/build/output/apisix/dashboard/usr/lib/systemd/system \
     # config golang
     && export GO111MODULE=on \
     && export GOROOT=/usr/local/go \
