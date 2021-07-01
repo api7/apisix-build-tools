@@ -1,0 +1,17 @@
+ARG VERSION
+
+FROM apache/apisix-openresty:${VERSION} AS APISIX
+FROM api7/fpm
+
+ARG ITERATION
+ARG PACKAGE_VERSION
+
+ENV ITERATION=${ITERATION}
+ENV PACKAGE_VERSION=${PACKAGE_VERSION}
+
+COPY --from=APISIX /usr/local/openresty /tmp/build/output/openresty
+COPY package-apisix-openresty.sh /package-apisix-openresty.sh
+COPY post-install-apisix-openresty.sh /post-install-apisix-openresty.sh
+COPY usr /usr
+
+RUN /package-apisix-openresty.sh

@@ -1,6 +1,6 @@
 ARG image_base="centos"
 ARG image_tag="7"
-ARG checkout_v="2.2"
+ARG checkout_v="2.6"
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
 

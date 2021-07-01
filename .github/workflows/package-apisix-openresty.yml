@@ -22,7 +22,7 @@ jobs:
 
       - name: build apisix-openresty rpm
         run: |
-          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION}
+          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} checkout=${BUILD_APISIX_OR_VERSION}
 
       - name: run centos7 docker and mapping apisix-openresty rpm into container
         run: |
