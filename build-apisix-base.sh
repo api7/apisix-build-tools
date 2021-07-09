@@ -84,7 +84,7 @@ no_pool_patch=${no_pool_patch:-}
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
-    --with-cc-opt="-DAPISIX_BASE_VER=$version $cc_opt" \
+    --with-cc-opt="-DAPISIX_BASE_VER=$version -Werror $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
