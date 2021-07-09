@@ -2,7 +2,7 @@
 set -euo pipefail
 set -x
 mkdir /output
-fpm -f -s dir -t rpm \
+fpm -f -s dir -t "$PACKAGE_TYPE" \
 	-n apisix \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \

@@ -1,4 +1,4 @@
-name: package apisix-dashabord
+name: Package apisix-dashabord
 
 on:
   push:
@@ -24,13 +24,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: install dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 
-      - name: run apisix-dashboard packaging test
+      - name: Run apisix-dashboard packaging test
         run: |
           make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION}
 
