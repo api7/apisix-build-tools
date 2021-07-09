@@ -35,11 +35,11 @@ build-apisix-rpm:
 .PHONY: package-apisix-rpm
 package-apisix-rpm:
 	docker build -t apache/apisix-packaged:$(version) \
-	--build-arg VERSION=$(version) \
-	--build-arg ITERATION=$(iteration) \
-	--build-arg PACKAGE_VERSION=$(version) \
-	-f ./dockerfiles/Dockerfile.package.apisix .
-	docker run -d --name output --net="host" apache/apisix-packaged:$(version)
+		--build-arg VERSION=$(version) \
+		--build-arg ITERATION=$(iteration) \
+		--build-arg PACKAGE_VERSION=$(version) \
+		-f ./dockerfiles/Dockerfile.package.apisix .
+	docker run -d --rm --name output --net="host" apache/apisix-packaged:$(version)
 	docker cp output:/output ${PWD}
 	docker stop output
 	docker system prune -a -f
@@ -54,11 +54,11 @@ build-dashboard-rpm:
 .PHONY: package-dashboard-rpm
 package-dashboard-rpm:
 	docker build -t apache/apisix-dashboard-packaged:$(version) \
-	--build-arg VERSION=$(version) \
-	--build-arg ITERATION=$(iteration) \
-	--build-arg PACKAGE_VERSION=$(version) \
-	-f ./dockerfiles/Dockerfile.package.apisix-dashboard .
-	docker run -d --name output --net="host" apache/apisix-dashboard-packaged:$(version)
+		--build-arg VERSION=$(version) \
+		--build-arg ITERATION=$(iteration) \
+		--build-arg PACKAGE_VERSION=$(version) \
+		-f ./dockerfiles/Dockerfile.package.apisix-dashboard .
+	docker run -d --rm --name output --net="host" apache/apisix-dashboard-packaged:$(version)
 	docker cp output:/output ${PWD}/output
 	docker stop output
 	docker system prune -a -f
@@ -73,11 +73,11 @@ build-apisix-openresty-rpm:
 .PHONY: package-apisix-openresty-rpm
 package-apisix-openresty-rpm:
 	docker build -t apache/apisix-openresty-packaged:$(version) \
-	--build-arg VERSION=$(version) \
-	--build-arg ITERATION=$(iteration) \
-	--build-arg PACKAGE_VERSION=$(version) \
-	-f ./dockerfiles/Dockerfile.package.apisix-openresty .
-	docker run -d --name output --net="host" apache/apisix-openresty-packaged:$(version)
+		--build-arg VERSION=$(version) \
+		--build-arg ITERATION=$(iteration) \
+		--build-arg PACKAGE_VERSION=$(version) \
+		-f ./dockerfiles/Dockerfile.package.apisix-openresty .
+	docker run -d --rm --name output --net="host" apache/apisix-openresty-packaged:$(version)
 	docker cp output:/output ${PWD}
 	docker stop output
 	docker system prune -a -f
