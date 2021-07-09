@@ -1,8 +1,8 @@
 ARG image_base="centos"
 ARG image_tag="7"
-ARG checkout_v="2.2"
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
+ARG checkout_v
 
 FROM ${image_base}:${image_tag}
 

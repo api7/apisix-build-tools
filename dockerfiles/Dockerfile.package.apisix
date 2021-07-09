@@ -1,0 +1,16 @@
+ARG VERSION
+
+FROM apache/apisix:${VERSION} AS APISIX
+FROM api7/fpm
+
+ARG ITERATION
+ARG PACKAGE_VERSION
+
+ENV ITERATION=${ITERATION}
+ENV PACKAGE_VERSION=${PACKAGE_VERSION}
+
+COPY --from=APISIX /tmp/build/output /tmp/build/output
+COPY package-apisix.sh /package-apisix.sh
+COPY usr /usr
+
+RUN /package-apisix.sh
