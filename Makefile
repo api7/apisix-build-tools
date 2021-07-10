@@ -59,7 +59,7 @@ package-dashboard-rpm:
 		--build-arg PACKAGE_VERSION=$(version) \
 		-f ./dockerfiles/Dockerfile.package.apisix-dashboard .
 	docker run -d --rm --name output --net="host" apache/apisix-dashboard-packaged:$(version)
-	docker cp output:/output ${PWD}/output
+	docker cp output:/output ${PWD}
 	docker stop output
 	docker system prune -a -f
 

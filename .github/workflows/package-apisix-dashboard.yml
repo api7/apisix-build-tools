@@ -9,6 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DASHBOARD_VERSION: 2.7
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
 
     steps:
       - uses: actions/checkout@v2
@@ -21,4 +32,23 @@ jobs:
 
       - name: run apisix-dashboard packaging test
         run: |
-          make package type=rpm app=dashboard version=2.4 checkout=v2.4
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION}
+
+      - name: Run centos7 docker and mapping rpm into container
+        run: |
+          docker run -itd -v $PWD/output:/apisix-dashboard --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+
+      - name: Install rpm package
+        run: |
+          docker exec centos7Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.x86_64.rpm"
+          docker logs centos7Instance
+          docker exec centos7Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
+
+      - name: Run test cases
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9000)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX Dashboard by rpm"
+              exit 1
+          fi
+
