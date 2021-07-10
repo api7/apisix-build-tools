@@ -9,6 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
 
     steps:
       - uses: actions/checkout@v2
@@ -19,8 +28,29 @@ jobs:
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 
-      - name: run apisix packaging test
+      - name: packaging APISIX
         run: |
-          make package type=rpm app=apisix version=2.3 checkout=2.3
-          make package type=rpm app=apisix version=2.2 checkout=v2.2
+          make package type=rpm app=apisix version=2.7 checkout=release/2.7
           make package type=rpm app=apisix version=master checkout=master
+
+      - name: run centos7 docker and mapping rpm into container
+        run: |
+          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+
+      - name: install dependencies in container
+        run: |
+          docker exec centos7Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+          docker exec centos7Instance bash -c "yum -y install openresty openresty-openssl111-devel"
+
+      - name: install APISIX by rpm in container
+        run: |
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-master-0.x86_64.rpm"
+          docker exec centos7Instance bash -c "apisix start"
+
+      - name: check and ensure APISIX is installed
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX by rpm"
+              exit 1
+          fi
