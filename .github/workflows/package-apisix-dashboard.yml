@@ -33,7 +33,7 @@ jobs:
         run: |
           make package type=rpm app=dashboard version=2.7 checkout=release/2.7
 
-      - name: Run centos7 docker and mapping rmp into container
+      - name: Run centos7 docker and mapping rpm into container
         run: |
           docker run -itd -v $PWD/output:/apisix-dashboard --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
@@ -48,7 +48,7 @@ jobs:
         run: |
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9000)
           if [ ! $code -eq 200 ]; then
-              echo "failed: failed to custom port"
+              echo "failed: failed to install Apache APISIX Dashboard by rpm"
               exit 1
           fi
 
