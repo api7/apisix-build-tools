@@ -40,9 +40,8 @@ jobs:
       - name: Install rpm package
         run: |
           export VERSION=2.7
-          docker exec centos7Instance bash -c "cd apisix-dashboard && yum install -y ./apisix-build-tools/output/apisix-dashboard-${VERSION}-0.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${VERSION}-0.x86_64.rpm"
           docker logs centos7Instance
-          # Dependencies are attached with rpm, so revert `make deps`
           docker exec centos7Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
 
       - name: Run test cases
