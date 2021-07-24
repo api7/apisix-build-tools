@@ -34,7 +34,7 @@ define package_rpm
 		--build-arg VERSION=$(version) \
 		--build-arg ITERATION=$(iteration) \
 		--build-arg PACKAGE_VERSION=$(version) \
-		-f ./dockerfiles/Dockerfile.package.apisix .
+		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged:$(version)
 	docker cp output:/output ${PWD}
 	docker stop output
