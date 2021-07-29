@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-version=0
+version=${version:-0.0.0}
 checkout=0
 app=0
 type=0
