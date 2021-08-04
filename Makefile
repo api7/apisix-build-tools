@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-version=${version:-0.0.0}
+version=0
 checkout=0
 app=0
 type=0
@@ -64,7 +64,8 @@ package-dashboard-rpm:
 ### build apisix-openresty:
 .PHONY: build-apisix-openresty-rpm
 build-apisix-openresty-rpm:
-	$(call build_rpm,apisix-openresty,apisix-openresty)
+	docker build -t apache/apisix-openresty:$(version) --build-arg version=$(version) \
+		-f ./dockerfiles/Dockerfile.apisix-openresty.rpm .
 
 ### build rpm for apisix-openresty:
 .PHONY: package-apisix-openresty-rpm
