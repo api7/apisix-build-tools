@@ -1,5 +1,5 @@
-ARG image_base="centos"
-ARG image_tag="7"
+ARG image_base="ubuntu"
+ARG image_tag="20.04"
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
 ARG checkout_v
@@ -9,7 +9,7 @@ FROM ${image_base}:${image_tag}
 COPY ./utils/install-common.sh /install-common.sh
 
 # install dependencies
-RUN /install-common.sh install_apisix_dependencies_rpm
+RUN /install-common.sh install_apisix_dependencies_deb
 
 ARG checkout_v
 ARG iteration

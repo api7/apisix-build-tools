@@ -1,6 +1,7 @@
 ARG VERSION
+ARG PACKAGE_TYPE
 
-FROM apache/apisix-openresty:${VERSION} AS APISIX
+FROM apache/apisix-openresty-${PACKAGE_TYPE}:${VERSION} AS APISIX
 FROM api7/fpm
 
 ARG ITERATION

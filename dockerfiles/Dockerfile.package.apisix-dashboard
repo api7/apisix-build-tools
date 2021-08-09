@@ -1,6 +1,7 @@
 ARG VERSION
+ARG PACKAGE_TYPE
 
-FROM apache/apisix-dashboard:${VERSION} AS APISIX
+FROM apache/apisix-dashboard-${PACKAGE_TYPE}:${VERSION} AS APISIX
 FROM api7/fpm
 
 ARG ITERATION

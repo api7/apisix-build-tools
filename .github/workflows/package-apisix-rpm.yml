@@ -1,4 +1,4 @@
-name: package apisix
+name: package apisix rpm
 
 on:
   push:
