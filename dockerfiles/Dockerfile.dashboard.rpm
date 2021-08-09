@@ -1,10 +1,12 @@
-ARG image_base="centos"
-ARG image_tag="7"
+ARG IMAGE_BASE="centos"
+ARG IMAGE_TAG="7"
 ARG checkout_v="v2.3"
 ARG iteration="0"
 ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
 
-FROM ${image_base}:${image_tag}
+FROM ${IMAGE_BASE}}:${IMAGE_TAG}}
+
+COPY ./utils/determine-dist.sh /determine-dist.sh
 
 RUN set -x \
     # install dependency
@@ -19,6 +21,9 @@ RUN set -x \
 ARG checkout_v
 ARG iteration
 ARG dashboard_repo
+ENV IMAGE_BASE=${IMAGE_BASE}
+ENV IMAGE_TAG=${IMAGE_TAG}
+
 RUN set -x \
     && mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/ \
     && mkdir -p /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/ \
@@ -40,3 +45,6 @@ RUN set -x \
     && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \
     # set the soft link for manager-api
     && ln -s /usr/local/apisix/dashboard/manager-api /tmp/build/output/apisix/dashboard/usr/bin/manager-api
+
+# determine dist and write it into /tmp/dist file
+RUN /determine-dist.sh

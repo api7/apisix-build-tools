@@ -11,6 +11,7 @@ ENV ITERATION=${ITERATION}
 ENV PACKAGE_VERSION=${PACKAGE_VERSION}
 
 COPY --from=APISIX /usr/local/openresty /tmp/build/output/openresty
+COPY --from=APISIX /tmp/dist /tmp/dist
 COPY package-apisix-openresty.sh /package-apisix-openresty.sh
 COPY post-install-apisix-openresty.sh /post-install-apisix-openresty.sh
 COPY usr /usr

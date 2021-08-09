@@ -1,4 +1,4 @@
-name: package apisix-openresty
+name: package apisix-openresty rpm for el7
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
 
       - name: build apisix-openresty rpm
         run: |
-          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION}
+          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} image_base=centos image_tag=7
 
       - name: run centos7 docker and mapping apisix-openresty rpm into container
         run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: install rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.el7.x86_64.rpm"
 
       - name: check and ensure openresty is installed
         run: |

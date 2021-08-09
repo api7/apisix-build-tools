@@ -2,7 +2,9 @@
 set -euo pipefail
 set -x
 mkdir /output
+dist=$(cat /tmp/dist)
 fpm -f -s dir -t "$PACKAGE_TYPE" \
+	--"$PACKAGE_TYPE"-dist "$dist" \
 	-n apisix \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
@@ -14,3 +16,9 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	-p /output \
 	--url 'http://apisix.apache.org/' \
 	--config-files usr/lib/systemd/system/apisix.service
+
+# Rename deb file with adding $DIST section
+if [ "$PACKAGE_TYPE" == "deb" ]
+then
+	mv /output/apisix_${PACKAGE_VERSION}-${ITERATION}_amd64.deb /output/apisix_${PACKAGE_VERSION}-${ITERATION}~${dist}_amd64.deb
+fi

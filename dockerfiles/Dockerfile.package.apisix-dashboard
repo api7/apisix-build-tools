@@ -11,6 +11,7 @@ ENV ITERATION=${ITERATION}
 ENV PACKAGE_VERSION=${PACKAGE_VERSION}
 
 COPY --from=APISIX /tmp/build/output /tmp/build/output
+COPY --from=APISIX /tmp/dist /tmp/dist
 COPY package-apisix-dashboard.sh /package-apisix-dashboard.sh
 
 RUN /package-apisix-dashboard.sh

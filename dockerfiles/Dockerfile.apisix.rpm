@@ -1,12 +1,13 @@
-ARG image_base="centos"
-ARG image_tag="7"
+ARG IMAGE_BASE="centos"
+ARG IMAGE_TAG="7"
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
 ARG checkout_v
 
-FROM ${image_base}:${image_tag}
+FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY ./utils/install-common.sh /install-common.sh
+COPY ./utils/determine-dist.sh /determine-dist.sh
 
 # install dependencies
 RUN /install-common.sh install_apisix_dependencies_rpm
@@ -18,6 +19,11 @@ ARG apisix_repo
 ENV checkout_v=${checkout_v}
 ENV iteration=${iteration}
 ENV apisix_repo=${apisix_repo}
+ENV IMAGE_BASE=${IMAGE_BASE}
+ENV IMAGE_TAG=${IMAGE_TAG}
 
 # install apisix
 RUN /install-common.sh install_apisix
+
+# determine dist and write it into /tmp/dist file
+RUN /determine-dist.sh

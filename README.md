@@ -18,23 +18,36 @@
 ## Example
 Packaging a Centos 7 package of Apache APISIX
 ```sh
+make package type=rpm app=apisix version=2.2 checkout=2.2 image_base=centos image_tag=7
+ls output/
+apisix-2.2-0.el7.x86_64.rpm
+```
+or just leave `image_base` and `image_tag` as the default values.
+```
 make package type=rpm app=apisix version=2.2 checkout=2.2
 ls output/
-apisix-2.2-0.x86_64.rpm
+apisix-2.2-0.el7.x86_64.rpm
+```
+
+Packaging a Centos 8 package of Apache APISIX
+```sh
+make package type=rpm app=apisix version=2.2 checkout=2.2 image_base=centos image_tag=8
+ls output/
+apisix-2.2-0.el8.x86_64.rpm
 ```
 
 Packaging a Centos 7 package of Apache APISIX Dashboard
 ```sh
-make package type=rpm app=dashboard version=2.4 checkout=v2.4
+make package type=rpm app=dashboard version=2.4 checkout=v2.4 image_base=centos image_tag=7
 ls output/
-apisix-dashboard-2.4-0.x86_64.rpm
+apisix-dashboard-2.4-0.el7.x86_64.rpm
 ```
 
 Packaging a Centos 7 package of APISIX's OpenResty distribution
 ```sh
-make package type=rpm app=apisix-openresty version=1.0.0
+make package type=rpm app=apisix-openresty version=1.0.0 image_base=centos image_tag=7
 ls output/
-apisix-openresty-1.0.0-0.x86_64.rpm
+apisix-openresty-1.0.0-0.el7.x86_64.rpm
 ```
 
 ## Details
