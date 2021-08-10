@@ -56,8 +56,7 @@ install_openresty_deb() {
 install_openresty_rpm() {
     # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y pcre-devel
-    yum install -y openresty openresty-openssl111-devel
+    yum install -y openresty openresty-openssl111-devel pcre-devel
 }
 
 install_luarocks() {
@@ -83,7 +82,9 @@ install_etcd() {
 install_apisix() {
     mkdir -p /tmp/build/output/apisix/usr/bin/
     # get source code
-    git clone "${apisix_repo}"
+    if [ ! -d "./apisix" ]; then
+      git clone "${apisix_repo}"
+    fi
     cd apisix
     git checkout ${checkout_v}
     # remove useless code for build
