@@ -1,10 +1,7 @@
 ARG IMAGE_BASE="centos"
 ARG IMAGE_TAG="7"
-ARG checkout_v="v2.3"
-ARG iteration="0"
-ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
 
-FROM ${IMAGE_BASE}}:${IMAGE_TAG}}
+FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY ./utils/determine-dist.sh /determine-dist.sh
 
@@ -18,9 +15,12 @@ RUN set -x \
     && tar -xzf go1.15.2.linux-amd64.tar.gz \
     && mv go /usr/local
 
-ARG checkout_v
-ARG iteration
-ARG dashboard_repo
+ARG checkout_v="v2.3"
+ARG iteration="0"
+ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
+ARG IMAGE_BASE
+ARG IMAGE_TAG
+
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 
@@ -44,7 +44,6 @@ RUN set -x \
     # copy the compiled files to the specified directory for packaging
     && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \
     # set the soft link for manager-api
-    && ln -s /usr/local/apisix/dashboard/manager-api /tmp/build/output/apisix/dashboard/usr/bin/manager-api
-
-# determine dist and write it into /tmp/dist file
-RUN /determine-dist.sh
+    && ln -s /usr/local/apisix/dashboard/manager-api /tmp/build/output/apisix/dashboard/usr/bin/manager-api \
+    # determine dist and write it into /tmp/dist file
+    && /determine-dist.sh
