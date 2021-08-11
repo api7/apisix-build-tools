@@ -83,7 +83,6 @@ install_apisix() {
     mkdir -p /tmp/build/output/apisix/usr/bin/
     # get source code
     git clone "${apisix_repo}"
-
     cd apisix
     git checkout ${checkout_v}
     # remove useless code for build
