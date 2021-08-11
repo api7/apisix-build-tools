@@ -82,9 +82,7 @@ install_etcd() {
 install_apisix() {
     mkdir -p /tmp/build/output/apisix/usr/bin/
     # get source code
-    if [ ! -d "./apisix" ]; then
-      git clone "${apisix_repo}"
-    fi
+    git clone "${apisix_repo}"
     cd apisix
     git checkout ${checkout_v}
     # remove useless code for build
