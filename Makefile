@@ -23,6 +23,12 @@ image_base="centos"
 image_tag="7"
 iteration=0
 
+### set the default image for deb package
+ifeq ($(type), deb)
+image_base="ubuntu"
+image_tag="focal"
+endif
+
 ### function for building
 ### $(1) is name
 ### $(2) is dockerfile filename
