@@ -26,7 +26,7 @@ iteration=0
 ### set the default image for deb package
 ifeq ($(type), deb)
 image_base="ubuntu"
-image_tag="focal"
+image_tag="20.04"
 endif
 
 ### function for building

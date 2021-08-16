@@ -8,7 +8,7 @@ then
     dist="el${IMAGE_TAG}"
 elif [ "${IMAGE_BASE}" == "ubuntu" ]
 then
-    dist="${IMAGE_TAG}1"
+    dist="${IMAGE_BASE}${IMAGE_TAG}"
 fi
 
 echo "${dist}" > /tmp/dist

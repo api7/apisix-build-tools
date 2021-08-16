@@ -21,14 +21,14 @@ jobs:
 
       - name: run apisix packaging
         run: |
-          make package type=deb app=apisix version=2.3 checkout=2.3 image_base=ubuntu image_tag=focal
-          make package type=deb app=apisix version=2.2 checkout=v2.2 image_base=ubuntu image_tag=focal
-          make package type=deb app=apisix version=master checkout=master image_base=ubuntu image_tag=focal
-          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} checkout=${PACKAGE_APISIX_VERSION} image_base=ubuntu image_tag=focal
+          make package type=deb app=apisix version=2.3 checkout=2.3 image_base=ubuntu image_tag=20.04
+          make package type=deb app=apisix version=2.2 checkout=v2.2 image_base=ubuntu image_tag=20.04
+          make package type=deb app=apisix version=master checkout=master image_base=ubuntu image_tag=20.04
+          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} checkout=${PACKAGE_APISIX_VERSION} image_base=ubuntu image_tag=20.04
 
       - name: install apisix deb into container
         run: |
-          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.focal1 .
+          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.ubuntu20.04 .
 
       - name: start apisix and test
         run: |

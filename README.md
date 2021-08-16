@@ -13,7 +13,7 @@
 |checkout   |True |the code branch or tag of the app which you want to package|checkout=2.1 or checkout=v2.1|
 |version  |True |the version of the package|version=10.10|
 |image_base|False |the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`|image_base=centos|
-|image_tag|False |the environment for packaging, it's value can be `xenial\|bionic\|focal\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `focal`|image_tag=7|
+|image_tag|False |the environment for packaging, it's value can be `16.04\|18.04\|20.04\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `20.04`|image_tag=7|
 
 ## Example
 Packaging a Centos 7 package of Apache APISIX
