@@ -1,4 +1,4 @@
-name: package apisix deb
+name: package apisix deb for the default image ubuntu 20.04(Focal Fossa)
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
 
       - name: install apisix deb into container
         run: |
-          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb .
+          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.ubuntu20.04 .
 
       - name: start apisix and test
         run: |

@@ -13,6 +13,7 @@ ENV PACKAGE_VERSION=${PACKAGE_VERSION}
 ENV PACKAGE_TYPE=${PACKAGE_TYPE}
 
 COPY --from=APISIX /tmp/build/output /tmp/build/output
+COPY --from=APISIX /tmp/dist /tmp/dist
 COPY package-apisix.sh /package-apisix.sh
 COPY usr /usr
 

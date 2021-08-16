@@ -3,7 +3,9 @@ set -euo pipefail
 set -x
 
 mkdir /output
+dist=$(cat /tmp/dist)
 fpm -f -s dir -t rpm \
+	--"$PACKAGE_TYPE"-dist "$dist" \
 	-n apisix-dashboard \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \

@@ -1,12 +1,21 @@
-ARG image_base="centos"
-ARG image_tag="7"
+ARG IMAGE_BASE="centos"
+ARG IMAGE_TAG="7"
 
-FROM ${image_base}:${image_tag}
+FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY build-apisix-openresty-centos7.sh /tmp/build-apisix-openresty-centos7.sh
 COPY build-apisix-openresty.sh /tmp/build-apisix-openresty.sh
+COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
 WORKDIR /tmp
 
 ARG version
-RUN version=${version} ./build-apisix-openresty-centos7.sh
+ARG IMAGE_BASE
+ARG IMAGE_TAG
+
+ENV IMAGE_BASE=${IMAGE_BASE}
+ENV IMAGE_TAG=${IMAGE_TAG}
+
+RUN version=${version} ./build-apisix-openresty-centos7.sh \
+    # determine dist and write it into /tmp/dist file
+    && /tmp/determine-dist.sh

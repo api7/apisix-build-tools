@@ -1,4 +1,4 @@
-name: package apisix-dashabord
+name: package apisix-dashabord rpm for el7
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
 
       - name: run apisix-dashboard packaging test
         run: |
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION}
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} image_base=centos image_tag=7
 
       - name: Run centos7 docker and mapping rpm into container
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Install rpm package
         run: |
-          docker exec centos7Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.el7.x86_64.rpm"
           docker logs centos7Instance
           docker exec centos7Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
 

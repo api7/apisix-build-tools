@@ -23,12 +23,21 @@ image_base="centos"
 image_tag="7"
 iteration=0
 
+### set the default image for deb package
+ifeq ($(type), deb)
+image_base="ubuntu"
+image_tag="20.04"
+endif
+
 ### function for building
 ### $(1) is name
 ### $(2) is dockerfile filename
 ### $(3) is package type
 define build
-	docker build -t apache/$(1)-$(3):$(version) --build-arg checkout_v=$(checkout) \
+	docker build -t apache/$(1)-$(3):$(version) \
+		--build-arg checkout_v=$(checkout) \
+		--build-arg IMAGE_BASE=$(image_base) \
+		--build-arg IMAGE_TAG=$(image_tag) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 
@@ -79,7 +88,10 @@ package-dashboard-rpm:
 ### build apisix-openresty:
 .PHONY: build-apisix-openresty-rpm
 build-apisix-openresty-rpm:
-	docker build -t apache/apisix-openresty-rpm:$(version) --build-arg version=$(version) \
+	docker build -t apache/apisix-openresty-rpm:$(version) \
+		--build-arg version=$(version) \
+		--build-arg IMAGE_BASE=$(image_base) \
+		--build-arg IMAGE_TAG=$(image_tag) \
 		-f ./dockerfiles/Dockerfile.apisix-openresty.rpm .
 
 ### build rpm for apisix-openresty:
