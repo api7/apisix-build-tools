@@ -6,11 +6,9 @@ dist=$(cat /tmp/dist)
 
 # Determine the dependencies
 dep_pcre="pcre"
-dep_libpcre="pcre-devel"
 if [ "$PACKAGE_TYPE" == "deb" ]
 then
 	dep_pcre="libpcre3"
-	dep_libpcre="libpcre3-dev"
 fi
 
 fpm -f -s dir -t "$PACKAGE_TYPE" \
@@ -21,7 +19,6 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--iteration "$ITERATION" \
 	-d 'openresty >= 1.17.8.2' \
 	-d "$dep_pcre" \
-	-d "$dep_libpcre" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 	--license "ASL 2.0" \
 	-C /tmp/build/output/apisix \
