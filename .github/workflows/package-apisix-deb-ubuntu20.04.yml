@@ -3,6 +3,8 @@ name: package apisix deb for ubuntu 20.04(Focal Fossa)
 on:
   push:
     branches: [ master ]
+    tag:
+      - "v*"
   pull_request:
     branches: [ master ]
   schedule:
