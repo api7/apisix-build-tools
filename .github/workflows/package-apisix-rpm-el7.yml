@@ -3,7 +3,7 @@ name: package apisix rpm for el7
 on:
   push:
     branches: [ master ]
-    tag:
+    tags:
       - "v*"
   pull_request:
     branches: [ master ]

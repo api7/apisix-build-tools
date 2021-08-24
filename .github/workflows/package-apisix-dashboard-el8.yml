@@ -3,7 +3,7 @@ name: package apisix-dashabord rpm for el8
 on:
   push:
     branches: [ master ]
-    tag:
+    tags:
       - "v*"
   pull_request:
     branches: [ master ]
