@@ -1,0 +1,63 @@
+name: package apisix-dashabord(locally) rpm for el7
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DASHBOARD_VERSION: master
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+          sudo apt-get install -y rpm
+
+      - name: clone apisix
+        run: |
+          git clone -b ${DASHBOARD_VERSION} https://github.com/apache/apisix-dashboard.git
+
+      - name: run apisix-dashboard packaging test
+        run: |
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_VERSION} \
+            image_base=centos image_tag=7 local_code_path=./apisix-dashboard
+
+      - name: Run centos7 docker and mapping rpm into container
+        run: |
+          docker run -itd -v $PWD/output:/apisix-dashboard --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+
+      - name: Install rpm package
+        run: |
+          docker exec centos7Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.el7.x86_64.rpm"
+          docker logs centos7Instance
+          docker exec centos7Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
+
+      - name: Run test cases
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9000)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX Dashboard by rpm"
+              exit 1
+          fi
+

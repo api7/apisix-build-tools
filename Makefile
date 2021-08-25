@@ -22,6 +22,9 @@ type=0
 image_base="centos"
 image_tag="7"
 iteration=0
+local_code_path=0
+apisix_repo="https://github.com/apache/apisix"
+dashboard_repo="https://github.com/apache/apisix-dashboard"
 
 ### set the default image for deb package
 ifeq ($(type), deb)
@@ -33,11 +36,13 @@ endif
 ### $(1) is name
 ### $(2) is dockerfile filename
 ### $(3) is package type
+### $(4) is code path
 define build
 	docker build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg CODE_PATH=$(4) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 
@@ -60,11 +65,23 @@ endef
 ### build apisix:
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
-	$(call build,apisix,apisix,rpm)
+ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(apisix_repo) ./apisix
+	$(call build,apisix,apisix,rpm,"./apisix")
+	rm -fr ./apisix
+else
+	$(call build,apisix,apisix,rpm,$(local_code_path))
+endif
 
 .PHONY: build-apisix-deb
 build-apisix-deb:
-	$(call build,apisix,apisix,deb)
+ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(apisix_repo) ./apisix
+	$(call build,apisix,apisix,deb,"./apisix")
+	rm -fr ./apisix
+else
+	$(call build,apisix,apisix,deb,$(local_code_path))
+endif
 
 ### build rpm for apisix:
 .PHONY: package-apisix-rpm
@@ -78,7 +95,13 @@ package-apisix-deb:
 ### build dashboard:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
-	$(call build,apisix-dashboard,dashboard,rpm)
+ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
+	$(call build,apisix-dashboard,dashboard,rpm,"./apisix-dashboard")
+	rm -fr ./apisix-dashboard
+else
+	$(call build,apisix-dashboard,dashboard,rpm,$(local_code_path))
+endif
 
 ### build rpm for apisix dashboard:
 .PHONY: package-dashboard-rpm

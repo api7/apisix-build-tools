@@ -11,6 +11,7 @@ ARG apisix_repo="https://github.com/apache/apisix"
 ARG checkout_v
 ARG IMAGE_BASE
 ARG IMAGE_TAG
+ARG CODE_PATH
 
 # install dependencies
 RUN /install-common.sh install_apisix_dependencies_rpm
@@ -20,6 +21,8 @@ ENV iteration=${iteration}
 ENV apisix_repo=${apisix_repo}
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
+
+COPY ${CODE_PATH} /apisix
 
 # install apisix
 RUN /install-common.sh install_apisix \
