@@ -34,7 +34,7 @@ jobs:
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 
-      - name: clone apisix
+      - name: clone apisix dashboard
         run: |
           git clone -b ${DASHBOARD_VERSION} https://github.com/apache/apisix-dashboard.git
 
