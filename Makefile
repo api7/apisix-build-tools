@@ -105,10 +105,25 @@ else
 	$(call build,apisix-dashboard,dashboard,rpm,$(local_code_path))
 endif
 
+.PHONY: build-dashboard-deb
+build-dashboard-deb:
+ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
+	$(call build,apisix-dashboard,dashboard,deb,"./apisix-dashboard")
+	rm -fr ./apisix-dashboard
+else
+	$(call build,apisix-dashboard,dashboard,deb,$(local_code_path))
+endif
+
 ### build rpm for apisix dashboard:
 .PHONY: package-dashboard-rpm
 package-dashboard-rpm:
 	$(call package,apisix-dashboard,rpm)
+
+### build deb for apisix dashboard:
+.PHONY: package-dashboard-deb
+package-dashboard-deb:
+	$(call package,apisix-dashboard,deb)
 
 ### build apisix-openresty:
 .PHONY: build-apisix-openresty-rpm
@@ -160,5 +175,10 @@ else ifeq ($(app)_$(type),dashboard_rpm)
 package: build-fpm
 package: build-dashboard-rpm
 package: package-dashboard-rpm
+
+else ifeq ($(app)_$(type),dashboard_deb)
+package: build-fpm
+package: build-dashboard-deb
+package: package-dashboard-deb
 
 endif

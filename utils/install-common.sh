@@ -112,6 +112,51 @@ install_apisix() {
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/doc
 }
 
+install_golang() {
+    wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz
+    tar -xzf go1.15.2.linux-amd64.tar.gz
+    mv go /usr/local
+}
+
+install_dashboard_dependencies_rpm() {
+    yum install -y wget curl git which gcc make
+    curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
+    sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_14.x)"
+    yum install -y nodejs yarn
+    install_golang
+}
+
+install_dashboard_dependencies_deb() {
+    DEBIAN_FRONTEND=noninteractive apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wget curl git gcc make
+    curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+    DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+    npm install -g yarn
+    install_golang
+}
+
+install_dashboard() {
+    mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/
+    mkdir -p /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard/
+    # config golang
+    export GO111MODULE=on
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/gopath
+    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    cd "$HOME"
+    mkdir gopath
+    go env -w GOPROXY=https://goproxy.cn,direct
+    cd /tmp/
+    cd /apisix-dashboard
+    make build
+    # copy the compiled files to the specified directory for packaging
+    cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard
+    # set the soft link for manager-api
+    ln -s /usr/local/apisix/dashboard/manager-api /tmp/build/output/apisix/dashboard/usr/bin/manager-api
+    # determine dist and write it into /tmp/dist file
+    /determine-dist.sh
+}
+
 case_opt=$1
 shift
 
@@ -133,5 +178,14 @@ install_etcd)
     ;;
 install_apisix)
     install_apisix
+    ;;
+install_dashboard_dependencies_rpm)
+    install_dashboard_dependencies_rpm
+    ;;
+install_dashboard_dependencies_deb)
+    install_dashboard_dependencies_deb
+    ;;
+install_dashboard)
+    install_dashboard
     ;;
 esac

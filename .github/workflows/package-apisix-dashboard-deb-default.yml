@@ -1,0 +1,56 @@
+name: package apisix-dashabord deb the default image ubuntu 20.04(Focal Fossa)
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DASHBOARD_VERSION: 2.7
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make build-essential
+
+      - name: run apisix-dashboard packaging test
+        run: |
+          make package type=deb app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION}
+
+      - name: Run ubuntu 20.04 docker and mapping deb into container
+        run: |
+          docker run -itd -v $PWD/output:/apisix-dashboard --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
+
+      - name: Install deb package
+        run: |
+          docker exec ubuntu20.04Instance bash -c "dpkg -i /apisix-dashboard/apisix-dashboard_${DASHBOARD_VERSION}-0~ubuntu20.04_amd64.deb"
+          docker logs ubuntu20.04Instance
+          docker exec ubuntu20.04Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
+
+      - name: Run test cases
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9000)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX Dashboard by rpm"
+              exit 1
+          fi
+
