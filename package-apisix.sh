@@ -17,7 +17,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
-	-d 'openresty >= 1.17.8.2' \
+	-d "$OPENRESTY >= 1.17.8.2" \
 	-d "$dep_pcre" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 	--license "ASL 2.0" \
