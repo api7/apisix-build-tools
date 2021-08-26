@@ -39,7 +39,7 @@ jobs:
 
       - name: packaging apisix-openresty
         run: |
-          make package type=rpm app=apisix-openresty image_base=centos image_tag=7 openresty=apisix-openresty
+          make package type=rpm app=apisix-openresty version=1.19.3.2 image_base=centos image_tag=7 openresty=apisix-openresty
 
       - name: run centos7 docker and mapping rpm into container
         run: |

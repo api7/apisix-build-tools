@@ -24,7 +24,7 @@ jobs:
 
       - name: build apisix-openresty rpm
         run: |
-          make package type=rpm app=apisix-openresty image_base=centos image_tag=7
+          make package type=rpm app=apisix-openresty version=1.19.3.2 image_base=centos image_tag=7
 
       - name: run centos7 docker and mapping apisix-openresty rpm into container
         run: |
