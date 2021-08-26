@@ -24,6 +24,7 @@ image_tag="7"
 iteration=0
 local_code_path=0
 openresty="openresty"
+artifact="0"
 apisix_repo="https://github.com/apache/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
@@ -57,6 +58,7 @@ define package
 		--build-arg PACKAGE_VERSION=$(version) \
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
+		--build-arg ARTIFACT=$(artifact) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
 	docker cp output:/output ${PWD}

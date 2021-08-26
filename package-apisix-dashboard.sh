@@ -4,9 +4,18 @@ set -x
 
 mkdir /output
 dist=$(cat /tmp/dist)
+
+# Determine the name of artifact
+# The defaut is apisix-dashboard
+artifact="apisix-dashboard"
+if [ "$ARTIFACT" != "0" ]
+then
+	artifact=${ARTIFACT}
+fi
+
 fpm -f -s dir -t rpm \
 	--"$PACKAGE_TYPE"-dist "$dist" \
-	-n apisix-dashboard \
+	-n "$artifact" \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
