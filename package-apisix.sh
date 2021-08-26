@@ -11,13 +11,22 @@ then
 	dep_pcre="libpcre3"
 fi
 
+# Determine the min version of openresty or apisix-openresty
+#	openresty >= 1.17.8.2
+#	apisix-openresty >= 1.19.3.2.0
+or_version="1.17.8.2"
+if [ "$OPENRESTY" == "apisix-openresty"]
+then
+	or_version="1.19.3.2.0"
+fi
+
 fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--"$PACKAGE_TYPE"-dist "$dist" \
 	-n apisix \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
-	-d 'openresty >= 1.17.8.2' \
+	-d "$OPENRESTY >= $or_version" \
 	-d "$dep_pcre" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 	--license "ASL 2.0" \

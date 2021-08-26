@@ -1,0 +1,75 @@
+name: package apisix rpm depends on apisix-openresty for el7
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_APISIX_OR_VERSION: 1.19.3.2.0
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+          sudo apt-get install -y rpm
+
+      - name: packaging APISIX
+        run: |
+          make package type=rpm app=apisix version=2.7 checkout=release/2.7 image_base=centos image_tag=7 openresty=apisix-openresty
+          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 openresty=apisix-openresty
+
+      - name: packaging apisix-openresty
+        run: |
+          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} image_base=centos image_tag=7 openresty=apisix-openresty
+
+      - name: run centos7 docker and mapping rpm into container
+        run: |
+          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+
+      - name: install openresty-* dependencies in container
+        run: |
+          docker exec centos7Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+          docker exec centos7Instance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"
+
+      - name: install apisix-openresty rpm in container
+        run: |
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.el7.x86_64.rpm"
+
+      - name: check and ensure apisix-openresty is installed correctly
+        run: |
+          export APISIX_OPENRESTY_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+          if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
+
+      - name: install APISIX which depens on apisix-openresty by rpm in container
+        run: |
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-master-0.el7.x86_64.rpm"
+          docker exec centos7Instance bash -c "apisix start"
+
+      - name: check and ensure APISIX is installed
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX by rpm"
+              exit 1
+          fi
