@@ -17,12 +17,14 @@ RUN set -x \
 
 ARG checkout_v="v2.3"
 ARG iteration="0"
-ARG dashboard_repo="https://github.com/apache/apisix-dashboard.git"
 ARG IMAGE_BASE
 ARG IMAGE_TAG
+ARG CODE_PATH
 
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
+
+COPY ${CODE_PATH} /apisix-dashboard
 
 RUN set -x \
     && mkdir -p /tmp/build/output/apisix/dashboard/usr/bin/ \
@@ -36,10 +38,7 @@ RUN set -x \
     && mkdir gopath \
     && go env -w GOPROXY=https://goproxy.cn,direct \
     && cd /tmp/ \
-    # get source code and build
-    && git clone ${dashboard_repo} \
-    && cd apisix-dashboard \
-    && git checkout ${checkout_v} \
+    && cd /apisix-dashboard \
     && make build \
     # copy the compiled files to the specified directory for packaging
     && cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard \
