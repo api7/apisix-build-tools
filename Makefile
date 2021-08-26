@@ -56,7 +56,7 @@ define package
 		--build-arg ITERATION=$(iteration) \
 		--build-arg PACKAGE_VERSION=$(version) \
 		--build-arg PACKAGE_TYPE=$(2) \
-		--build-arg OPENRESTY=$(openresty)
+		--build-arg OPENRESTY=$(openresty) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
 	docker cp output:/output ${PWD}
