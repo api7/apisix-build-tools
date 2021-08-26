@@ -7,7 +7,7 @@ fpm -f -s dir -t rpm \
 	--"$PACKAGE_TYPE"-dist "$dist" \
 	-n apisix-openresty \
 	-a "$(uname -i)" \
-	-v "$PACKAGE_VERSION" \
+	-v "1.19.3.2" \
 	--iteration "$ITERATION" \
 	-x openresty/zlib \
 	-x openresty/openssl111 \
