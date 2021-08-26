@@ -33,8 +33,8 @@ image_tag="20.04"
 endif
 
 buildx=0
-cache_from="/tmp/.buildx-cache"
-cache_to="/tmp/.buildx-cache"
+cache_from=type=local,src=/tmp/.buildx-cache
+cache_to=type=local,dest=/tmp/.buildx-cache
 ### function for building
 ### $(1) is name
 ### $(2) is dockerfile filename
