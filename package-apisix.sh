@@ -13,11 +13,11 @@ fi
 
 # Determine the min version of openresty or apisix-openresty
 #	openresty >= 1.17.8.2
-#	apisix-openresty >= 1.19.3.2
+#	apisix-openresty >= 1.19.3.2.0
 or_version="1.17.8.2"
 if [ "$OPENRESTY" == "apisix-openresty"]
 then
-	or_version="1.19.3.2"
+	or_version="1.19.3.2.0"
 fi
 
 fpm -f -s dir -t "$PACKAGE_TYPE" \

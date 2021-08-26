@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BUILD_APISIX_OR_VERSION: 1.19.3.2.0
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -39,7 +41,7 @@ jobs:
 
       - name: packaging apisix-openresty
         run: |
-          make package type=rpm app=apisix-openresty version=1.19.3.2 image_base=centos image_tag=7 openresty=apisix-openresty
+          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} image_base=centos image_tag=7 openresty=apisix-openresty
 
       - name: run centos7 docker and mapping rpm into container
         run: |
@@ -52,12 +54,12 @@ jobs:
 
       - name: install apisix-openresty rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-1.19.3.2-0.el7.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.el7.x86_64.rpm"
 
       - name: check and ensure apisix-openresty is installed correctly
         run: |
           export APISIX_OPENRESTY_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
-          if [ "$APISIX_OPENRESTY_VER" != "1.19.3.2" ]; then exit 1; fi
+          if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
 
       - name: install APISIX which depens on apisix-openresty by rpm in container
         run: |
