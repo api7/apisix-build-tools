@@ -3,9 +3,18 @@ set -euo pipefail
 set -x
 mkdir /output
 dist=$(cat /tmp/dist)
+
+# Determine the name of artifact
+# The defaut is apisix-openresty
+artifact="apisix-openresty"
+if [ "$ARTIFACT" != "0" ]
+then
+	artifact=${ARTIFACT}
+fi
+
 fpm -f -s dir -t rpm \
 	--"$PACKAGE_TYPE"-dist "$dist" \
-	-n apisix-openresty \
+	-n "$artifact" \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \

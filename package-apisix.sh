@@ -15,14 +15,22 @@ fi
 #	openresty >= 1.17.8.2
 #	apisix-openresty >= 1.19.3.2.0
 or_version="1.17.8.2"
-if [ "$OPENRESTY" == "apisix-openresty"]
+if [ "$OPENRESTY" == "apisix-openresty" ]
 then
 	or_version="1.19.3.2.0"
 fi
 
+# Determine the name of artifact
+# The defaut is apisix
+artifact="apisix"
+if [ "$ARTIFACT" != "0" ]
+then
+	artifact=${ARTIFACT}
+fi
+
 fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--"$PACKAGE_TYPE"-dist "$dist" \
-	-n apisix \
+	-n "$artifact" \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
