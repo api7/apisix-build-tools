@@ -20,7 +20,21 @@
 
 ## Table of Contents
 
+- [2.1.0](#210)
+  - [New Feature](#new-feature)
 - [2.0.0](#200)
+
+
+## 2.1.0
+
+This release mainly contains serveral new features.
+
+### New Feature
+- feat: Support setting artifact name [#83](https://github.com/api7/apisix-build-tools/pull/83)
+- feat: upgrade apisix_nginx_module_ver [#81](https://github.com/api7/apisix-build-tools/pull/81)
+- feat: Support packaging apisix which depends on apisix-openresty [#80](https://github.com/api7/apisix-build-tools/pull/80)
+- feat: Support use local code for packaging [#79](https://github.com/api7/apisix-build-tools/pull/79)
+
 
 ## 2.0.0
 
