@@ -19,6 +19,8 @@ install_dependencies_rpm() {
     yum -y install wget tar gcc automake autoconf libtool make curl git which unzip
     wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     rpm -ivh epel-release-latest-7.noarch.rpm
+    # Fix failed to get metalink from epel repository
+    yum --disablerepo=epel -y update ca-certificates
     yum install -y yum-utils readline-dev readline-devel
 
     # install lua 5.1 for compatible with openresty 1.17.8.2
