@@ -115,8 +115,8 @@ install_apisix() {
 }
 
 install_golang() {
-    wget https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz
-    tar -xzf go1.15.2.linux-amd64.tar.gz
+    wget https://dl.google.com/go/go1.16.linux-amd64.tar.gz
+    tar -xzf go1.16.linux-amd64.tar.gz
     mv go /usr/local
 }
 
