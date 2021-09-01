@@ -52,17 +52,10 @@ make package type=rpm app=apisix-openresty version=1.0.0 image_base=centos image
 ls output/
 apisix-openresty-1.0.0-0.el7.x86_64.rpm
 ```
+(Note: deb for APISIX OpenResty is not available yet. Pull request is welcome!)
 
 ## Details
 
 - `Makefile` the entrance of the packager
 - `dockerfiles` directory for dockerfiles
 - `output` directory for packages
-
-## build apisix's OpenResty
-
-```shell
-OR_PREFIX=/tmp ./build-apisix-openresty.sh
-```
-
-The default `OR_PREFIX` is `/usr/local/openresty`
