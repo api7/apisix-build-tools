@@ -13,7 +13,7 @@ then
 	artifact=${ARTIFACT}
 fi
 
-fpm -f -s dir -t rpm \
+fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--"$PACKAGE_TYPE"-dist "$dist" \
 	-n "$artifact" \
 	-a "$(uname -i)" \
@@ -24,3 +24,9 @@ fpm -f -s dir -t rpm \
 	-C /tmp/build/output/apisix/dashboard/ \
 	-p /output/ \
 	--url 'https://github.com/apache/apisix-dashboard'
+
+# Rename deb file with adding $DIST section
+if [ "$PACKAGE_TYPE" == "deb" ]
+then
+	mv /output/apisix-dashboard_"${PACKAGE_VERSION}"-"${ITERATION}"_amd64.deb /output/apisix-dashboard_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_amd64.deb
+fi
