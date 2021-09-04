@@ -42,7 +42,7 @@ jobs:
 
       - name: Run centos7 docker and mapping apisix into container
         run: |
-          docker run -itd -v $PWD:/apisix-dashboard --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+          docker run -itd -v $PWD/output:/apisix-dashboard --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
       - name: Install rpm package
         run: |
