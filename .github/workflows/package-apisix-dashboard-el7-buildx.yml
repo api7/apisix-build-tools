@@ -38,7 +38,7 @@ jobs:
 
       - name: Build rpm package
         run: |
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} image_base=centos image_tag=7 buildx=true
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} image_base=centos image_tag=7 buildx=True
 
       - name: Run centos7 docker and mapping apisix into container
         run: |
