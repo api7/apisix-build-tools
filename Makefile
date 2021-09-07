@@ -40,7 +40,7 @@ cache_to=type=local,dest=/tmp/.buildx-cache
 ### $(2) is dockerfile filename
 ### $(3) is package type
 ### $(4) is code path
-ifneq ($(buildx), "True")
+ifneq ($(buildx), True)
 define build
 	docker build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
@@ -140,7 +140,7 @@ package-apisix-openresty-rpm:
 
 ### build fpm for packaging:
 .PHONY: build-fpm
-ifneq ($(buildx), "True")
+ifneq ($(buildx), True)
 build-fpm:
 	docker build -t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 else
