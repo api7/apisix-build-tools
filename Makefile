@@ -55,6 +55,7 @@ define build
 		--build-arg checkout_v=$(checkout) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg CODE_PATH=$(4) \
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
