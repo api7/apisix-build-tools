@@ -36,6 +36,14 @@ jobs:
 
       - uses: docker/setup-buildx-action@v1
 
+      - uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-apisixdashboard-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-apisixdashboard-
+            ${{ runner.os }}-buildx-
+
       - name: run apisix-dashboard packaging test
         run: |
           make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} image_base=centos image_tag=7 buildx=True
