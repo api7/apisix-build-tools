@@ -34,11 +34,15 @@ image_base="ubuntu"
 image_tag="20.04"
 endif
 
+buildx=0
+cache_from=type=local,src=/tmp/.buildx-cache
+cache_to=type=local,dest=/tmp/.buildx-cache
 ### function for building
 ### $(1) is name
 ### $(2) is dockerfile filename
 ### $(3) is package type
 ### $(4) is code path
+ifneq ($(buildx), True)
 define build
 	docker build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
@@ -47,6 +51,19 @@ define build
 		--build-arg CODE_PATH=$(4) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
+else
+define build
+	docker buildx build -t apache/$(1)-$(3):$(version) \
+		--build-arg checkout_v=$(checkout) \
+		--build-arg IMAGE_BASE=$(image_base) \
+		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg CODE_PATH=$(4) \
+		--load \
+		--cache-from=$(cache_from) \
+		--cache-to=$(cache_to) \
+		-f ./dockerfiles/Dockerfile.$(2).$(3) .
+endef
+endif
 
 ### function for packing
 ### $(1) is name
@@ -143,8 +160,17 @@ package-apisix-openresty-rpm:
 
 ### build fpm for packaging:
 .PHONY: build-fpm
+ifneq ($(buildx), True)
 build-fpm:
 	docker build -t api7/fpm - < ./dockerfiles/Dockerfile.fpm
+else
+build-fpm:
+	docker buildx build \
+	--load \
+	--cache-from=$(cache_from) \
+	--cache-to=$(cache_to) \
+	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
+endif
 
 ifeq ($(filter $(app),apisix dashboard apisix-openresty),)
 $(info  the app's value have to be apisix or dashboard!)
