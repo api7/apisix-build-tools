@@ -21,8 +21,6 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
-          sudo gem install --no-document fpm
-          sudo apt-get install -y rpm
 
       - name: build apisix-openresty rpm
         run: |
@@ -45,4 +43,3 @@ jobs:
         run: |
           export APISIX_OPENRESTY_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
-

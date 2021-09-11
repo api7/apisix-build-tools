@@ -1,7 +1,7 @@
 ARG VERSION
 ARG PACKAGE_TYPE
 
-FROM apache/apisix-openresty-${PACKAGE_TYPE}:${VERSION} AS APISIX
+FROM apache/apisix-openresty-${PACKAGE_TYPE}:${VERSION} AS APISIX-OPENRESTY
 FROM api7/fpm
 
 ARG ITERATION
@@ -14,8 +14,8 @@ ENV PACKAGE_VERSION=${PACKAGE_VERSION}
 ENV PACKAGE_TYPE=${PACKAGE_TYPE}
 ENV ARTIFACT=${ARTIFACT}
 
-COPY --from=APISIX /usr/local/openresty /tmp/build/output/openresty
-COPY --from=APISIX /tmp/dist /tmp/dist
+COPY --from=APISIX-OPENRESTY /usr/local/openresty /tmp/build/output/openresty
+COPY --from=APISIX-OPENRESTY /tmp/dist /tmp/dist
 COPY package-apisix-openresty.sh /package-apisix-openresty.sh
 COPY post-install-apisix-openresty.sh /post-install-apisix-openresty.sh
 COPY usr /usr

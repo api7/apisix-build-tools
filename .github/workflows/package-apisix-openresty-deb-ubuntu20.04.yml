@@ -1,0 +1,50 @@
+name: package apisix-openresty deb for ubuntu 20.04(Focal Fossa)
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_APISIX_OR_VERSION: 1.19.3.2.0
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: build apisix-openresty deb
+        run: |
+          make package type=deb app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} image_base=ubuntu image_tag=20.04
+
+      - name: run ubuntu 20.04 docker and mapping apisix-openresty deb into container
+        run: |
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
+
+      - name: install dependencies in container
+        run: |
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libssl-dev perl build-essential"
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates"
+          docker exec ubuntu20.04Instance bash -c "wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -"
+          docker exec ubuntu20.04Instance bash -c "echo \"deb http://openresty.org/package/ubuntu $(lsb_release -sc) main\" | tee /etc/apt/sources.list.d/openresty.list"
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install openresty-openssl111 openresty-pcre openresty-zlib"
+
+      - name: install deb in container
+        run: |
+          docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-openresty_${BUILD_APISIX_OR_VERSION}-0~ubuntu20.04_amd64.deb"
+
+      - name: check and ensure openresty is installed
+        run: |
+          export APISIX_OPENRESTY_VER=$(docker exec ubuntu20.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+          if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
