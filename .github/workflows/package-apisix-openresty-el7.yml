@@ -2,7 +2,9 @@ name: package apisix-openresty rpm for el7
 
 on:
   push:
-    branches: [ master ]
+    branches: 
+      - master
+      - upload-artifact
     tags:
       - "v*"
   pull_request:
@@ -46,3 +48,11 @@ jobs:
           export APISIX_OPENRESTY_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
 
+      - name: upload artifact
+        uses: actions/upload-artifact@v2.2.2
+        if: ${{ github.event_name == 'push'   }}
+        with:
+          name: apisix-openresty.rpm
+          path: |
+            /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.el7.x86_64.rpm
+          retention-days: 7
