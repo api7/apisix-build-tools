@@ -40,11 +40,25 @@ ls output/
 apisix-2.2-0.el8.x86_64.rpm
 ```
 
+Packaging an Ubuntu 20.04 package of Apache APISIX
+```sh
+make package type=deb app=apisix version=2.2 checkout=2.2
+ls output/
+apisix_2.2-0~ubuntu20.04_amd64.deb
+```
+
 Packaging a Centos 7 package of Apache APISIX Dashboard
 ```sh
 make package type=rpm app=dashboard version=2.4 checkout=v2.4 image_base=centos image_tag=7
 ls output/
 apisix-dashboard-2.4-0.el7.x86_64.rpm
+```
+
+Packaging an Ubuntu 20.04 package of Apache APISIX Dashboard
+```sh
+make package type=deb app=apisix version=2.2 checkout=2.2
+ls output/
+apisix-dashboard_2.2-0~ubuntu20.04_amd64.deb
 ```
 
 Packaging a Centos 7 package of APISIX's OpenResty distribution
@@ -53,7 +67,13 @@ make package type=rpm app=apisix-openresty version=1.0.0 image_base=centos image
 ls output/
 apisix-openresty-1.0.0-0.el7.x86_64.rpm
 ```
-(Note: deb for APISIX OpenResty is not available yet. Pull request is welcome!)
+
+Packaging an Ubuntu 20.04 package of Apache APISIX's OpenResty distribution
+```sh
+make package type=deb app=apisix-openresty version=1.0.0
+ls output/
+apisix-openresty_1.0.0-0~ubuntu20.04_amd64.deb
+```
 
 ## Details
 
