@@ -1,5 +1,5 @@
-ARG IMAGE_BASE="centos"
-ARG IMAGE_TAG="7"
+ARG IMAGE_BASE="ubuntu"
+ARG IMAGE_TAG="20.04"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
@@ -17,6 +17,6 @@ ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
 
-RUN ./build-common.sh build_apisix_openresty_rpm \
+RUN ./build-common.sh build_apisix_openresty_deb \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh
