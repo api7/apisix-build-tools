@@ -43,8 +43,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--url 'http://apisix.apache.org/' \
 	--config-files usr/lib/systemd/system/apisix.service \
 	--config-files usr/local/apisix/conf/config.yaml \
-	--config-files usr/local/apisix/conf/config-default.yaml \
-	--config-files usr/local/apisix/conf/debug.yaml
+	--config-files usr/local/apisix/conf/config-default.yaml
 
 # Rename deb file with adding $DIST section
 if [ "$PACKAGE_TYPE" == "deb" ]
