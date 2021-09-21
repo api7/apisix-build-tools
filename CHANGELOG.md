@@ -20,13 +20,21 @@
 
 ## Table of Contents
 
+- [2.2.1](#221)
 - [2.2.0](#220)
-  - [New Feature](#new-feature)
-  - [Bugfix](#bugfix)
 - [2.1.0](#210)
-  - [New Feature](#new-feature)
 - [2.0.0](#200)
 
+## 2.2.1
+
+ This release mainly contains two important bugfixes, as well as a feature.
+
+ ### New Feature
+ - feat: add apisix-openresty deb support [#92](https://github.com/api7/apisix-build-tools/pull/92)
+
+ ### Bugfix
+ - ci: Fix no setting config files [95](https://github.com/api7/apisix-build-tools/pull/95)
+ - fix: failed to get metalink from epel [#93](https://github.com/api7/apisix-build-tools/pull/93)
 
 ## 2.2.0
 
