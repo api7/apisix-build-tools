@@ -24,6 +24,11 @@ build_apisix_openresty_deb() {
     ./build-apisix-openresty.sh
 }
 
+build_apisix_openresty_apk() {
+    export_openresty_variables
+    ./build-apisix-openresty.sh
+}
+
 export_openresty_variables() {
     export openssl_prefix=/usr/local/openresty/openssl111
     export zlib_prefix=/usr/local/openresty/zlib
@@ -41,5 +46,8 @@ build_apisix_openresty_rpm)
     ;;
 build_apisix_openresty_deb)
     build_apisix_openresty_deb
+    ;;
+build_apisix_openresty_apk)
+    build_apisix_openresty_apk
     ;;
 esac

@@ -155,6 +155,10 @@ build-apisix-openresty-rpm:
 build-apisix-openresty-deb:
 	$(call build,apisix-openresty,apisix-openresty,deb,$(local_code_path))
 
+.PHONY: build-apisix-openresty-apk
+build-apisix-openresty-apk:
+	$(call build,apisix-openresty,apisix-openresty,apk,$(local_code_path))
+
 ### build rpm for apisix-openresty:
 .PHONY: package-apisix-openresty-rpm
 package-apisix-openresty-rpm:
