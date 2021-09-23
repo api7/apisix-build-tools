@@ -59,7 +59,7 @@ ARG _RESTY_CONFIG_DEPS="--with-pcre \
     "
 
 LABEL resty_image_base="${RESTY_IMAGE_BASE}"
-LABEL resty_image_tag="${RESTY_IMAGE_TAG}"
+LABEL resty_image_tag="${IMAGE_TAG}"
 LABEL resty_version="${RESTY_VERSION}"
 LABEL resty_openssl_version="${RESTY_OPENSSL_VERSION}"
 LABEL resty_openssl_patch_version="${RESTY_OPENSSL_PATCH_VERSION}"
@@ -129,6 +129,7 @@ RUN apk add --no-cache --virtual .build-deps \
         --enable-unicode-properties \
     && make -j${RESTY_J} \
     && make -j${RESTY_J} install \
+    && cd /tmp \
     && ./build-common.sh build_apisix_openresty_apk \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh \
