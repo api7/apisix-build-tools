@@ -127,9 +127,9 @@ sudo make install
 cd ..
 
 cd apisix-nginx-module || exit 1
-sudo bash -c "OPENRESTY_PREFIX=\"$OR_PREFIX\" make install"
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd wasm-nginx-module || exit 1
-sudo bash -c "OPENRESTY_PREFIX=\"$OR_PREFIX\" make install"
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..

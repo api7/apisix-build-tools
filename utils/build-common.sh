@@ -4,13 +4,12 @@ set -x
 
 build_apisix_openresty_rpm() {
     yum -y install centos-release-scl
-    yum -y install devtoolset-8 patch wget git make sudo
+    yum -y install devtoolset-9 patch wget git make sudo
     set +eu
-    source scl_source enable devtoolset-8
+    source scl_source enable devtoolset-9
     set -eu
     command -v gcc
     gcc --version
-    command -v sudo
 
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
