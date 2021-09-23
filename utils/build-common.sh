@@ -2,6 +2,7 @@
 set -euo pipefail
 set -x
 
+
 build_apisix_openresty_rpm() {
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum -y install gcc gcc-c++ patch wget git make sudo
