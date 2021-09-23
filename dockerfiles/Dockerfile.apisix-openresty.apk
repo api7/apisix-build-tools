@@ -130,6 +130,7 @@ RUN cd /tmp \
     && make -j${RESTY_J} install
 
 RUN cd /tmp \
+    && curl --version \
     && ./build-common.sh build_apisix_openresty_apk \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh \
