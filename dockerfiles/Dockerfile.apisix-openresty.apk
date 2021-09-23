@@ -47,8 +47,6 @@ ARG RESTY_CONFIG_OPTIONS="\
 ARG RESTY_CONFIG_OPTIONS_MORE=""
 ARG RESTY_LUAJIT_OPTIONS="--with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT'"
 
-ARG RESTY_ADD_PACKAGE_BUILDDEPS=""
-ARG RESTY_ADD_PACKAGE_RUNDEPS=""
 ARG RESTY_EVAL_PRE_CONFIGURE=""
 ARG RESTY_EVAL_POST_MAKE=""
 
@@ -68,8 +66,6 @@ LABEL resty_pcre_version="${RESTY_PCRE_VERSION}"
 LABEL resty_config_options="${RESTY_CONFIG_OPTIONS}"
 LABEL resty_config_options_more="${RESTY_CONFIG_OPTIONS_MORE}"
 LABEL resty_config_deps="${_RESTY_CONFIG_DEPS}"
-LABEL resty_add_package_builddeps="${RESTY_ADD_PACKAGE_BUILDDEPS}"
-LABEL resty_add_package_rundeps="${RESTY_ADD_PACKAGE_RUNDEPS}"
 LABEL resty_eval_pre_configure="${RESTY_EVAL_PRE_CONFIGURE}"
 LABEL resty_eval_post_make="${RESTY_EVAL_POST_MAKE}"
 
@@ -86,7 +82,6 @@ RUN apk add --no-cache --virtual .build-deps \
         perl-dev \
         readline-dev \
         zlib-dev \
-        ${RESTY_ADD_PACKAGE_BUILDDEPS} \
     && apk add --no-cache \
         gd \
         geoip \
@@ -94,9 +89,9 @@ RUN apk add --no-cache --virtual .build-deps \
         libxslt \
         zlib \
         bash \
-        git \
-        ${RESTY_ADD_PACKAGE_RUNDEPS} \
-    && cd /tmp \
+        git
+
+RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
     && cd /tmp \
     && curl -fSL "${RESTY_OPENSSL_URL_BASE}/openssl-${RESTY_OPENSSL_VERSION}.tar.gz" -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
@@ -118,8 +113,9 @@ RUN apk add --no-cache --virtual .build-deps \
       --libdir=lib \
       -Wl,-rpath,/usr/local/openresty/openssl/lib \
     && make -j${RESTY_J} \
-    && make -j${RESTY_J} install_sw \
-    && cd /tmp \
+    && make -j${RESTY_J} install_sw
+
+RUN cd /tmp \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && cd /tmp/pcre-${RESTY_PCRE_VERSION} \
@@ -130,8 +126,9 @@ RUN apk add --no-cache --virtual .build-deps \
         --enable-utf \
         --enable-unicode-properties \
     && make -j${RESTY_J} \
-    && make -j${RESTY_J} install \
-    && cd /tmp \
+    && make -j${RESTY_J} install
+    
+RUN cd /tmp \
     && ./build-common.sh build_apisix_openresty_apk \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh \
