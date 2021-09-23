@@ -6,8 +6,8 @@ set -x
 build_apisix_openresty_rpm() {
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum -y install gcc gcc-c++ patch wget git make sudo
-    yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
     yum -y install libmaxminddb-devel
+    yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
     ./build-apisix-openresty.sh
