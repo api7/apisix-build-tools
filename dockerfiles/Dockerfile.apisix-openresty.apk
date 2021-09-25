@@ -90,6 +90,7 @@ RUN apk add --no-cache --virtual .build-deps \
         zlib \
         bash \
         git \
+        sudo \
         curl
 
 RUN cd /tmp \
