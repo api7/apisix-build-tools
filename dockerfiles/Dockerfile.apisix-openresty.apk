@@ -52,8 +52,8 @@ ARG RESTY_EVAL_POST_MAKE=""
 
 # These are not intended to be user-specified
 ARG _RESTY_CONFIG_DEPS="--with-pcre \
-    --with-cc-opt='-DNGX_LUA_ABORT_AT_PANIC -I/usr/local/openresty/pcre/include -I/usr/local/openresty/openssl/include' \
-    --with-ld-opt='-L/usr/local/openresty/pcre/lib -L/usr/local/openresty/openssl/lib -Wl,-rpath,/usr/local/openresty/pcre/lib:/usr/local/openresty/openssl/lib' \
+    --with-cc-opt='-DNGX_LUA_ABORT_AT_PANIC -I/usr/local/openresty/pcre/include -I/usr/local/openresty/openssl111/include' \
+    --with-ld-opt='-L/usr/local/openresty/pcre/lib -L/usr/local/openresty/openssl111/lib -Wl,-rpath,/usr/local/openresty/pcre/lib:/usr/local/openresty/openssl111/lib' \
     "
 
 LABEL resty_image_base="${RESTY_IMAGE_BASE}"
@@ -110,9 +110,9 @@ RUN cd /tmp \
     && ./config \
       no-threads shared zlib -g \
       enable-ssl3 enable-ssl3-method \
-      --prefix=/usr/local/openresty/openssl \
+      --prefix=/usr/local/openresty/openssl111 \
       --libdir=lib \
-      -Wl,-rpath,/usr/local/openresty/openssl/lib \
+      -Wl,-rpath,/usr/local/openresty/openssl111/lib \
     && make -j${RESTY_J} \
     && make -j${RESTY_J} install_sw
 
@@ -128,5 +128,9 @@ RUN cd /tmp \
         --enable-unicode-properties \
     && make -j${RESTY_J} \
     && make -j${RESTY_J} install
+
+RUN cd /tmp \
+    && curl --version \
+    && ./build-common.sh build_apisix_openresty_apk
 
 CMD /bin/sh
