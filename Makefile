@@ -115,6 +115,14 @@ package-apisix-rpm:
 package-apisix-deb:
 	$(call package,apisix,deb)
 
+
+### build apisix image base alpine:
+.PHONY: build-apisix-alpine-image
+build-apisix-alpine-image:
+	$(call build,apisix-openresty,apisix-openresty,apk,$(local_code_path))
+	$(call build,apisix,apisix,alpine,$(local_code_path))
+
+
 ### build dashboard:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
@@ -221,6 +229,11 @@ package: build-dashboard-rpm
 package: package-dashboard-rpm
 
 else ifeq ($(app)_$(type),dashboard_deb)
+package: build-fpm
+package: build-dashboard-deb
+package: package-dashboard-deb
+
+else ifeq ($(app)_$(type),apisix_)
 package: build-fpm
 package: build-dashboard-deb
 package: package-dashboard-deb
