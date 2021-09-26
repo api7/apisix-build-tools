@@ -24,6 +24,7 @@ image_tag="7"
 iteration=0
 local_code_path=0
 openresty="openresty"
+openresty_version="1.19.3.2.0"
 artifact="0"
 apisix_repo="https://github.com/apache/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
@@ -60,6 +61,34 @@ define build
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
+		--load \
+		--cache-from=$(cache_from) \
+		--cache-to=$(cache_to) \
+		-f ./dockerfiles/Dockerfile.$(2).$(3) .
+endef
+endif
+
+### function for building image
+### $(1) is name
+### $(2) is dockerfile filename
+### $(3) is package type
+### $(4) is openresty image name
+### $(5) is openresty image version
+### $(6) is code path
+ifneq ($(buildx), True)
+define build-image
+	docker build -t apache/$(1)-$(3):$(version) \
+		--build-arg OPENRESTY_NAME=$(4) \
+		--build-arg OPENRESTY_VERSION=$(5) \
+		--build-arg CODE_PATH=$(6) \
+		-f ./dockerfiles/Dockerfile.$(2).$(3) .
+endef
+else
+define build-image
+	docker buildx build -t apache/$(1)-$(3):$(version) \
+		--build-arg OPENRESTY_NAME=$(4) \
+		--build-arg OPENRESTY_VERSION=$(5) \
+		--build-arg CODE_PATH=$(6) \
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
@@ -120,7 +149,7 @@ package-apisix-deb:
 .PHONY: build-apisix-alpine-image
 build-apisix-alpine-image:
 	$(call build,apisix-openresty,apisix-openresty,apk,$(local_code_path))
-	$(call build,apisix,apisix,alpine,$(local_code_path))
+	$(call build-image,apisix,apisix,alpine,apisix-openresty,$(openresty_version),$(local_code_path))
 
 
 ### build dashboard:

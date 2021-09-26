@@ -1,7 +1,8 @@
 ARG ENABLE_PROXY=false
-ARG VERSION
+ARG OPENRESTY_VERSION
+ARG OPENRESTY_NAME
 
-FROM apache/apisix-alpine:${VERSION} AS production-stage
+FROM apache/${OPENRESTY_NAME}:${OPENRESTY_VERSION} AS production-stage
 
 ARG APISIX_VERSION=2.9
 LABEL apisix_version="${APISIX_VERSION}"
