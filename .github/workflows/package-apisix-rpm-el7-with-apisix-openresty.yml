@@ -37,7 +37,6 @@ jobs:
       - name: packaging APISIX
         run: |
           make package type=rpm app=apisix version=2.7 checkout=release/2.7 image_base=centos image_tag=7 openresty=apisix-openresty
-          make package type=rpm app=apisix version=2.9 checkout=release/2.9 image_base=centos image_tag=7 openresty=apisix-openresty
           make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 openresty=apisix-openresty
 
       - name: packaging apisix-openresty
@@ -78,6 +77,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: apisix-2.9-0.el7.x86_64.rpm that depends on apisix-openresty
-          path: output/apisix-2.9-0.el7.x86_64.rpm
+          name: apisix-master-0.el7.x86_64.rpm that depends on apisix-openresty
+          path: output/apisix-master-0.el7.x86_64.rpm
+          retention-days: 5
           if-no-files-found: error

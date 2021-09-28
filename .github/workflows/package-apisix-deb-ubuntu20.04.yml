@@ -60,4 +60,5 @@ jobs:
         with:
           name: apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
           path: output/apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
+          retention-days: 5
           if-no-files-found: error

@@ -54,4 +54,5 @@ jobs:
         with:
           name: apisix-openresty_${{ env.BUILD_APISIX_OR_VERSION }}-0~ubuntu20.04_amd64.deb
           path: output/apisix-openresty_${{ env.BUILD_APISIX_OR_VERSION }}-0~ubuntu20.04_amd64.deb
+          retention-days: 5
           if-no-files-found: error

@@ -91,4 +91,5 @@ jobs:
         with:
           name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
           path: output/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          retention-days: 5
           if-no-files-found: error

@@ -59,4 +59,5 @@ jobs:
         with:
           name: apisix-dashboard_${{ env.DASHBOARD_VERSION }}-0~ubuntu20.04_amd64.deb
           path: output/apisix-dashboard_${{ env.DASHBOARD_VERSION }}-0~ubuntu20.04_amd64.deb
+          retention-days: 5
           if-no-files-found: error
