@@ -47,7 +47,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: apisix-base-${{ env.BUILD_APISIX_OR_VERSION }}-0.el7.x86_64.rpm
-          path: output/apisix-base-${{ env.BUILD_APISIX_OR_VERSION }}-0.el7.x86_64.rpm
+          name: apisix-base-${{ env.BUILD_APISIX_BASE_VERSION }}-0.el7.x86_64.rpm
+          path: output/apisix-base-${{ env.BUILD_APISIX_BASE_VERSION }}-0.el7.x86_64.rpm
           retention-days: 5
           if-no-files-found: error
