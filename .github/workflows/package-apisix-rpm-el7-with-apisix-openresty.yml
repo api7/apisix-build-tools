@@ -73,3 +73,11 @@ jobs:
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apisix-master-0.el7.x86_64.rpm that depends on apisix-openresty
+          path: output/apisix-master-0.el7.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error
