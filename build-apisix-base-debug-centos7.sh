@@ -16,4 +16,4 @@ export luajit_xcflags="-DLUAJIT_ASSERT -DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52C
 export OR_PREFIX=/usr/local/openresty-debug
 export debug_args=--with-debug
 
-./build-apisix-openresty.sh
+./build-apisix-base.sh

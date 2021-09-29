@@ -1,4 +1,4 @@
-name: package apisix-openresty rpm for el7
+name: package apisix-base rpm for el7
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      BUILD_APISIX_OR_VERSION: 1.19.3.2.0
+      BUILD_APISIX_BASE_VERSION: 1.19.3.2.0
     steps:
       - uses: actions/checkout@v2
 
@@ -22,11 +22,11 @@ jobs:
         run: |
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
-      - name: build apisix-openresty rpm
+      - name: build apisix-base rpm
         run: |
-          make package type=rpm app=apisix-openresty version=${BUILD_APISIX_OR_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix-base version=${BUILD_APISIX_BASE_VERSION} image_base=centos image_tag=7
 
-      - name: run centos7 docker and mapping apisix-openresty rpm into container
+      - name: run centos7 docker and mapping apisix-base rpm into container
         run: |
           docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
@@ -37,17 +37,17 @@ jobs:
 
       - name: install rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-openresty-${BUILD_APISIX_OR_VERSION}-0.el7.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-base-${BUILD_APISIX_BASE_VERSION}-0.el7.x86_64.rpm"
 
-      - name: check and ensure openresty is installed
+      - name: check and ensure apisix-base is installed
         run: |
-          export APISIX_OPENRESTY_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_OPENRESTY_VER=/{print $5}' | awk -v FS="=" '{print $2}')
-          if [ "$APISIX_OPENRESTY_VER" != "${BUILD_APISIX_OR_VERSION}" ]; then exit 1; fi
+          export APISIX_BASE_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_BASE_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+          if [ "$APISIX_BASE_VER" != "${BUILD_APISIX_BASE_VERSION}" ]; then exit 1; fi
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: apisix-openresty-${{ env.BUILD_APISIX_OR_VERSION }}-0.el7.x86_64.rpm
-          path: output/apisix-openresty-${{ env.BUILD_APISIX_OR_VERSION }}-0.el7.x86_64.rpm
+          name: apisix-base-${{ env.BUILD_APISIX_BASE_VERSION }}-0.el7.x86_64.rpm
+          path: output/apisix-base-${{ env.BUILD_APISIX_BASE_VERSION }}-0.el7.x86_64.rpm
           retention-days: 5
           if-no-files-found: error
