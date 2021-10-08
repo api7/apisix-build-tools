@@ -24,7 +24,7 @@ workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
 or_ver="1.19.3.2"
-wget https://openresty.org/download/openresty-${or_ver}.tar.gz
+wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
