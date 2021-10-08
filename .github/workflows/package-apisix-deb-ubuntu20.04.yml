@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PACKAGE_APISIX_VERSION: 2.7
+      PACKAGE_APISIX_VERSION: 2.9
 
     steps:
       - uses: actions/checkout@v2
@@ -54,3 +54,11 @@ jobs:
               printf "result_code: %s\n" "$result_code"
               exit 125
           fi
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
+          path: output/apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
+          retention-days: 5
+          if-no-files-found: error

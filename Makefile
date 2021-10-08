@@ -146,24 +146,24 @@ package-dashboard-rpm:
 package-dashboard-deb:
 	$(call package,apisix-dashboard,deb)
 
-### build apisix-openresty:
-.PHONY: build-apisix-openresty-rpm
-build-apisix-openresty-rpm:
-	$(call build,apisix-openresty,apisix-openresty,rpm,$(local_code_path))
+### build apisix-base:
+.PHONY: build-apisix-base-rpm
+build-apisix-base-rpm:
+	$(call build,apisix-base,apisix-base,rpm,$(local_code_path))
 
-.PHONY: build-apisix-openresty-deb
-build-apisix-openresty-deb:
-	$(call build,apisix-openresty,apisix-openresty,deb,$(local_code_path))
+.PHONY: build-apisix-base-deb
+build-apisix-base-deb:
+	$(call build,apisix-base,apisix-base,deb,$(local_code_path))
 
-### build rpm for apisix-openresty:
-.PHONY: package-apisix-openresty-rpm
-package-apisix-openresty-rpm:
-	$(call package,apisix-openresty,rpm)
+### build rpm for apisix-base:
+.PHONY: package-apisix-base-rpm
+package-apisix-base-rpm:
+	$(call package,apisix-base,rpm)
 
-### build deb for apisix-openresty:
-.PHONY: package-apisix-openresty-deb
-package-apisix-openresty-deb:
-	$(call package,apisix-openresty,deb)
+### build deb for apisix-base:
+.PHONY: package-apisix-base-deb
+package-apisix-base-deb:
+	$(call package,apisix-base,deb)
 
 ### build fpm for packaging:
 .PHONY: build-fpm
@@ -179,7 +179,7 @@ build-fpm:
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 
-ifeq ($(filter $(app),apisix dashboard apisix-openresty),)
+ifeq ($(filter $(app),apisix dashboard apisix-base),)
 $(info  the app's value have to be apisix or dashboard!)
 
 else ifeq ($(filter $(type),rpm deb),)
@@ -188,15 +188,15 @@ $(info  the type's value have to be rpm or deb!)
 else ifeq ($(version), 0)
 $(info  you have to input a version value!)
 
-else ifeq ($(app)_$(type),apisix-openresty_rpm)
+else ifeq ($(app)_$(type),apisix-base_rpm)
 package: build-fpm
-package: build-apisix-openresty-rpm
-package: package-apisix-openresty-rpm
+package: build-apisix-base-rpm
+package: package-apisix-base-rpm
 
-else ifeq ($(app)_$(type),apisix-openresty_deb)
+else ifeq ($(app)_$(type),apisix-base_deb)
 package: build-fpm
-package: build-apisix-openresty-deb
-package: package-apisix-openresty-deb
+package: build-apisix-base-deb
+package: package-apisix-base-deb
 
 else ifeq ($(checkout), 0)
 $(info  you have to input a checkout value!)

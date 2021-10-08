@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DASHBOARD_VERSION: 2.7
+      DASHBOARD_VERSION: 2.8
     services:
       etcd:
         image: bitnami/etcd:3.4.0

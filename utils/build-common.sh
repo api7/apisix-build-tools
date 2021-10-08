@@ -2,7 +2,7 @@
 set -euo pipefail
 set -x
 
-build_apisix_openresty_rpm() {
+build_apisix_base_rpm() {
     yum -y install centos-release-scl
     yum -y install devtoolset-9 patch wget git make sudo
     set +eu
@@ -15,10 +15,10 @@ build_apisix_openresty_rpm() {
     yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
-    ./build-apisix-openresty.sh
+    ./build-apisix-base.sh
 }
 
-build_apisix_openresty_deb() {
+build_apisix_base_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y sudo git libreadline-dev lsb-release libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
@@ -28,7 +28,7 @@ build_apisix_openresty_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
-    ./build-apisix-openresty.sh
+    ./build-apisix-base.sh
 }
 
 export_openresty_variables() {
@@ -43,10 +43,10 @@ export_openresty_variables() {
 case_opt=$1
 
 case ${case_opt} in
-build_apisix_openresty_rpm)
-    build_apisix_openresty_rpm
+build_apisix_base_rpm)
+    build_apisix_base_rpm
     ;;
-build_apisix_openresty_deb)
-    build_apisix_openresty_deb
+build_apisix_base_deb)
+    build_apisix_base_deb
     ;;
 esac

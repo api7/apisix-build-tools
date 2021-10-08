@@ -5,8 +5,8 @@ mkdir /output
 dist=$(cat /tmp/dist)
 
 # Determine the name of artifact
-# The defaut is apisix-openresty
-artifact="apisix-openresty"
+# The defaut is apisix-base
+artifact="apisix-base"
 if [ "$ARTIFACT" != "0" ]; then
     artifact=${ARTIFACT}
 fi
@@ -31,7 +31,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
     -d "openresty-zlib >= $openresty_zlib_version" \
     -d "openresty-openssl111 >= $openresty_openssl111_version" \
     -d "openresty-pcre >= $openresty_pcre_version" \
-    --post-install post-install-apisix-openresty.sh \
+    --post-install post-install-apisix-base.sh \
     --description "APISIX's OpenResty distribution." \
     --license "ASL 2.0" \
     -C /tmp/build/output \
@@ -43,5 +43,5 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 
 if [ "$PACKAGE_TYPE" == "deb" ]; then
     # Rename deb file with adding $DIST section
-    mv /output/apisix-openresty_"${PACKAGE_VERSION}"-"${ITERATION}"_amd64.deb /output/apisix-openresty_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_amd64.deb
+    mv /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"_amd64.deb /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_amd64.deb
 fi
