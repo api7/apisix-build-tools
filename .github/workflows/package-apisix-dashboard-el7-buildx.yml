@@ -6,13 +6,11 @@ on:
     tags:
       - 'v*'
     paths-ignore:
-      - 'CHANGELOG.md'
-      - 'README.md'
+      - '*.md'
   pull_request:
     branches: [master]
     paths-ignore:
-      - 'CHANGELOG.md'
-      - 'README.md'
+      - '*.md'
   schedule:
     - cron: '0 0 * * *'
 
