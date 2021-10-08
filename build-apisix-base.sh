@@ -6,6 +6,7 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
     apisix_nginx_module_ver=""
+    wasm_nginx_module_ver=""
     lua_var_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
@@ -13,6 +14,7 @@ else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
     apisix_nginx_module_ver="-b 1.3.0"
+    wasm_nginx_module_ver=""
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
@@ -48,6 +50,13 @@ else
         https://github.com/api7/apisix-nginx-module.git
 fi
 
+if [ "$repo" == wasm-nginx-module ]; then
+    cp -r "$prev_workdir" .
+else
+    git clone --depth=1 $wasm_nginx_module_ver \
+        https://github.com/api7/wasm-nginx-module.git
+fi
+
 if [ "$repo" == lua-var-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
@@ -63,6 +72,10 @@ cd apisix-nginx-module/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
+cd wasm-nginx-module || exit 1
+./install-wasmtime.sh
+cd ..
+
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
@@ -72,10 +85,11 @@ no_pool_patch=${no_pool_patch:-}
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_BASE_VER=$version $cc_opt" \
-    --with-ld-opt="$ld_opt" \
+    --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     --add-module=../mod_dubbo \
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
+    --add-module=../wasm-nginx-module \
     --add-module=../lua-var-nginx-module \
     $debug_args \
     --with-poll_module \
@@ -114,3 +128,8 @@ cd ..
 
 cd apisix-nginx-module || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+cd ..
+
+cd wasm-nginx-module || exit 1
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+cd ..

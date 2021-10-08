@@ -3,8 +3,15 @@ set -euo pipefail
 set -x
 
 build_apisix_base_rpm() {
+    yum -y install centos-release-scl
+    yum -y install devtoolset-9 patch wget git make sudo
+    set +eu
+    source scl_source enable devtoolset-9
+    set -eu
+    command -v gcc
+    gcc --version
+
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install gcc gcc-c++ patch wget git make sudo
     yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
