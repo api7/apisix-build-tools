@@ -20,11 +20,21 @@
 
 ## Table of Contents
 
+- [2.4.0](#240)
 - [2.3.0](#230)
 - [2.2.1](#221)
 - [2.2.0](#220)
 - [2.1.0](#210)
 - [2.0.0](#200)
+
+## 2.4.0
+
+This release mainly contains several new features.
+
+### New Feature
+- ci: Disable CI for doc changes [#106](https://github.com/api7/apisix-build-tools/pull/106)
+- feat: add wasm-nginx-module [#98](https://github.com/api7/apisix-build-tools/pull/98)
+- chore: Ignore cert check when downloading openresty [#105](https://github.com/api7/apisix-build-tools/pull/105)
 
 ## 2.3.0
 
