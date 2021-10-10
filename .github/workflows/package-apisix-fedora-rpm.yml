@@ -1,0 +1,39 @@
+name: package apisix rpm for Fedora 34
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "v*"
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make
+
+      - name: run apisix packaging
+        run: |
+          make package type=rpm app=apisix_fedora version=master checkout=master image_base=fedora image_tag=34 artifact=apisix-remote
+          make package type=rpm app=apisix_fedora version=2.2 checkout=2.2 image_base=fedora image_tag=34
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apisix-2.2-0.fedora34.x86_64.rpm
+          path: output/apisix-2.2-0.fedora34.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error
