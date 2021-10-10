@@ -96,6 +96,17 @@ else
 	$(call build,apisix,apisix,rpm,$(local_code_path))
 endif
 
+### build apisix_fedora:
+.PHONY: build-apisix_fedora-rpm
+build-apisix_fedora-rpm:
+ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(apisix_repo) ./apisix
+	$(call build,apisix,apisix_fedora,rpm,"./apisix")
+	rm -fr ./apisix
+else
+    $(call build,apisix,apisix_fedora,rpm,$(local_code_path))
+endif
+
 .PHONY: build-apisix-deb
 build-apisix-deb:
 ifeq ($(local_code_path), 0)
@@ -110,6 +121,10 @@ endif
 .PHONY: package-apisix-rpm
 package-apisix-rpm:
 	$(call package,apisix,rpm)
+
+.PHONY: package-apisix_fedora-rpm
+package-apisix_fedora-rpm:
+	$(call package,apisix_fedora,rpm)	
 
 .PHONY: package-apisix-deb
 package-apisix-deb:
@@ -179,8 +194,8 @@ build-fpm:
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 
-ifeq ($(filter $(app),apisix dashboard apisix-base),)
-$(info  the app's value have to be apisix or dashboard!)
+ifeq ($(filter $(app),apisix_fedora apisix dashboard apisix-base),)
+$(info  the app's value have to be apisix_fedora, apisix or dashboard!)
 
 else ifeq ($(filter $(type),rpm deb),)
 $(info  the type's value have to be rpm or deb!)
@@ -205,6 +220,12 @@ else ifeq ($(app)_$(type),apisix_rpm)
 package: build-fpm
 package: build-apisix-rpm
 package: package-apisix-rpm
+
+
+else ifeq ($(app)_$(type),apisix_fedora_rpm)
+package: build-fpm
+package: build-apisix_fedora-rpm
+package: package-apisix_fedora-rpm
 
 else ifeq ($(app)_$(type),apisix_deb)
 package: build-fpm

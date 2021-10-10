@@ -22,7 +22,7 @@ fi
 
 # Determine the name of artifact
 # The defaut is apisix
-artifact="apisix"
+artifact="apisix" 
 if [ "$ARTIFACT" != "0" ]
 then
 	artifact=${ARTIFACT}

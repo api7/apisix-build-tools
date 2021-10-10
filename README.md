@@ -39,6 +39,12 @@ make package type=rpm app=apisix version=2.2 checkout=2.2 image_base=centos imag
 ls output/
 apisix-2.2-0.el8.x86_64.rpm
 ```
+Packaging a Fedora 34 package of Apache APISIX
+```sh
+make package type=rpm app=apisix_fedora version=2.2 checkout=2.2 image_base=fedora image_tag=34
+ls output/
+apisix-2.2-0.fedora34.x86_64.rpm
+```
 
 Packaging an Ubuntu 20.04 package of Apache APISIX
 ```sh
