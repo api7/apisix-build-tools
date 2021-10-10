@@ -28,6 +28,7 @@ jobs:
       - name: run apisix packaging
         run: |
           make package type=rpm app=apisix_fedora version=master checkout=master image_base=fedora image_tag=34 artifact=apisix-remote
+          make package type=rpm app=apisix_fedora version=2.2 checkout=2.2 image_base=fedora image_tag=34
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4
