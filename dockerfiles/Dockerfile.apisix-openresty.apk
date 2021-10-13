@@ -79,6 +79,6 @@ RUN cd /tmp \
 
 RUN cd /tmp \
     && curl --version \
-    && ./build-common.sh build_apisix_openresty_apk
+    && ./build-common.sh build_apisix_base_apk
 
 CMD /bin/sh

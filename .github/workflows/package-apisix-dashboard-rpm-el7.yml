@@ -5,8 +5,12 @@ on:
     branches: [ master ]
     tags:
       - "v*"
+    paths-ignore:
+      - '*.md'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - '*.md'
   schedule:
     - cron: '0 0 * * *'
 
@@ -14,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DASHBOARD_VERSION: 2.7
+      DASHBOARD_VERSION: 2.8
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -81,3 +85,15 @@ jobs:
               echo "failed: failed to install Apache APISIX Dashboard by rpm"
               exit 1
           fi
+
+      - name: Rename rpm package
+        run: |
+          mv output/apisix-dashboard-local-${DASHBOARD_VERSION}-0.el7.x86_64.rpm output/apisix-dashboard-${DASHBOARD_VERSION}-0.el7.x86_64.rpm
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          path: output/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error

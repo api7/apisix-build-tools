@@ -4,7 +4,7 @@ ARG IMAGE_TAG="7"
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
-COPY build-apisix-openresty.sh /tmp/build-apisix-openresty.sh
+COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
 WORKDIR /tmp
@@ -17,6 +17,6 @@ ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
 
-RUN ./build-common.sh build_apisix_openresty_rpm \
+RUN ./build-common.sh build_apisix_base_rpm \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh
