@@ -4,7 +4,7 @@ ARG IMAGE_TAG="3.12"
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
-COPY build-apisix-openresty.sh /tmp/build-apisix-openresty.sh
+COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
 
