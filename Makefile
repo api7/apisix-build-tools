@@ -144,14 +144,6 @@ package-apisix-rpm:
 package-apisix-deb:
 	$(call package,apisix,deb)
 
-
-### build apisix image base alpine:
-.PHONY: build-apisix-alpine-image
-build-apisix-alpine-image:
-	$(call build,apisix-openresty,apisix-openresty,apk,$(local_code_path))
-	$(call build-image,apisix,apisix,alpine,apisix-openresty,$(openresty_version),$(local_code_path))
-
-
 ### build dashboard:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
@@ -238,6 +230,9 @@ else ifeq ($(app)_$(type),apisix-base_deb)
 package: build-fpm
 package: build-apisix-base-deb
 package: package-apisix-base-deb
+
+else ifeq ($(app)_$(type),apisix-base_apk)
+package: build-apisix-base-apk
 
 else ifeq ($(checkout), 0)
 $(info  you have to input a checkout value!)
