@@ -221,10 +221,10 @@ build-fpm:
 endif
 
 ifeq ($(filter $(app),apisix dashboard apisix-base),)
-$(info  the app's value have to be apisix or dashboard!)
+$(info  the app's value have to be apisix, dashboard or apisix-base!)
 
-else ifeq ($(filter $(type),rpm deb),)
-$(info  the type's value have to be rpm or deb!)
+else ifeq ($(filter $(type),rpm deb apk),)
+$(info  the type's value have to be rpm, deb or apk!)
 
 else ifeq ($(version), 0)
 $(info  you have to input a version value!)
