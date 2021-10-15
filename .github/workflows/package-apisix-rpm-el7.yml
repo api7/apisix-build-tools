@@ -50,10 +50,10 @@ jobs:
         run: |
           docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
-      - name: install dependencies in container
+      - name: enable apisix repository in container
         run: |
-          docker exec centos7Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-          docker exec centos7Instance bash -c "yum -y install openresty openresty-openssl111-devel"
+          docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
+          docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
       - name: install APISIX(-remote) by rpm in container
         run: |
