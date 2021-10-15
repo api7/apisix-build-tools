@@ -79,6 +79,8 @@ install_etcd() {
 }
 
 install_apisix() {
+    # show awk version
+    awk --version
     mkdir -p /tmp/build/output/apisix/usr/bin/
     cd /apisix
     # remove useless code for build
