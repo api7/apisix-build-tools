@@ -29,6 +29,17 @@ or_ver="1.19.3.2"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz
 
+if [ "$repo" == wasm-nginx-module ]; then
+    cp -r "$prev_workdir" .
+else
+    git clone --depth=1 $wasm_nginx_module_ver \
+        https://github.com/api7/wasm-nginx-module.git
+fi
+
+cd wasm-nginx-module || exit 1
+./install-wasmtime.sh
+cd ..
+
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
 else
@@ -50,12 +61,7 @@ else
         https://github.com/api7/apisix-nginx-module.git
 fi
 
-if [ "$repo" == wasm-nginx-module ]; then
-    cp -r "$prev_workdir" .
-else
-    git clone --depth=1 $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git
-fi
+
 
 if [ "$repo" == lua-var-nginx-module ]; then
     cp -r "$prev_workdir" .
@@ -72,9 +78,6 @@ cd apisix-nginx-module/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
-cd wasm-nginx-module || exit 1
-./install-wasmtime.sh
-cd ..
 
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
