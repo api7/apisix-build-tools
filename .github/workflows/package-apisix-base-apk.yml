@@ -1,4 +1,4 @@
-name: package apisix-base rpm for el7
+name: package apisix-base apk
 
 on:
   push:
