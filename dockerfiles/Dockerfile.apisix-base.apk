@@ -36,7 +36,6 @@ RUN apk add --no-cache --virtual .build-deps \
         perl-dev \
         readline-dev \
         zlib-dev \
-        gcompat libc6-compat \
     && apk add --no-cache \
         gd \
         geoip \
@@ -47,7 +46,13 @@ RUN apk add --no-cache --virtual .build-deps \
         sudo \
         curl \
         build-base \
-        libstdc++ 
+        libstdc++
+
+# install latest Rust to build wasmtime
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rust-installer.sh \
+    && chmod +x ./rust-installer.sh \
+    && ./rust-installer.sh -y \
+    && rm rust-installer.sh
 
 RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
@@ -81,6 +86,7 @@ RUN cd /tmp \
 
 RUN cd /tmp \
     && curl --version \
+    && source /root/.cargo/env \
     && ./build-common.sh build_apisix_base_apk
 
 CMD /bin/sh
