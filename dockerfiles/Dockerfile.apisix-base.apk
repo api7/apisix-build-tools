@@ -54,7 +54,8 @@ RUN cd /tmp \
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-${GLIBC_VER}.apk && \
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-bin-${GLIBC_VER}.apk && \
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-i18n-${GLIBC_VER}.apk && \
-    apk add glibc-bin-${GLIBC_VER}.apk glibc-i18n-${GLIBC_VER}.apk glibc-${GLIBC_VER}.apk
+    apk add glibc-bin-${GLIBC_VER}.apk glibc-i18n-${GLIBC_VER}.apk glibc-${GLIBC_VER}.apk && \
+    /usr/glibc-compat/sbin/ldconfig
 
 RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
