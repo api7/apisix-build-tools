@@ -48,13 +48,11 @@ RUN apk add --no-cache --virtual .build-deps \
         build-base \
         libstdc++ 
 
-RUN cd /tmp \
-    && GLIBC_VER="2.29-r0" && \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-${GLIBC_VER}.apk && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-bin-${GLIBC_VER}.apk && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-i18n-${GLIBC_VER}.apk && \
-    apk add glibc-bin-${GLIBC_VER}.apk glibc-i18n-${GLIBC_VER}.apk glibc-${GLIBC_VER}.apk
+# install latest Rust to build wasmtime
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rust-installer.sh \
+    && chmod +x ./rust-installer.sh \
+    && ./rust-installer.sh -y \
+    && rm rust-installer.sh
 
 RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
@@ -88,6 +86,7 @@ RUN cd /tmp \
 
 RUN cd /tmp \
     && curl --version \
+    && source /root/.cargo/env \
     && ./build-common.sh build_apisix_base_apk
 
 CMD /bin/sh
