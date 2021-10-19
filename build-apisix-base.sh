@@ -27,7 +27,7 @@ cd "$workdir" || exit 1
 
 or_ver="1.19.3.2"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
-tar -zxvpf openresty-${or_ver}.tar.gz
+tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" .
