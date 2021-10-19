@@ -29,26 +29,6 @@ or_ver="1.19.3.2"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
-if [ "$repo" == wasm-nginx-module ]; then
-    cp -r "$prev_workdir" .
-else
-    git clone --depth=1 $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git
-fi
-
-cd wasm-nginx-module || exit 1
-wget https://github.com/bytecodealliance/wasmtime/releases/download/v0.30.0/wasmtime-v0.30.0-x86_64-linux-c-api.tar.xz
-tar -xvf ./wasmtime-v0.30.0-x86_64-linux-c-api.tar.xz
-mv wasmtime-v0.30.0-x86_64-linux-c-api wasmtime-c-api
-git clone --depth=1 https://github.com/bytecodealliance/wasmtime -b v0.30.0 \
-    && cd wasmtime \
-    && git submodule update --init \
-    && RUSTFLAGS="-C target-feature=-crt-static" \
-        cargo build --release --manifest-path crates/c-api/Cargo.toml \
-    && mv target/release/libwasmtime.* ../wasmtime-c-api/lib \
-    && cd ..
-cd ..
-
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
 else
@@ -70,7 +50,12 @@ else
         https://github.com/api7/apisix-nginx-module.git
 fi
 
-
+if [ "$repo" == wasm-nginx-module ]; then
+    cp -r "$prev_workdir" .
+else
+    git clone --depth=1 $wasm_nginx_module_ver \
+        https://github.com/api7/wasm-nginx-module.git
+fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
     cp -r "$prev_workdir" .
@@ -87,6 +72,9 @@ cd apisix-nginx-module/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
+cd wasm-nginx-module || exit 1
+./install-wasmtime.sh
+cd ..
 
 version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
