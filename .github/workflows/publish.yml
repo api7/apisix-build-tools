@@ -1,0 +1,119 @@
+name: Build and Publish Package
+
+on:
+  create
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish_apisix:
+    name: Build and Publish RPM Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.5
+        with:
+          submodules: recursive
+
+      - name: Extract Tags name
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: tag_env
+        shell: bash
+        run: |
+          echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
+
+      - name: Extract Tags Type
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: tag_type
+        shell: bash
+        run: |
+          echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+
+      - name: Build apisix RPM Package
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        env: 
+          APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+        run: |
+          # build apisix
+          make package type=rpm app=apisix checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
+          mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ./
+
+      - name: Build apisix-base RPM Package
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        env: 
+          APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+        run: |
+          # build apisix-base
+          echo ${{ steps.tag_env.outputs.version}}
+          echo ${{ steps.tag_type.outputs.version}}
+          make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=7
+          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.el7.x86_64.rpm ./
+
+      - name: Build apisix-dashboard RPM Package
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
+        env: 
+          APISIX_DASHBOARD_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+        run: |
+          # build apisix dashboard
+          make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
+          mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el7.x86_64.rpm ./
+
+      - name: Upload apisix Artifact
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "./apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+
+      - name: Upload apisix-base Artifact
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "./apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+
+      - name: Upload apisix-dashboard Artifact
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+
+      - name: Push apisix RPM Package to Aliyun OSS
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        run: |
+          echo "[Credentials]" >> /tmp/ossutilconfig
+          echo "language=EN" >> /tmp/ossutilconfig
+          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
+          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
+          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
+          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
+          chmod 755 ossutil64
+          ./ossutil64 cp -f ./apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
+
+      - name: Push apisix-base RPM Package to Aliyun OSS
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        run: |
+          echo "[Credentials]" >> /tmp/ossutilconfig
+          echo "language=EN" >> /tmp/ossutilconfig
+          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
+          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
+          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
+          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
+          chmod 755 ossutil64
+          ./ossutil64 cp -f ./apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
+
+      - name: Push apisix-dashboard RPM Package to Aliyun OSS
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
+        run: |
+          echo "[Credentials]" >> /tmp/ossutilconfig
+          echo "language=EN" >> /tmp/ossutilconfig
+          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
+          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
+          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
+          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
+          chmod 755 ossutil64
+          ./ossutil64 cp -f ./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
