@@ -31,10 +31,16 @@ build_apisix_base_deb() {
     ./build-apisix-base.sh
 }
 
+build_apisix_base_apk() {
+    export_openresty_variables
+    ./build-apisix-base.sh
+}
+
 export_openresty_variables() {
     export openssl_prefix=/usr/local/openresty/openssl111
     export zlib_prefix=/usr/local/openresty/zlib
     export pcre_prefix=/usr/local/openresty/pcre
+    export OR_PREFIX=/usr/local/openresty
 
     export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include"
     export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
@@ -48,5 +54,8 @@ build_apisix_base_rpm)
     ;;
 build_apisix_base_deb)
     build_apisix_base_deb
+    ;;
+build_apisix_base_apk)
+    build_apisix_base_apk
     ;;
 esac
