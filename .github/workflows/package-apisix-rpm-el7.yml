@@ -38,13 +38,15 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=2.7 checkout=release/2.7 image_base=centos image_tag=7 artifact=apisix-remote
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 artifact=apisix-remote
+          make package type=rpm app=apisix version=2.10.1 checkout=release/2.10.1 image_base=centos image_tag=7 artifact=apisix
 
-      - name: packaging APISIX(-local) with local code
-        run: |
-          git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
+      - name: Publish Artifact - apisix-2.10.1
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: apisix-2.10.1-0.el7.x86_64.rpm
+          path: |
+            ./output/apisix-2.10.1-0.el7.x86_64.rpm
+          retention-days: 1
 
       - name: run centos7 docker and mapping rpm into container
         run: |
@@ -55,12 +57,12 @@ jobs:
           docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
           docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
-      - name: install APISIX(-remote) by rpm in container
+      - name: install APISIX by rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-remote-master-0.el7.x86_64.rpm"
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-2.10.1-0.el7.x86_64.rpm"
           docker exec centos7Instance bash -c "apisix start"
 
-      - name: check and ensure APISIX(-remote) is installed
+      - name: check and ensure APISIX is installed
         run: |
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
           if [ ! $code -eq 200 ]; then
@@ -71,17 +73,4 @@ jobs:
       - name: stop and uninstall APISIX(-remote)
         run: |
           docker exec centos7Instance bash -c "pkill -f nginx"
-          docker exec centos7Instance bash -c "yum -y erase apisix-remote-master"
-
-      - name: install APISIX(-local) by rpm in container
-        run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
-
-      - name: check and ensure APISIX(-local) is installed
-        run: |
-          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
-          if [ ! $code -eq 200 ]; then
-              echo "failed: failed to install Apache APISIX by rpm"
-              exit 1
-          fi
+          docker exec centos7Instance bash -c "yum -y erase apisix"
