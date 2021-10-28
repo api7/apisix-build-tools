@@ -11,6 +11,7 @@ jobs:
   publish_apisix:
     name: Build and Publish RPM Package
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Check out code
