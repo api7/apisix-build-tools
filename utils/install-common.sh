@@ -78,6 +78,19 @@ install_etcd() {
     tar -zxvf etcd-"${RUNNING_ETCD_VERSION}"-linux-amd64.tar.gz
 }
 
+version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; }
+
+is_newer_version() {
+    if [ "${checkout_v}" = "master" -o "${checkout_v:0:7}" = "release" ];then
+		return 0
+	fi
+	if [ "${checkout_v:0:1}" = "v" ];then
+		version_gt "${checkout_v:1}" "2.2"
+	else
+		version_gt "${checkout_v}" "2.2"
+	fi
+}
+
 install_apisix() {
     # show awk version
     awk --version
@@ -94,7 +107,7 @@ install_apisix() {
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     # modify the apisix entry shell to be compatible with version 2.2 and 2.3
-    if [ "${checkout_v}" = "master" ] || [ "${checkout_v:0:1}" != "v" -a "${checkout_v}" \> "2.2" ] || [ "${checkout_v:0:1}" = "v" -a "${checkout_v:1}" \> "2.2" ]; then
+    if is_newer_version "${checkout_v}"; then
         echo 'use shell '
     else
         bin='#! /usr/local/openresty/luajit/bin/luajit\npackage.path = "/usr/local/apisix/?.lua;" .. package.path'
@@ -102,7 +115,7 @@ install_apisix() {
     fi
     cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/
     mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/
-    if [ "${checkout_v}" = "master" ] || [ "${checkout_v:0:1}" != "v" -a "${checkout_v}" \> "2.2" ] || [ "${checkout_v:0:1}" = "v" -a "${checkout_v:1}" \> "2.2" ]; then
+    if is_newer_version "${checkout_v}"; then
         bin='package.path = "/usr/local/apisix/?.lua;" .. package.path'
         sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua
     else
