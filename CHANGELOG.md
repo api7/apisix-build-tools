@@ -20,12 +20,29 @@
 
 ## Table of Contents
 
+- [2.5.0](#250)
 - [2.4.0](#240)
 - [2.3.0](#230)
 - [2.2.1](#221)
 - [2.2.0](#220)
 - [2.1.0](#210)
 - [2.0.0](#200)
+
+## 2.5.0
+
+This release contains serveral new features and important bugfixes.
+
+### New Feature
+- feat: Update apisix-build-tools workflow: add parameter "timeout-minutes: 60" in all files [#124](https://github.com/api7/apisix-build-tools/pull/124)
+- ci: auto build and push apisix-base image [#118](https://github.com/api7/apisix-build-tools/pull/118)
+- ci(workflow): auto build and publish rpm package [#115](https://github.com/api7/apisix-build-tools/pull/115)
+- feat: build apisix-base docker image [#114](https://github.com/api7/apisix-build-tools/pull/114)
+- feat: release wasm-nginx-module 0.1.0 [#116](https://github.com/api7/apisix-build-tools/pull/116)
+- chore: Use apache apisix rpm repository [#111](https://github.com/api7/apisix-build-tools/pull/111)
+
+### Bugfix
+- ci: Fix incorrect shebang in rpm package for 2.10.x [#125](https://github.com/api7/apisix-build-tools/pull/125)
+- fix: Add ldap dev dependency for building apisix [#112](https://github.com/api7/apisix-build-tools/pull/112)
 
 ## 2.4.0
 
@@ -46,14 +63,14 @@ This release mainly contains two new features.
 
 ## 2.2.1
 
- This release mainly contains two important bugfixes, as well as a feature.
+This release mainly contains two important bugfixes, as well as a feature.
 
- ### New Feature
- - feat: add apisix-openresty deb support [#92](https://github.com/api7/apisix-build-tools/pull/92)
+### New Feature
+- feat: add apisix-openresty deb support [#92](https://github.com/api7/apisix-build-tools/pull/92)
 
- ### Bugfix
- - ci: Fix no setting config files [95](https://github.com/api7/apisix-build-tools/pull/95)
- - fix: failed to get metalink from epel [#93](https://github.com/api7/apisix-build-tools/pull/93)
+### Bugfix
+- ci: Fix no setting config files [95](https://github.com/api7/apisix-build-tools/pull/95)
+- fix: failed to get metalink from epel [#93](https://github.com/api7/apisix-build-tools/pull/93)
 
 ## 2.2.0
 
