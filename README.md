@@ -8,7 +8,7 @@
 ## Parameters
 |Parameter      |Required   |Description        |Example|
 |---------|---------|----|-----------|
-|type     |True |it can be `deb` or `rpm` |type=rpm|
+|type     |True |it can be `deb` or `rpm` or `apk`|type=rpm|
 |app      |True |it can be `apisix`, `dashboard` or `apisix-base`|app=apisix|
 |checkout   |True |the code branch or tag of the app which you want to package|checkout=2.1 or checkout=v2.1|
 |version  |True |the version of the package|version=10.10|
@@ -73,6 +73,14 @@ Packaging an Ubuntu 20.04 package of Apache APISIX's OpenResty distribution
 make package type=deb app=apisix-base version=1.0.0
 ls output/
 apisix-base_1.0.0-0~ubuntu20.04_amd64.deb
+```
+
+Packaging an docker image of Apache APISIX's OpenResty distribution
+```sh
+make package version=1.19.3.2.1 image_base=alpine image_tag=3.12 app=apisix-base type=apk
+docker images
+REPOSITORY               TAG         
+apache/apisix-base-apk   1.19.3.2.1   
 ```
 
 ## Details
