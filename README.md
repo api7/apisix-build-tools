@@ -75,7 +75,7 @@ ls output/
 apisix-base_1.0.0-0~ubuntu20.04_amd64.deb
 ```
 
-Packaging an docker image of Apache APISIX's OpenResty distribution
+Packaging an Alpine docker image of Apache APISIX's OpenResty distribution
 ```sh
 make package version=1.19.3.2.1 image_base=alpine image_tag=3.12 app=apisix-base type=apk
 docker images
