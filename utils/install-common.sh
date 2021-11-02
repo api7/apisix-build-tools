@@ -202,4 +202,10 @@ install_dashboard_dependencies_deb)
 install_dashboard)
     install_dashboard
     ;;
+install_lua)
+    install_lua
+    ;;
+install_luarocks)
+    install_luarocks
+    ;;
 esac

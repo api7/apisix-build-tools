@@ -4,6 +4,7 @@ ARG IMAGE_TAG="3.12"
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
+COPY ./utils/install-common.sh /tmp/install-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
@@ -90,6 +91,8 @@ RUN cd /tmp \
     && curl --version \
     && source /root/.cargo/env \
     && ./build-common.sh build_apisix_base_apk \
+    && ./install-common.sh install_lua \
+    && ./install-common.sh install_luarocks \
     && /usr/local/openresty/bin/openresty -V
 
 CMD /bin/sh
