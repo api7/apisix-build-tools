@@ -9,11 +9,16 @@ on:
       - '*.md'
   pull_request:
     branches: [ master ]
+    types: [ labeled, synchronize ]
     paths-ignore:
       - '*.md'
+concurrency: 
+  group: base-apk-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'base-apk') }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:

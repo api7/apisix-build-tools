@@ -9,13 +9,19 @@ on:
       - '*.md'
   pull_request:
     branches: [ master ]
+    types: [ labeled, synchronize ]
     paths-ignore:
       - '*.md'
   schedule:
     - cron: '0 0 * * *'
 
+concurrency: 
+  group: dashboard-rpm-el8-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard-rpm-el8') }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
