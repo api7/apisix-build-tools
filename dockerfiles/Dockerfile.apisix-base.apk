@@ -40,6 +40,7 @@ RUN apk add --no-cache --virtual .build-deps \
         perl-dev \
         readline-dev \
         zlib-dev \
+        unzip \
     && apk add --no-cache \
         gd \
         geoip \
