@@ -26,6 +26,8 @@ LABEL resty_pcre_version="${RESTY_PCRE_VERSION}"
 LABEL resty_eval_pre_configure="${RESTY_EVAL_PRE_CONFIGURE}"
 
 
+ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
+
 RUN apk add --no-cache --virtual .build-deps \
         build-base \
         coreutils \
@@ -38,6 +40,7 @@ RUN apk add --no-cache --virtual .build-deps \
         perl-dev \
         readline-dev \
         zlib-dev \
+        unzip \
     && apk add --no-cache \
         gd \
         geoip \
