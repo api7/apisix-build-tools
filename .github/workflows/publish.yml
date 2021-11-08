@@ -39,7 +39,7 @@ jobs:
           APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix
-          make package type=rpm app=apisix checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
           mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ./
 
       - name: Build apisix-base RPM Package
