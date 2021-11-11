@@ -13,7 +13,7 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="-b 1.0.0"
     mod_dubbo_ver="-b 1.0.0"
-    apisix_nginx_module_ver="-b 1.3.0"
+    apisix_nginx_module_ver="-b 1.3.1"
     wasm_nginx_module_ver="-b 0.1.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
