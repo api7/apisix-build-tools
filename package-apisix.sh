@@ -36,6 +36,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--iteration "$ITERATION" \
 	-d "$OPENRESTY >= $or_version" \
 	-d "$dep_pcre" \
+	-d "which" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 	--license "ASL 2.0" \
 	-C /tmp/build/output/apisix \
