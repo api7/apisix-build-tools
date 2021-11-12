@@ -10,6 +10,11 @@ if [ "$PACKAGE_TYPE" == "deb" ]
 then
 	dep_pcre="libpcre3"
 fi
+dep_which="which"
+if [ "$PACKAGE_TYPE" == "deb" ]
+then
+	dep_which="debianutils"
+fi
 
 # Determine the min version of openresty or apisix-base
 #	openresty >= 1.17.8.2
@@ -36,7 +41,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--iteration "$ITERATION" \
 	-d "$OPENRESTY >= $or_version" \
 	-d "$dep_pcre" \
-	-d "which" \
+	-d "$dep_which" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
 	--license "ASL 2.0" \
 	-C /tmp/build/output/apisix \
