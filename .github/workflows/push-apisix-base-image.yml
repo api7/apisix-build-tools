@@ -38,7 +38,7 @@ jobs:
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         run: |
           docker build -t api7/apisix-base:${{ steps.tag_env.outputs.version }} \
-            -f ./dockerfiles/Dockerfile.apisix-base.apk .
+            --build-arg VERSION=${{ steps.tag_env.outputs.version }} -f ./dockerfiles/Dockerfile.apisix-base.apk .
       
       - name: Push docker image
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
