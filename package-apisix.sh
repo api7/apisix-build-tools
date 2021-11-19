@@ -22,7 +22,7 @@ fi
 or_version="1.17.8.2"
 if [ "$OPENRESTY" == "apisix-base" ]
 then
-	or_version="1.19.3.2.0"
+	or_version="1.19.3.2.2"
 fi
 
 # Determine the name of artifact
