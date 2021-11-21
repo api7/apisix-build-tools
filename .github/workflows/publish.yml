@@ -10,7 +10,7 @@ concurrency:
 jobs:
   publish_apisix:
     name: Build and Publish RPM Package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     timeout-minutes: 60
 
     steps:
@@ -35,16 +35,17 @@ jobs:
 
       - name: Build apisix RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
-        env: 
+        env:
           APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix
           make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
           mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ./
+          echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
-        env: 
+        env:
           APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix-base
@@ -52,15 +53,17 @@ jobs:
           echo ${{ steps.tag_type.outputs.version}}
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=7
           mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.el7.x86_64.rpm ./
+          echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
-        env: 
+        env:
           APISIX_DASHBOARD_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix dashboard
           make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
           mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el7.x86_64.rpm ./
+          echo "TARGET_APP=apisix-dashboard" >> "$GITHUB_ENV"
 
       - name: Upload apisix Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
@@ -83,38 +86,48 @@ jobs:
           name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
           path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
-      - name: Push apisix RPM Package to Aliyun OSS
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+      - name: Sign RPM Package
+        env:
+          GPG_NAME: "APISIX Publisher"
+          GPG_MAIL: "<dev@apisix.apache.org>"
+          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
+          TARGET_APP: ${{ env.TARGET_APP }}
         run: |
-          echo "[Credentials]" >> /tmp/ossutilconfig
-          echo "language=EN" >> /tmp/ossutilconfig
-          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
-          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
-          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
-          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
-          chmod 755 ossutil64
-          ./ossutil64 cp -f ./apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
+          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
+          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
+          ./utils/publish-rpm.sh sign_target_app_rpm
+          date_tag=$(date +%Y%m%d)
+          echo "DATE_TAG=${date_tag}" >> "$GITHUB_ENV"
 
-      - name: Push apisix-base RPM Package to Aliyun OSS
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+      - name: Backup and rebuild RPM Repository
+        env:
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
+          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
+          TARGET_APP: ${{ env.TARGET_APP }}
+          DATE_TAG: ${{ env.DATE_TAG }}
         run: |
-          echo "[Credentials]" >> /tmp/ossutilconfig
-          echo "language=EN" >> /tmp/ossutilconfig
-          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
-          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
-          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
-          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
-          chmod 755 ossutil64
-          ./ossutil64 cp -f ./apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
+          ./utils/publish-rpm.sh backup_and_rebuild_repo
 
-      - name: Push apisix-dashboard RPM Package to Aliyun OSS
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
+      - name: Sign RPM Repository Metadata
+        env:
+          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
         run: |
-          echo "[Credentials]" >> /tmp/ossutilconfig
-          echo "language=EN" >> /tmp/ossutilconfig
-          echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
-          echo "accessKeyID=${{ secrets.ACCESS_KEY_ID }}" >> /tmp/ossutilconfig
-          echo "accessKeySecret=${{ secrets.ACCESS_KEY_SECRET }}" >> /tmp/ossutilconfig
-          wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
-          chmod 755 ossutil64
-          ./ossutil64 cp -f ./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm oss://apisix-repo/packages/centos/7/x86_64/ --config-file=/tmp/ossutilconfig
+          ./utils/publish-rpm.sh sign_repo_metadata
+
+      - name: Upload new RPM Repository
+        run: |
+          ./utils/publish-rpm.sh upload_new_repo
+
+      - name: Check download new RPM Package
+        env:
+          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
+          TARGET_APP: ${{ env.TARGET_APP }}
+        run: |
+          ./utils/publish-rpm.sh check_down_load_rpm
+
+      - name: Remove backup RPM Repository
+        env:
+          DATE_TAG: ${{ env.DATE_TAG }}
+        run: |
+          ./utils/publish-rpm.sh rm_backup_repo
