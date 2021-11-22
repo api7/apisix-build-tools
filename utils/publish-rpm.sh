@@ -100,7 +100,7 @@ upload_new_repo() {
 
 check_down_load_rpm() {
     mkdir temp && cd temp
-    wget https://apisix-repo.oss-cn-shanghai.aliyuncs.com/packages/centos/7/x86_64/${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm
+    wget https://apisix-repo.oss-cn-shenzhen.aliyuncs.com/packages/centos/7/x86_64/${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm
     if [ ! -f ${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm ]; then
         echo "failed: download new ${TARGET_APP} rpm package"
         exit 1
