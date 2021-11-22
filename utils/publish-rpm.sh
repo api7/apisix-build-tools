@@ -63,7 +63,7 @@ backup_and_rebuild_repo() {
     download_ossutil64
 
     # backup origin repo
-    ./ossutil64 cp -r oss://tzs-apisix-repo/packages/centos/7/x86_64 oss://tzs-apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
+    ./ossutil64 cp -r oss://apisix-repo/packages/centos/7/x86_64 oss://apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
 
     # download origin repo
     ./ossutil64 cp -r oss://apisix-repo/packages/centos/7/x86_64 ./ --config-file=/tmp/ossutilconfig
@@ -110,7 +110,7 @@ check_down_load_rpm() {
 
 
 rm_backup_repo() {
-    ./ossutil64 rm -r -f oss://tzs-apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
+    ./ossutil64 rm -r -f oss://apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
 }
 
 
