@@ -17,5 +17,6 @@ ENV ARTIFACT=${ARTIFACT}
 COPY --from=APISIX /tmp/build/output /tmp/build/output
 COPY --from=APISIX /tmp/dist /tmp/dist
 COPY package-apisix-dashboard.sh /package-apisix-dashboard.sh
+COPY usr /usr
 
 RUN /package-apisix-dashboard.sh
