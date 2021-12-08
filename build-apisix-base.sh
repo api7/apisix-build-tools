@@ -11,9 +11,9 @@ if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
-    ngx_multi_upstream_module_ver="-b 1.0.0"
-    mod_dubbo_ver="-b 1.0.0"
-    apisix_nginx_module_ver="-b 1.3.1"
+    ngx_multi_upstream_module_ver="-b 1.0.1"
+    mod_dubbo_ver="-b 1.0.1"
+    apisix_nginx_module_ver="-b 1.4.0"
     wasm_nginx_module_ver="-b 0.2.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
@@ -25,7 +25,7 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-or_ver="1.19.3.2"
+or_ver="1.19.9.1"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
