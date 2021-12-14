@@ -24,7 +24,6 @@ image_tag="7"
 iteration=0
 local_code_path=0
 openresty="openresty"
-openresty_version="1.19.3.2.0"
 artifact="0"
 apisix_repo="https://github.com/apache/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
