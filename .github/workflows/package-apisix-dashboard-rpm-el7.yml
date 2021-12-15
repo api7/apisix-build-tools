@@ -129,8 +129,8 @@ jobs:
         run: |
           sudo podman run -d --name test --systemd true --net host centos:7 /usr/lib/systemd/systemd
           sudo podman cp apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm test:/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
-          sudo podman exec test "rpm -ivh /apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm"
-          sudo podman exec test "systemctl start apisix-dashboard"
+          sudo podman exec test rpm -ivh /apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          sudo podman exec test systemctl start apisix-dashboard
 
       - name: Test APISIX Dashboard status
         run: |
