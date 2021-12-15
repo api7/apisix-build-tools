@@ -92,7 +92,7 @@ jobs:
           mv output/apisix-dashboard-local-${DASHBOARD_VERSION}-0.el7.x86_64.rpm output/apisix-dashboard-${DASHBOARD_VERSION}-0.el7.x86_64.rpm
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v2
         with:
           name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
           path: output/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
@@ -101,6 +101,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build
+    env:
+      DASHBOARD_VERSION: 2.8
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -119,17 +121,16 @@ jobs:
           sudo apt install podman
 
       - name: Download artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/download-artifact@v2
         with:
           name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
 
       - name: Start CentOS 7 container
         run: |
-          sudo su
-          podman run -d --name test --systemd true --net host centos:7 /usr/lib/systemd/systemd
-          podman cp apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm test:/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
-          podman exec test "rpm -ivh /apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm"
-          podman exec test "systemctl start apisix-dashboard"
+          sudo podman run -d --name test --systemd true --net host centos:7 /usr/lib/systemd/systemd
+          sudo podman cp apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm test:/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          sudo podman exec test "rpm -ivh /apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm"
+          sudo podman exec test "systemctl start apisix-dashboard"
 
       - name: Test APISIX Dashboard status
         run: |
