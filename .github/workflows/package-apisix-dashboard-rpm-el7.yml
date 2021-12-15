@@ -100,10 +100,40 @@ jobs:
           if-no-files-found: error
   test:
     runs-on: ubuntu-latest
+    services:
+      etcd:
+        image: bitnami/etcd:3.4.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ALLOW_NONE_AUTHENTICATION: yes
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
     steps:
-      - name: Install Podman
+      - name: Install podman
         run: |
           echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/testing/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:testing.list
           curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:testing/xUbuntu_20.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_testing.gpg > /dev/null
           sudo apt update
           sudo apt install podman
+
+      - name: Download artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+
+      - name: Start CentOS 7 container
+        run: |
+          sudo su
+          podman run -d --name test --systemd true --net host centos:7 /usr/lib/systemd/systemd
+          podman cp apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm test:/apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
+          podman exec test "rpm -ivh /apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm"
+          podman exec test "systemctl start apisix-dashboard"
+
+      - name: Test APISIX Dashboard status
+        run: |
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9000)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to install Apache APISIX Dashboard by rpm"
+              exit 1
+          fi
