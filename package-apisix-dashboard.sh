@@ -23,7 +23,9 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--license "ASL 2.0" \
 	-C /tmp/build/output/apisix/dashboard/ \
 	-p /output/ \
-	--url 'https://github.com/apache/apisix-dashboard'
+	--url 'https://github.com/apache/apisix-dashboard' \
+	--config-files usr/lib/systemd/system/apisix-dashboard.service \
+	--config-files usr/local/apisix/dashboard/conf/conf.yaml
 
 # Rename deb file with adding $DIST section
 if [ "$PACKAGE_TYPE" == "deb" ]
