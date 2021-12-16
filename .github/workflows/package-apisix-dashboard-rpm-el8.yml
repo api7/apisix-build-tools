@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      DASHBOARD_VERSION: 2.8
+      DASHBOARD_VERSION: "2.10"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
