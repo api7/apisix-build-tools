@@ -9,6 +9,14 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     wasm_nginx_module_ver=""
     lua_var_nginx_module_ver=""
     debug_args="--with-debug"
+    add_module_args="
+    --add-module=../mod_dubbo \
+    --add-module=../ngx_multi_upstream_module \
+    --add-module=../apisix-nginx-module \
+    --add-module=../apisix-nginx-module/src/stream \
+    --add-module=../wasm-nginx-module \
+    --add-module=../lua-var-nginx-module \
+    "
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
     ngx_multi_upstream_module_ver="-b 1.0.1"
@@ -17,6 +25,13 @@ else
     wasm_nginx_module_ver="-b 0.3.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
+    add_module_args="
+    --add-module=../mod_dubbo \
+    --add-module=../ngx_multi_upstream_module \
+    --add-module=../apisix-nginx-module \
+    --add-module=../wasm-nginx-module \
+    --add-module=../lua-var-nginx-module \
+    "
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
@@ -86,12 +101,8 @@ cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_BASE_VER=$version $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
-    --add-module=../mod_dubbo \
-    --add-module=../ngx_multi_upstream_module \
-    --add-module=../apisix-nginx-module \
-    --add-module=../wasm-nginx-module \
-    --add-module=../lua-var-nginx-module \
     $debug_args \
+    $add_module_args \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
