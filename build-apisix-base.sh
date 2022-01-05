@@ -2,7 +2,7 @@
 set -euo pipefail
 set -x
 
-if [ $# -gt 0 ] && [ "$1" == "latest" ]; then
+if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
     apisix_nginx_module_ver=""
