@@ -18,8 +18,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      BUILD_APISIX_BASE_VERSION: 1.19.3.2.0
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -42,11 +40,11 @@ jobs:
       - name: packaging APISIX
         run: |
           make package type=rpm app=apisix version=2.7 checkout=release/2.7 image_base=centos image_tag=7 openresty=apisix-base
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 openresty=apisix-base
+          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 openresty=apisix-base-latest
 
       - name: packaging apisix-base
         run: |
-          make package type=rpm app=apisix-base version=${BUILD_APISIX_BASE_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix-base version=latest image_base=centos image_tag=7
 
       - name: run centos7 docker and mapping rpm into container
         run: |
@@ -59,6 +57,7 @@ jobs:
 
       - name: install APISIX which depens on apisix-base by rpm in container
         run: |
+          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-base-latest-0.el7.x86_64.rpm"
           docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-master-0.el7.x86_64.rpm"
           docker exec centos7Instance bash -c "apisix start"
 
