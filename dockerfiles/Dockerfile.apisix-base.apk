@@ -97,8 +97,17 @@ RUN cd /tmp \
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
 
-ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
-
 COPY --from=build /usr/local/openresty /usr/local/openresty
+
+RUN apk add --no-cache \
+        gd \
+        geoip \
+        libxslt \
+        zlib \
+        libstdc++ \
+    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
+    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.d
+
+ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
 CMD /bin/sh
