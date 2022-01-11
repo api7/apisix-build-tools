@@ -1,12 +1,13 @@
 ARG IMAGE_BASE="alpine"
-ARG IMAGE_TAG="3.12"
+ARG IMAGE_TAG="3.14"
 
-FROM ${IMAGE_BASE}:${IMAGE_TAG}
+FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
-COPY ./utils/build-common.sh /tmp/build-common.sh
-COPY ./utils/install-common.sh /tmp/install-common.sh
-COPY build-apisix-base.sh /tmp/build-apisix-base.sh
-COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
+COPY ./utils/build-common.sh \
+     ./utils/install-common.sh \
+     build-apisix-base.sh \
+     ./utils/determine-dist.sh \
+     /tmp/
 
 
 ARG RESTY_OPENSSL_VERSION="1.1.1g"
@@ -41,23 +42,18 @@ RUN apk add --no-cache --virtual .build-deps \
         readline-dev \
         zlib-dev \
         unzip \
+        git \
+        sudo \
+        bash \
     && apk add --no-cache \
         gd \
         geoip \
         libxslt \
         zlib \
-        bash \
-        git \
-        sudo \
-        curl \
-        build-base \
         libstdc++
 
 # install latest Rust to build wasmtime
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rust-installer.sh \
-    && chmod +x ./rust-installer.sh \
-    && ./rust-installer.sh -y \
-    && rm rust-installer.sh
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
@@ -97,5 +93,12 @@ RUN cd /tmp \
     && ./install-common.sh install_lua \
     && ./install-common.sh install_luarocks \
     && /usr/local/openresty/bin/openresty -V
+
+
+FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
+
+ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
+
+COPY --from=build /usr/local/openresty /usr/local/openresty
 
 CMD /bin/sh
