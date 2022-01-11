@@ -60,14 +60,14 @@ install_openresty_rpm() {
 
 install_luarocks() {
     # install luarocks
-    wget https://github.com/luarocks/luarocks/archive/v3.4.0.tar.gz
-    tar -xf v3.4.0.tar.gz
-    cd luarocks-3.4.0 || exit
+    wget https://github.com/luarocks/luarocks/archive/v3.8.0.tar.gz
+    tar -xf v3.8.0.tar.gz
+    cd luarocks-3.8.0 || exit
     ./configure --with-lua=/usr/local --with-lua-include=/usr/local/include >build.log 2>&1 || (cat build.log && exit 1)
     make build >build.log 2>&1 || (cat build.log && exit 1)
     make install >build.log 2>&1 || (cat build.log && exit 1)
     cd .. || exit
-    rm -rf luarocks-3.4.0
+    rm -rf luarocks-3.8.0
     mkdir ~/.luarocks || true
     luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib
     luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
