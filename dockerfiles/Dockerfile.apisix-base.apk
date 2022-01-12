@@ -29,27 +29,26 @@ LABEL resty_eval_pre_configure="${RESTY_EVAL_PRE_CONFIGURE}"
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
-RUN apk add --no-cache --virtual .build-deps \
+RUN apk add --no-cache \
         build-base \
         coreutils \
         curl \
+        gd \
         gd-dev \
+        geoip \
         geoip-dev \
+        libxslt \
         libxslt-dev \
         linux-headers \
         make \
         perl-dev \
         readline-dev \
+        zlib \
         zlib-dev \
         unzip \
         git \
         sudo \
         bash \
-    && apk add --no-cache \
-        gd \
-        geoip \
-        libxslt \
-        zlib \
         libstdc++
 
 # install latest Rust to build wasmtime
