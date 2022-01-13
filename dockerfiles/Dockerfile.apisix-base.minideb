@@ -96,6 +96,7 @@ RUN echo ${TARGETARCH} \
     && ./build-common.sh build_apisix_base_minideb \
     && ./install-common.sh install_lua \
     && ./install-common.sh install_luarocks \
+    && rm -f /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
     && /usr/local/openresty/bin/openresty -V
 
 FROM bitnami/minideb:bullseye as prod
@@ -105,8 +106,7 @@ COPY --from=build /usr/local/openresty /usr/local/openresty
 RUN install_packages libgd3 \
                      libgeoip1 \
                      libxslt1.1 \
-                     zlib1g \
-    && rm -f /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a
+                     zlib1g
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
