@@ -31,6 +31,11 @@ build_apisix_base_deb() {
     ./build-apisix-base.sh
 }
 
+build_apisix_base_minideb() {
+    export_openresty_variables
+    ./build-apisix-base.sh
+}
+
 build_apisix_base_apk() {
     export_openresty_variables
     ./build-apisix-base.sh
@@ -54,6 +59,9 @@ build_apisix_base_rpm)
     ;;
 build_apisix_base_deb)
     build_apisix_base_deb
+    ;;
+build_apisix_base_minideb)
+    build_apisix_base_minideb
     ;;
 build_apisix_base_apk)
     build_apisix_base_apk
