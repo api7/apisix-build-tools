@@ -45,4 +45,7 @@ jobs:
         run: |
           docker buildx build -t api7/apisix-base:${{ steps.tag_env.outputs.version }} --push \
             --build-arg VERSION=${{ steps.tag_env.outputs.version }} --platform linux/amd64,linux/arm64 \
+            -f ./dockerfiles/Dockerfile.apisix-base.apk .
+          docker buildx build -t api7/apisix-base:${{ steps.tag_env.outputs.version }}-debian --push \
+            --build-arg VERSION=${{ steps.tag_env.outputs.version }} --platform linux/amd64,linux/arm64 \
             -f ./dockerfiles/Dockerfile.apisix-base.minideb .
