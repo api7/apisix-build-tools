@@ -106,7 +106,7 @@ RUN install_packages libgd3 \
                      libgeoip1 \
                      libxslt1.1 \
                      zlib1g \
-    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a
+    && rm -f /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
