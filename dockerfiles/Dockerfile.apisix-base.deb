@@ -12,10 +12,12 @@ WORKDIR /tmp
 ARG VERSION
 ARG IMAGE_BASE
 ARG IMAGE_TAG
+ARG TARGETARCH
 
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
+ENV TARGETARCH=${TARGETARCH}
 
 RUN ./build-common.sh build_apisix_base_deb \
     # determine dist and write it into /tmp/dist file
