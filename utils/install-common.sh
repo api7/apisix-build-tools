@@ -16,29 +16,15 @@ install_apisix_dependencies_rpm() {
 
 install_dependencies_rpm() {
     # install basic dependencies
-    yum -y install wget tar gcc automake autoconf libtool make curl git which unzip
+    yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo
     yum -y install epel-release
     yum install -y yum-utils readline-dev readline-devel
-
-    # install lua 5.1 for compatible with openresty 1.17.8.2
-    install_lua
 }
 
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip libreadline-dev lsb-release gawk
-
-    # install lua 5.1 for compatible with openresty 1.17.8.2
-    install_lua
-}
-
-install_lua() {
-    wget http://www.lua.org/ftp/lua-5.1.4.tar.gz
-    tar -zxvf lua-5.1.4.tar.gz
-    cd lua-5.1.4/
-    make linux
-    make install
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip sudo libreadline-dev lsb-release gawk
 }
 
 install_openresty_deb() {
@@ -59,18 +45,9 @@ install_openresty_rpm() {
 }
 
 install_luarocks() {
-    # install luarocks
-    wget https://github.com/luarocks/luarocks/archive/v3.8.0.tar.gz
-    tar -xf v3.8.0.tar.gz
-    cd luarocks-3.8.0 || exit
-    ./configure --with-lua=/usr/local --with-lua-include=/usr/local/include >build.log 2>&1 || (cat build.log && exit 1)
-    make build >build.log 2>&1 || (cat build.log && exit 1)
-    make install >build.log 2>&1 || (cat build.log && exit 1)
-    cd .. || exit
-    rm -rf luarocks-3.8.0
-    mkdir ~/.luarocks || true
-    luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib
-    luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
+    wget https://raw.githubusercontent.com/apache/apisix/master/utils/linux-install-luarocks.sh
+    chmod +x linux-install-luarocks.sh
+    ./linux-install-luarocks.sh
 }
 
 install_etcd() {
@@ -201,9 +178,6 @@ install_dashboard_dependencies_deb)
     ;;
 install_dashboard)
     install_dashboard
-    ;;
-install_lua)
-    install_lua
     ;;
 install_luarocks)
     install_luarocks

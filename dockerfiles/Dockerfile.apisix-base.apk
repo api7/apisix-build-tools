@@ -89,8 +89,8 @@ RUN cd /tmp \
     && curl --version \
     && source /root/.cargo/env \
     && ./build-common.sh build_apisix_base_apk \
-    && ./install-common.sh install_lua \
-    && ./install-common.sh install_luarocks \
+    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
+    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.d \
     && /usr/local/openresty/bin/openresty -V
 
 
@@ -104,8 +104,13 @@ RUN apk add --no-cache \
         libxslt \
         zlib \
         libstdc++ \
-    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
-    && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.d
+    && apk add --no-cache --virtual .build-deps \
+        curl \
+        make \
+        sudo \
+    && curl https://raw.githubusercontent.com/apache/apisix/master/utils/linux-install-luarocks.sh -sL | sh - \
+    && apk del .build-deps
+
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
