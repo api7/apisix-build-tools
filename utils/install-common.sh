@@ -19,18 +19,12 @@ install_dependencies_rpm() {
     yum -y install wget tar gcc automake autoconf libtool make curl git which unzip
     yum -y install epel-release
     yum install -y yum-utils readline-dev readline-devel
-
-    # install lua 5.1 for compatible with openresty 1.17.8.2
-    install_lua
 }
 
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip libreadline-dev lsb-release gawk
-
-    # install lua 5.1 for compatible with openresty 1.17.8.2
-    install_lua
 }
 
 install_openresty_deb() {
@@ -48,6 +42,12 @@ install_openresty_rpm() {
     # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+}
+
+install_luarocks() {
+    wget https://raw.githubusercontent.com/apache/apisix/master/utils/linux-install-luarocks.sh
+    chmod +x linux-install-luarocks.sh
+    ./linux-install-luarocks.sh
 }
 
 install_etcd() {
@@ -178,9 +178,6 @@ install_dashboard_dependencies_deb)
     ;;
 install_dashboard)
     install_dashboard
-    ;;
-install_lua)
-    install_lua
     ;;
 install_luarocks)
     install_luarocks
