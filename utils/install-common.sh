@@ -33,14 +33,6 @@ install_dependencies_deb() {
     install_lua
 }
 
-install_lua() {
-    wget http://www.lua.org/ftp/lua-5.1.4.tar.gz
-    tar -zxvf lua-5.1.4.tar.gz
-    cd lua-5.1.4/
-    make linux
-    make install
-}
-
 install_openresty_deb() {
     # install openresty and openssl111
     DEBIAN_FRONTEND=noninteractive apt-get update
@@ -56,21 +48,6 @@ install_openresty_rpm() {
     # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
-}
-
-install_luarocks() {
-    # install luarocks
-    wget https://github.com/luarocks/luarocks/archive/v3.8.0.tar.gz
-    tar -xf v3.8.0.tar.gz
-    cd luarocks-3.8.0 || exit
-    ./configure --with-lua=/usr/local --with-lua-include=/usr/local/include >build.log 2>&1 || (cat build.log && exit 1)
-    make build >build.log 2>&1 || (cat build.log && exit 1)
-    make install >build.log 2>&1 || (cat build.log && exit 1)
-    cd .. || exit
-    rm -rf luarocks-3.8.0
-    mkdir ~/.luarocks || true
-    luarocks config variables.OPENSSL_LIBDIR /usr/local/openresty/openssl111/lib
-    luarocks config variables.OPENSSL_INCDIR /usr/local/openresty/openssl111/include
 }
 
 install_etcd() {
