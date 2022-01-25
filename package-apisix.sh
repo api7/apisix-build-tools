@@ -20,7 +20,7 @@ fi
 or_version="1.17.8.2"
 if [ "$OPENRESTY" == "apisix-base" ]
 then
-	or_version="1.19.9.1.0"
+	or_version="1.19.9.1.3"
 elif [ "$OPENRESTY" == "apisix-base-latest" ]
 then
     # For CI
