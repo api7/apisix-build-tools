@@ -5,6 +5,12 @@ mkdir /output
 dist=$(cat /tmp/dist)
 
 # Determine the dependencies
+dep_ldap="openldap-devel"
+if [ "$PACKAGE_TYPE" == "deb" ]
+then
+    # the pkg contains the so library could be libldap-2.5 or libldap-2.4-2
+	dep_ldap="libldap2-dev"
+fi
 dep_pcre="pcre"
 if [ "$PACKAGE_TYPE" == "deb" ]
 then
@@ -43,6 +49,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
 	-d "$OPENRESTY >= $or_version" \
+	-d "$dep_ldap" \
 	-d "$dep_pcre" \
 	-d "$dep_which" \
 	--description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
