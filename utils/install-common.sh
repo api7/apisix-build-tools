@@ -87,13 +87,8 @@ is_newer_version() {
 }
 
 install_apisix() {
-    # show awk version
-    awk --version
     mkdir -p /tmp/build/output/apisix/usr/bin/
     cd /apisix
-    # remove useless code for build
-    sed -i 's/url.*/url = ".\/apisix",/' rockspec/apisix-master-${iteration}.rockspec
-    sed -i 's/branch.*//' rockspec/apisix-master-${iteration}.rockspec
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
