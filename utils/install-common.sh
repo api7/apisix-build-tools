@@ -2,6 +2,17 @@
 set -euo pipefail
 set -x
 
+patch_centos8_repo() {
+    # switch yum repo source
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+
+    # rebuild repo cache
+    dnf install -y centos-release-stream
+    dnf swap -y centos-{linux,stream}-repos
+    dnf distro-sync -y
+}
+
 install_apisix_dependencies_deb() {
     install_dependencies_deb
     install_openresty_deb
@@ -9,12 +20,16 @@ install_apisix_dependencies_deb() {
 }
 
 install_apisix_dependencies_rpm() {
+    patch_centos8_repo
+
     install_dependencies_rpm
     install_openresty_rpm
     install_luarocks
 }
 
 install_dependencies_rpm() {
+    patch_centos8_repo
+
     # install basic dependencies
     yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo
     yum -y install epel-release
@@ -110,6 +125,8 @@ install_golang() {
 }
 
 install_dashboard_dependencies_rpm() {
+    patch_centos8_repo
+
     yum install -y wget curl git which gcc make
     curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
     sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_14.x)"
