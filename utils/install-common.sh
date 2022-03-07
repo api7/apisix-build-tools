@@ -3,6 +3,9 @@ set -euo pipefail
 set -x
 
 patch_centos8_repo() {
+    if [[ $(rpm --eval '%{centos_ver}') != "8" ]]; then
+        return
+    fi
     # switch yum repo source
     sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
     sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
