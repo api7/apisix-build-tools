@@ -49,6 +49,12 @@ jobs:
 
       - name: Install rpm package
         run: |
+          docker exec centos8Instance bash -c "sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*"
+          docker exec centos8Instance bash -c "sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*"
+          docker exec centos8Instance bash -c "dnf install -y centos-release-stream"
+          docker exec centos8Instance bash -c "dnf swap -y centos-{linux,stream}-repos"
+          docker exec centos8Instance bash -c "dnf distro-sync -y"
+          
           docker exec centos8Instance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.el8.x86_64.rpm"
           docker logs centos8Instance
           docker exec centos8Instance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
