@@ -2,6 +2,8 @@
 set -euo pipefail
 set -x
 
+version=${version:-0.0.0}
+
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver=""
     mod_dubbo_ver=""
@@ -76,7 +78,6 @@ cd wasm-nginx-module || exit 1
 ./install-wasmtime.sh
 cd ..
 
-version=${version:-0.0.0}
 cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
