@@ -12,7 +12,7 @@ if [ "$ARTIFACT" != "0" ]; then
 fi
 
 openresty_zlib_version="1.2.11-3"
-openresty_openssl111_version="1.1.1h-1"
+openresty_openssl111_version="1.1.1n"
 openresty_pcre_version="8.44-1"
 if [ "$PACKAGE_TYPE" == "deb" ]; then
     openresty_zlib_version="1.2.11-3~focal1"
