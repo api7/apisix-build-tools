@@ -91,7 +91,7 @@ install_apisix() {
     cd /apisix
 
     # patch rockspec file to install with local repo
-    sed -re '/^\s*source\s*=\s*\{$/{:src;n;s/^(\s*url\s*=).*$/\1".\/apisix",/;/\}/!bsrc}' \
+    sed -rie '/^\s*source\s*=\s*\{$/{:src;n;s/^(\s*url\s*=).*$/\1".\/apisix",/;/\}/!bsrc}' \
          -e '/^\s*source\s*=\s*\{$/{:src;n;/^(\s*branch\s*=).*$/d;/\}/!bsrc}' \
          rockspec/apisix-master-${iteration}.rockspec
 
