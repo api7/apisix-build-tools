@@ -69,7 +69,7 @@ install_luarocks() {
 }
 
 install_etcd() {
-    wget https://github.com/etcd-io/etcd/releases/download/${RUNNING_ETCD_VERSION}/etcd-${RUNNING_ETCD_VERSION}-linux-amd64.tar.gz
+    wget https://github.com/etcd-io/etcd/releases/download/"${RUNNING_ETCD_VERSION}"/etcd-"${RUNNING_ETCD_VERSION}"-linux-amd64.tar.gz
     tar -zxvf etcd-"${RUNNING_ETCD_VERSION}"-linux-amd64.tar.gz
 }
 
@@ -94,8 +94,8 @@ install_apisix() {
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
     # copy the compiled files to the package install directory
-    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
-    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
+    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
+    cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     # modify the apisix entry shell to be compatible with version 2.2 and 2.3
     if is_newer_version "${checkout_v}"; then
         echo 'use shell '
@@ -113,7 +113,7 @@ install_apisix() {
     fi
     # delete unnecessary files
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks
-    rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-${iteration}/doc
+    rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/doc
 }
 
 install_golang() {
@@ -151,7 +151,7 @@ install_dashboard() {
     export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     cd "$HOME"
     mkdir gopath
-    go env -w GOPROXY=https://goproxy.cn,direct
+    go env -w GOPROXY="${goproxy}"
     cd /tmp/
     cd /apisix-dashboard
     make build

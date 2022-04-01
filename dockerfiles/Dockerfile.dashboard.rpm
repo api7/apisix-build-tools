@@ -11,6 +11,7 @@ RUN /install-common.sh install_dashboard_dependencies_rpm
 
 ARG checkout_v="v2.3"
 ARG iteration="0"
+ARG goproxy="https://proxy.golang.com.cn,direct"
 ARG IMAGE_BASE
 ARG IMAGE_TAG
 ARG CODE_PATH
