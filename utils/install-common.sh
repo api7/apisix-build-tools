@@ -89,6 +89,12 @@ is_newer_version() {
 install_apisix() {
     mkdir -p /tmp/build/output/apisix/usr/bin/
     cd /apisix
+
+    # patch rockspec file to install with local repo
+    sed -re '/^\s*source\s*=\s*\{$/{:src;n;s/^(\s*url\s*=).*$/\1".\/apisix",/;/\}/!bsrc}' \
+         -e '/^\s*source\s*=\s*\{$/{:src;n;/^(\s*branch\s*=).*$/d;/\}/!bsrc}' \
+         rockspec/apisix-master-${iteration}.rockspec
+
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
