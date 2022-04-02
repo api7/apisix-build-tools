@@ -173,6 +173,9 @@ case_opt=$1
 shift
 
 case ${case_opt} in
+patch_centos8_repo)
+    patch_centos8_repo
+    ;;
 install_apisix_dependencies_rpm)
     install_apisix_dependencies_rpm
     ;;
