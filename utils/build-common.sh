@@ -3,11 +3,16 @@ set -euo pipefail
 set -x
 
 build_apisix_base_rpm() {
-    yum -y install centos-release-scl
-    yum -y install devtoolset-9 patch wget git make sudo
-    set +eu
-    source scl_source enable devtoolset-9
-    set -eu
+    if [[ $(rpm --eval '%{centos_ver}') != "8" ]]; then
+        yum -y install centos-release-scl
+        yum -y install devtoolset-9 patch wget git make sudo
+        set +eu
+        source scl_source enable devtoolset-9
+        set -eu
+    else
+        yum install -y gcc-toolset-9 patch wget git make sudo
+    fi
+
     command -v gcc
     gcc --version
 
