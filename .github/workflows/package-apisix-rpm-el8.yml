@@ -48,7 +48,7 @@ jobs:
           git clone https://github.com/apache/apisix.git
           make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
 
-      - name: run centos7 docker and mapping rpm into container
+      - name: run centos8 docker and mapping rpm into container
         run: |
           docker run -itd -v $PWD/output:/output --name centos8Instance --net="host" docker.io/centos:8 /bin/bash
           docker exec centos8Instance bash -c "sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*"
