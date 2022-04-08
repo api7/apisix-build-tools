@@ -18,7 +18,7 @@ install_dependencies_rpm() {
     # install basic dependencies
     yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo
     yum -y install epel-release
-    yum install -y yum-utils readline-dev readline-devel
+    yum install -y yum-utils readline-devel
 }
 
 install_dependencies_deb() {
