@@ -50,17 +50,17 @@ jobs:
 
       - name: run centos7 docker and mapping rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:8 /bin/bash
+          docker run -itd -v $PWD/output:/output --name centos8Instance --net="host" docker.io/centos:8 /bin/bash
 
       - name: enable apisix repository in container
         run: |
-          docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
+          docker exec centos8Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
+          docker exec centos8Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
       - name: install APISIX(-remote) master by rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-remote-master-0.el8.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
+          docker exec centos8Instance bash -c "yum -y localinstall /output/apisix-remote-master-0.el8.x86_64.rpm"
+          docker exec centos8Instance bash -c "apisix start"
 
       - name: check and ensure APISIX(-remote) master is installed
         run: |
