@@ -59,13 +59,14 @@ version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; 
 
 is_newer_version() {
     if [ "${checkout_v}" = "master" -o "${checkout_v:0:7}" = "release" ];then
-		return 0
-	fi
-	if [ "${checkout_v:0:1}" = "v" ];then
-		version_gt "${checkout_v:1}" "2.2"
-	else
-		version_gt "${checkout_v}" "2.2"
-	fi
+        return 0
+    fi
+
+    if [ "${checkout_v:0:1}" = "v" ];then
+        version_gt "${checkout_v:1}" "2.2"
+    else
+        version_gt "${checkout_v}" "2.2"
+    fi
 }
 
 install_apisix() {
