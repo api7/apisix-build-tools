@@ -12,12 +12,26 @@ jobs:
     name: Build and Publish RPM Package
     runs-on: ubuntu-18.04
     timeout-minutes: 60
+    env:
+      VAR_ALIYUN_OSS_BUCKET: ${{ secrets.VAR_ALIYUN_OSS_BUCKET }}
+      VAR_ALIYUN_OSS_ENDPOINT: ${{ secrets.VAR_ALIYUN_OSS_ENDPOINT }}
+      VAR_RPM_WORKBENCH_DIR: /tmp/output
 
     steps:
       - name: Check out code
         uses: actions/checkout@v2.3.5
         with:
           submodules: recursive
+
+      - name: Init basic publish env
+        run: |
+          # install publish env deps
+          sudo apt-get update
+          sudo apt install -y createrepo
+          mkdir -p "${VAR_RPM_WORKBENCH_DIR}"
+          # init env var
+          TAG_DATE=$(date +%Y%m%d)
+          echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
 
       - name: Extract Tags name
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -40,7 +54,7 @@ jobs:
         run: |
           # build apisix
           make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
-          mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ./
+          mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
@@ -52,7 +66,7 @@ jobs:
           echo ${{ steps.tag_env.outputs.version}}
           echo ${{ steps.tag_type.outputs.version}}
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=7
-          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.el7.x86_64.rpm ./
+          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
@@ -62,7 +76,7 @@ jobs:
         run: |
           # build apisix dashboard
           make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
-          mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el7.x86_64.rpm ./
+          mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-dashboard" >> "$GITHUB_ENV"
 
       - name: Upload apisix Artifact
@@ -86,48 +100,38 @@ jobs:
           name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
           path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
-      - name: Sign RPM Package
-        env:
-          GPG_NAME: "APISIX Publisher"
-          GPG_MAIL: "<dev@apisix.apache.org>"
-          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
-          TARGET_APP: ${{ env.TARGET_APP }}
-        run: |
-          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
-          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
-          ./utils/publish-rpm.sh sign_target_app_rpm
-          date_tag=$(date +%Y%m%d)
-          echo "DATE_TAG=${date_tag}" >> "$GITHUB_ENV"
-
-      - name: Backup and rebuild RPM Repository
+      - name: RPM repo deps init
         env:
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
-          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
-          TARGET_APP: ${{ env.TARGET_APP }}
-          DATE_TAG: ${{ env.DATE_TAG }}
         run: |
-          ./utils/publish-rpm.sh backup_and_rebuild_repo
+          sudo -E ./utils/publish-rpm.sh init_oss_utils
 
-      - name: Sign RPM Repository Metadata
+      - name: RPM repo init
+        run: |
+          sudo -E ./utils/publish-rpm.sh repo_init
+          sudo -E ./utils/publish-rpm.sh repo_clone
+
+      - name: RPM repo package update
         env:
-          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
+          GPG_NAME: "APISIX Publisher"
+          GPG_MAIL: "<dev@apisix.apache.org>"
         run: |
-          ./utils/publish-rpm.sh sign_repo_metadata
+          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
+          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
+          echo "${{ secrets.RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
+          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
+          sudo -E ./utils/publish-rpm.sh repo_package_sync
 
-      - name: Upload new RPM Repository
+      - name: RPM repo backup
         run: |
-          ./utils/publish-rpm.sh upload_new_repo
+          sudo -E ./utils/publish-rpm.sh repo_backup
 
-      - name: Check download new RPM Package
-        env:
-          TAG_VERSION: ${{ steps.tag_env.outputs.version }}
-          TARGET_APP: ${{ env.TARGET_APP }}
+      - name: RPM repo refresh
         run: |
-          ./utils/publish-rpm.sh check_down_load_rpm
+          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
+          sudo -E ./utils/publish-rpm.sh repo_upload
 
-      - name: Remove backup RPM Repository
-        env:
-          DATE_TAG: ${{ env.DATE_TAG }}
+      - name: RPM repo remove backup
         run: |
-          ./utils/publish-rpm.sh rm_backup_repo
+          sudo -E ./utils/publish-rpm.sh repo_backup_remove
