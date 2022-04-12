@@ -1,138 +1,163 @@
 #!/usr/bin/env bash
+
+# pre-set
 set -euo pipefail
 set -x
 
+# =======================================
+# Runtime default config
+# =======================================
+VAR_ALIYUN_OSS_UTILS_VERSION=${VAR_ALIYUN_OSS_UTILS_VERSION:-1.7.10}
+VAR_ALIYUN_OSS_ENDPOINT=${VAR_ALIYUN_OSS_ENDPOINT:-endpoint=oss-cn-shenzhen.aliyuncs.com}
+VAR_RPM_WORKBENCH_DIR=${VAR_RPM_WORKBENCH_DIR:-/tmp/output}
+VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/rpm-gpg-publish.private}
+VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/rpm-gpg-publish.passphrase}
 
-import_gpg_key() {
-    gpg --import --pinentry-mode loopback --batch --passphrase-file \
-    /tmp/rpm-gpg-publish.passphrase /tmp/rpm-gpg-publish.private
+# =======================================
+# GPG extension
+# =======================================
+func_rpmsign_macros_init() {
+    cat > ~/.rpmmacros <<_EOC_
+# Macros for signing RPMs.
+%_signature gpg
+%_gpg_path ${HOME}/.gnupg
+%_gpg_name ${GPG_NAME} ${GPG_MAIL}
+%_gpgbin /usr/bin/gpg
+%__gpg_sign_cmd %{__gpg} gpg --batch --verbose --no-armor --pinentry-mode loopback --passphrase-file ${VAR_GPG_PASSPHRASE} --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
+_EOC_
+}
+
+func_gpg_key_load() {
+    # ${1} gpg private key
+    # ${2} gpg key passphrase
+    gpg --import --pinentry-mode loopback --batch --passphrase-file "${2}" "${1}"
 
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
     | gpg --import-ownertrust
 }
 
-
-
-rpm_checksig() {
-    rpm --import https://repos.apiseven.com/KEYS
-
-    out=$(rpm --checksig ./${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm)
-    if ! echo "$out" | grep "digests signatures OK"; then
-        echo "failed: check rpm digests signatures"
-        exit 1
-    fi
+# =======================================
+# OSS extension
+# =======================================
+func_oss_utils_install() {
+    # ${1} - OSS util version
+    curl -o /usr/bin/ossutil64 "http://gosspublic.alicdn.com/ossutil/${1}/ossutil64"
+    chmod 755 /usr/bin/ossutil64
 }
 
-
-init_rpmmacros() {
-    cat > ~/.rpmmacros <<EOF
-# Macros for signing RPMs.
-%_signature gpg
-%_gpg_path ${HOME}/.gnupg
-%_gpg_name ${GPG_NAME} ${GPG_MAIL}
-%_gpgbin /usr/bin/gpg
-%__gpg_sign_cmd %{__gpg} gpg --batch --verbose --no-armor --pinentry-mode loopback --passphrase-file /tmp/rpm-gpg-publish.passphrase --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
-EOF
+func_oss_utils_credential_init() {
+    # ${1} - OSS endpoint
+    # ${2} - ACCESS_KEY_ID
+    # ${3} - ACCESS_KEY_SECRET
+    cat > "$(eval echo ~${USER})/.ossutilconfig" <<_EOC_
+[Credentials]
+language=EN
+endpoint=${1}
+accessKeyID=${2}
+accessKeySecret=${3}
+_EOC_
 }
 
-
-sign_target_app_rpm() {
-    import_gpg_key
-
-    init_rpmmacros
-
-    rpmsign --addsign ./${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm
-
-    rpm_checksig
+# =======================================
+# OSS repo extension
+# =======================================
+func_repo_init() {
+    # ${1} - repo workbench path
+    mkdir -p "${1}"/centos/{7,8}/x86_64
 }
 
-
-download_ossutil64() {
-    echo "[Credentials]" >> /tmp/ossutilconfig
-    echo "language=EN" >> /tmp/ossutilconfig
-    echo "endpoint=oss-cn-shenzhen.aliyuncs.com" >> /tmp/ossutilconfig
-    echo "accessKeyID=${ACCESS_KEY_ID}" >> /tmp/ossutilconfig
-    echo "accessKeySecret=${ACCESS_KEY_SECRET}" >> /tmp/ossutilconfig
-    wget http://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64
-    chmod 755 ossutil64
+func_repo_clone() {
+    # ${1} - bucket name
+    # ${2} - OSS path
+    # ${3} - target path
+    ossutil64 cp -r -f "oss://${1}/packages/${2}" "${3}"
 }
 
-
-backup_and_rebuild_repo() {
-    download_ossutil64
-
-    # backup origin repo
-    ./ossutil64 cp -r oss://apisix-repo/packages/centos/7/x86_64 oss://apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
-
-    # download origin repo
-    ./ossutil64 cp -r oss://apisix-repo/packages/centos/7/x86_64 ./ --config-file=/tmp/ossutilconfig
-
-    # rebuild repo
-    cp ./${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm ./x86_64
-    cd ./x86_64
-
-    sudo apt-get update
-    sudo apt install createrepo -y
-    createrepo .
-    cd ../
+func_repo_backup() {
+    # ${1} - bucket name
+    # ${2} - OSS path
+    # ${3} - backup tag
+    ossutil64 cp -r "oss://${1}/packages/${2}" "oss://${1}/packages/backup/${2}_${3}"
 }
 
-
-sign_repo_metadata() {
-    rm ./x86_64/repodata/repomd.xml.asc
-    gpg --batch --pinentry-mode loopback --passphrase-file /tmp/rpm-gpg-publish.passphrase --detach-sign --armor ./x86_64/repodata/repomd.xml
-
-    out=$(gpg --verify x86_64/repodata/repomd.xml.asc 2>&1)
-    if ! echo "$out" | grep -iq 'Good signature'; then
-        echo "failed: check rpm metadata signatures"
-        exit 1
-    fi
+func_repo_backup_remove() {
+    # ${1} - bucket name
+    # ${2} - OSS path
+    # ${3} - backup tag
+    ossutil64 rm -r -f "oss://${1}/packages/backup/${2}_${3}"
 }
 
-
-upload_new_repo() {
-    # rm origin repo and upload new repo
-    ./ossutil64 rm -r -f oss://apisix-repo/packages/centos/7/x86_64 --config-file=/tmp/ossutilconfig
-    ./ossutil64 cp -r ./x86_64 oss://apisix-repo/packages/centos/7/x86_64 --config-file=/tmp/ossutilconfig
+func_repo_repodata_rebuild() {
+    # ${1} - repo parent path
+    find "${1}" -type d -name "x86_64" \
+        -exec echo "createrepo for: {}" \; \
+        -exec rm -rf {}/repodata \; \
+        -exec createrepo {} \;
 }
 
-
-check_down_load_rpm() {
-    mkdir temp && cd temp
-    wget https://apisix-repo.oss-cn-shenzhen.aliyuncs.com/packages/centos/7/x86_64/${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm
-    if [ ! -f ${TARGET_APP}-${TAG_VERSION}-0.el7.x86_64.rpm ]; then
-        echo "failed: download new ${TARGET_APP} rpm package"
-        exit 1
-    fi
-    cd ../
+func_repo_repodata_sign() {
+    # ${1} - repo parent path
+    find "${1}" -type f -name "*repomd.xml" \
+        -exec echo "sign repodata for: {}" \; \
+        -exec gpg --batch --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
 }
 
-
-rm_backup_repo() {
-    ./ossutil64 rm -r -f oss://apisix-repo/packages/backup/centos/7/x86_64_${DATE_TAG} --config-file=/tmp/ossutilconfig
+func_repo_upload() {
+    # ${1} - local path
+    # ${2} - bucket name
+    # ${3} - OSS path
+    ossutil64 rm -r -f "oss://${2}/packages/${3}"
+    ossutil64 cp -r "${1}" "oss://${2}/packages/${3}"
 }
 
-
+# =======================================
+# publish utils entry
+# =======================================
 case_opt=$1
 
 case ${case_opt} in
-sign_target_app_rpm)
-    sign_target_app_rpm
+init_oss_utils)
+    func_oss_utils_install "${VAR_ALIYUN_OSS_UTILS_VERSION}"
+    func_oss_utils_credential_init "${VAR_ALIYUN_OSS_ENDPOINT}" "${ACCESS_KEY_ID}" "${ACCESS_KEY_SECRET}"
     ;;
-backup_and_rebuild_repo)
-    backup_and_rebuild_repo
+repo_init)
+    # create basic repo directory structure
+    # useful when a new repo added
+    func_repo_init /tmp
     ;;
-sign_repo_metadata)
-    sign_repo_metadata
+repo_backup)
+    func_repo_backup "${VAR_ALIYUN_OSS_BUCKET}" "centos" "${TAG_DATE}"
     ;;
-upload_new_repo)
-    upload_new_repo
+repo_clone)
+    func_repo_clone "${VAR_ALIYUN_OSS_BUCKET}" "centos" /tmp
     ;;
-check_down_load_rpm)
-    check_down_load_rpm
+repo_package_sync)
+    VAR_REPO_MAJOR_VER=(7 8)
+    for i in "${VAR_REPO_MAJOR_VER[@]}"; do
+        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.x86_64.rpm" \
+            -exec echo "repo sync for: {}" \; \
+            -exec cp -a {} /tmp/centos/"${i}"/x86_64 \;
+    done
     ;;
-rm_backup_repo)
-    rm_backup_repo
+repo_repodata_rebuild)
+    func_repo_repodata_rebuild /tmp/centos
+    func_repo_repodata_sign /tmp/centos
     ;;
+repo_upload)
+    func_repo_upload /tmp/centos "${VAR_ALIYUN_OSS_BUCKET}" "centos"
+    ;;
+repo_backup_remove)
+    func_repo_backup_remove "${VAR_ALIYUN_OSS_BUCKET}" "centos" "${TAG_DATE}"
+    ;;
+rpm_gpg_sign)
+    func_rpmsign_macros_init
+    func_gpg_key_load "${VAR_GPG_PRIV_KET}" "${VAR_GPG_PASSPHRASE}"
+
+    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm" \
+        -exec echo "rpmsign for: {}" \; \
+        -exec rpmsign --addsign {} \;
+    ;;
+*)
+    echo "Unknown method!"
 esac
