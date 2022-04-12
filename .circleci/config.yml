@@ -5,7 +5,7 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build-apisix-base-deb:
+  build-deb:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     machine:
@@ -27,7 +27,7 @@ jobs:
 workflows:
   build-apisix-base:
     jobs:
-      - build-apisix-base-deb:
+      - build-deb:
         filters:
             branches:
               only: master
