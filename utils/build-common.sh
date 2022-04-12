@@ -4,7 +4,6 @@ set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
-BUILD_ARGS=${BUILD_ARGS}
 
 build_apisix_base_rpm() {
     yum -y install centos-release-scl
@@ -19,7 +18,7 @@ build_apisix_base_rpm() {
     yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
-    ${BUILD_PATH}/build-apisix-base.sh ${BUILD_ARGS}
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 build_apisix_base_deb() {
@@ -36,12 +35,12 @@ build_apisix_base_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
-    ${BUILD_PATH}/build-apisix-base.sh ${BUILD_ARGS}
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 build_apisix_base_apk() {
     export_openresty_variables
-    ${BUILD_PATH}/build-apisix-base.sh ${BUILD_ARGS}
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 export_openresty_variables() {
