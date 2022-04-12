@@ -14,18 +14,18 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "build apisix base"
+          name: "build apisix base deb"
           command: |
             sudo BUILD_PATH=~/project version=latest ./utils/build-common.sh build_apisix_base_deb
       - run:
-          name: "openresty -V"
+          name: "echo openresty version"
           command: |
             /usr/local/openresty/bin/openresty -V
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-deb:
+  build-apisix-base:
     jobs:
       - build-apisix-base-deb:
         filters:
