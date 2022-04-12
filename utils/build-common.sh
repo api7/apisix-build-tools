@@ -2,6 +2,9 @@
 set -euo pipefail
 set -x
 
+ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+BUILD_PATH=${BUILD_PATH:-`pwd`}
+
 build_apisix_base_rpm() {
     yum -y install centos-release-scl
     yum -y install devtoolset-9 patch wget git make sudo
@@ -15,25 +18,29 @@ build_apisix_base_rpm() {
     yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
-    ./build-apisix-base.sh
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 build_apisix_base_deb() {
+    arch_path=""
+    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+        arch_path="arm64/"
+    fi
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y sudo git libreadline-dev lsb-release libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-    echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
+    echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
-    ./build-apisix-base.sh
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 build_apisix_base_apk() {
     export_openresty_variables
-    ./build-apisix-base.sh
+    ${BUILD_PATH}/build-apisix-base.sh
 }
 
 export_openresty_variables() {
