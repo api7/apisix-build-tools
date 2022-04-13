@@ -44,7 +44,7 @@ jobs:
           command: |
             cd ~/project/apisix && bin/apisix start
       - run:
-          name: "check and ensure APISIX is installed"
+          name: "check and ensure APISIX is started"
           command: |
             code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
             if [ ! $code -eq 200 ]; then
