@@ -20,7 +20,37 @@ jobs:
       - run:
           name: "echo openresty version"
           command: |
-            /usr/local/openresty/bin/openresty -V
+            sudo ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty
+            openresty -V
+      - run:
+          name: "download apisix"
+          command: |
+            git clone https://github.com/apache/apisix ./apisix
+      - run:
+          name: "install apisix dependencies"
+          command: |
+            sudo apt-get install -y libldap2-dev
+            sudo ~/project/apisix/utils/linux-install-luarocks.sh
+            cd ~/project/apisix && sudo LUAROCKS_SERVER=https://luarocks.cn make deps
+            ETCD_VERSION='3.4.18'
+            wget https://github.com/etcd-io/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-arm64.tar.gz
+            tar -xvf etcd-v${ETCD_VERSION}-linux-arm64.tar.gz && \
+              cd etcd-v${ETCD_VERSION}-linux-arm64 && \
+              sudo cp -a etcd etcdctl /usr/bin/
+            ETCD_UNSUPPORTED_ARCH=arm64 nohup etcd >/tmp/etcd.log 2>&1 &
+            sleep 5
+      - run:
+          name: "start apisix"
+          command: |
+            cd ~/project/apisix && bin/apisix start
+      - run:
+          name: "check and ensure APISIX is installed"
+          command: |
+            code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
+            if [ ! $code -eq 200 ]; then
+                echo "failed: failed to install Apache APISIX by source"
+                exit 1
+            fi
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
