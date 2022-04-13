@@ -54,6 +54,7 @@ jobs:
         run: |
           # build apisix
           make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=8
           mv ./output/apisix-${APISIX_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
@@ -66,6 +67,7 @@ jobs:
           echo ${{ steps.tag_env.outputs.version}}
           echo ${{ steps.tag_type.outputs.version}}
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=8
           mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
@@ -76,6 +78,7 @@ jobs:
         run: |
           # build apisix dashboard
           make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=8
           mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el7.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-dashboard" >> "$GITHUB_ENV"
 
