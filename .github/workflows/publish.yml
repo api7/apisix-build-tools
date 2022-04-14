@@ -13,8 +13,9 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     env:
-      VAR_ALIYUN_OSS_BUCKET: ${{ secrets.VAR_ALIYUN_OSS_BUCKET }}
-      VAR_ALIYUN_OSS_ENDPOINT: ${{ secrets.VAR_ALIYUN_OSS_ENDPOINT }}
+      VAR_OSS_BUCKET_CI: ${{ secrets.VAR_OSS_BUCKET_CI }}
+      VAR_OSS_BUCKET_REPO: ${{ secrets.VAR_OSS_BUCKET_REPO }}
+      VAR_OSS_ENDPOINT: ${{ secrets.VAR_OSS_ENDPOINT }}
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
     steps:
@@ -117,8 +118,8 @@ jobs:
 
       - name: RPM repo package update
         env:
-          GPG_NAME: "APISIX Publisher"
-          GPG_MAIL: "<dev@apisix.apache.org>"
+          GPG_NAME: ${{ secrets.GPG_NAME }}
+          GPG_MAIL: ${{ secrets.GPG_MAIL }}
         run: |
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase

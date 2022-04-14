@@ -8,7 +8,6 @@ set -x
 # Runtime default config
 # =======================================
 VAR_ALIYUN_OSS_UTILS_VERSION=${VAR_ALIYUN_OSS_UTILS_VERSION:-1.7.10}
-VAR_ALIYUN_OSS_ENDPOINT=${VAR_ALIYUN_OSS_ENDPOINT:-endpoint=oss-cn-shenzhen.aliyuncs.com}
 VAR_RPM_WORKBENCH_DIR=${VAR_RPM_WORKBENCH_DIR:-/tmp/output}
 VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/rpm-gpg-publish.private}
 VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/rpm-gpg-publish.passphrase}
@@ -119,7 +118,7 @@ case_opt=$1
 case ${case_opt} in
 init_oss_utils)
     func_oss_utils_install "${VAR_ALIYUN_OSS_UTILS_VERSION}"
-    func_oss_utils_credential_init "${VAR_ALIYUN_OSS_ENDPOINT}" "${ACCESS_KEY_ID}" "${ACCESS_KEY_SECRET}"
+    func_oss_utils_credential_init "${VAR_OSS_ENDPOINT}" "${ACCESS_KEY_ID}" "${ACCESS_KEY_SECRET}"
     ;;
 repo_init)
     # create basic repo directory structure
@@ -127,10 +126,10 @@ repo_init)
     func_repo_init /tmp
     ;;
 repo_backup)
-    func_repo_backup "${VAR_ALIYUN_OSS_BUCKET}" "centos" "${TAG_DATE}"
+    func_repo_backup "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
 repo_clone)
-    func_repo_clone "${VAR_ALIYUN_OSS_BUCKET}" "centos" /tmp
+    func_repo_clone "${VAR_OSS_BUCKET_REPO}" "centos" /tmp
     ;;
 repo_package_sync)
     VAR_REPO_MAJOR_VER=(7 8)
@@ -145,10 +144,10 @@ repo_repodata_rebuild)
     func_repo_repodata_sign /tmp/centos
     ;;
 repo_upload)
-    func_repo_upload /tmp/centos "${VAR_ALIYUN_OSS_BUCKET}" "centos"
+    func_repo_upload /tmp/centos "${VAR_OSS_BUCKET_REPO}" "centos"
     ;;
 repo_backup_remove)
-    func_repo_backup_remove "${VAR_ALIYUN_OSS_BUCKET}" "centos" "${TAG_DATE}"
+    func_repo_backup_remove "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
 rpm_gpg_sign)
     func_rpmsign_macros_init
