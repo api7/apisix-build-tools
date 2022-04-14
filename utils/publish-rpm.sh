@@ -147,7 +147,7 @@ repo_upload)
     func_repo_upload /tmp/centos "${VAR_OSS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
-    ossutil64 cp -r "${VAR_OSS_BUCKET_CI}" "${VAR_OSS_BUCKET_REPO}"
+    ossutil64 cp -r "oss://${VAR_OSS_BUCKET_CI}" "oss://${VAR_OSS_BUCKET_REPO}"
     ;;
 repo_backup_remove)
     func_repo_backup_remove "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
