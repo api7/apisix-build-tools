@@ -136,6 +136,10 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
           sudo -E ./utils/publish-rpm.sh repo_upload
 
-      - name: RPM repo remove backup
+      - name: RPM repo verify
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup_remove
+          echo "verify"
+
+      - name: RPM repo publish
+        run: |
+          sudo -E ./utils/publish-rpm.sh repo_publish
