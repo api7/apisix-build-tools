@@ -11,45 +11,46 @@ jobs:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
+    environment:
+      - TEST_VERSION: 0-latest
     steps:
       - checkout
       - run:
-          name: "build apisix base deb"
+          name: install dependencies
           command: |
-            sudo BUILD_PATH=~/project version=latest ./utils/build-common.sh build_apisix_base_deb
+            sudo apt-get install -y make
       - run:
-          name: "echo openresty version"
+          name: package apisix-base
           command: |
-            sudo ln -s /usr/local/openresty/bin/openresty /usr/local/bin/openresty
-            openresty -V
+            make package type=deb app=apisix-base version=${TEST_VERSION}
       - run:
-          name: "download apisix"
+          name: package apisx
           command: |
-            git clone https://github.com/apache/apisix ./apisix
+            make package type=deb app=apisix version=${TEST_VERSION} checkout=master image_base=ubuntu image_tag=20.04
       - run:
-          name: "install apisix dependencies"
+          name: install apisix deb into container
           command: |
-            sudo apt-get install -y libldap2-dev
-            sudo ~/project/apisix/utils/linux-install-luarocks.sh
-            cd ~/project/apisix && sudo LUAROCKS_SERVER=https://luarocks.cn make deps
-            ETCD_VERSION='3.4.18'
-            wget https://github.com/etcd-io/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-arm64.tar.gz
-            tar -xvf etcd-v${ETCD_VERSION}-linux-arm64.tar.gz && \
-              cd etcd-v${ETCD_VERSION}-linux-arm64 && \
-              sudo cp -a etcd etcdctl /usr/bin/
-            ETCD_UNSUPPORTED_ARCH=arm64 nohup etcd >/tmp/etcd.log 2>&1 &
-            sleep 5
+            docker build -t apache/apisix:${TEST_VERSION}-deb-test --build-arg APISIX_VERSION=${TEST_VERSION} -f test/apisix/Dockerfile.test.apisix.arm64.ubuntu20.04 .
       - run:
-          name: "start apisix"
+          name: start apisix and test
           command: |
-            cd ~/project/apisix && bin/apisix start
-      - run:
-          name: "check and ensure APISIX is started"
-          command: |
-            code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
-            if [ ! $code -eq 200 ]; then
-                echo "failed: failed to install Apache APISIX by source"
-                exit 1
+            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
+            sleep 20
+            curl http://127.0.0.1:9080/apisix/admin/routes/1 \
+            -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
+              {
+                "uri": "/get",
+                "upstream": {
+                    "type": "roundrobin",
+                    "nodes": {
+                        "httpbin.org:80": 1
+                    }
+                }
+              }'
+            result_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/get`
+            if [[ $result_code -ne 200 ]]; then
+                printf "result_code: %s\n" "$result_code"
+                exit 125
             fi
 
 # Invoke jobs via workflows

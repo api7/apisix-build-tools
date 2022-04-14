@@ -4,6 +4,8 @@ set -x
 mkdir /output
 dist=$(cat /tmp/dist)
 
+ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+
 # Determine the dependencies
 dep_ldap="openldap-devel"
 if [ "$PACKAGE_TYPE" == "deb" ]
@@ -61,8 +63,13 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	--config-files usr/local/apisix/conf/config.yaml \
 	--config-files usr/local/apisix/conf/config-default.yaml
 
+PACKAGE_ARCH="amd64"
+if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+    PACKAGE_ARCH="arm64"
+fi
+
 # Rename deb file with adding $DIST section
 if [ "$PACKAGE_TYPE" == "deb" ]
 then
-	mv /output/apisix_${PACKAGE_VERSION}-${ITERATION}_amd64.deb /output/apisix_${PACKAGE_VERSION}-${ITERATION}~${dist}_amd64.deb
+	mv /output/apisix_${PACKAGE_VERSION}-${ITERATION}_"${PACKAGE_ARCH}".deb /output/apisix_${PACKAGE_VERSION}-${ITERATION}~${dist}_"${PACKAGE_ARCH}".deb
 fi
