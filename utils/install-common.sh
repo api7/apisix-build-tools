@@ -18,7 +18,7 @@ install_dependencies_rpm() {
     # install basic dependencies
     yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo
     yum -y install epel-release
-    yum install -y yum-utils readline-dev readline-devel
+    yum install -y yum-utils readline-devel
 }
 
 install_dependencies_deb() {
@@ -59,13 +59,14 @@ version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; 
 
 is_newer_version() {
     if [ "${checkout_v}" = "master" -o "${checkout_v:0:7}" = "release" ];then
-		return 0
-	fi
-	if [ "${checkout_v:0:1}" = "v" ];then
-		version_gt "${checkout_v:1}" "2.2"
-	else
-		version_gt "${checkout_v}" "2.2"
-	fi
+        return 0
+    fi
+
+    if [ "${checkout_v:0:1}" = "v" ];then
+        version_gt "${checkout_v:1}" "2.2"
+    else
+        version_gt "${checkout_v}" "2.2"
+    fi
 }
 
 install_apisix() {

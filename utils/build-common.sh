@@ -6,11 +6,20 @@ ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
 
 build_apisix_base_rpm() {
-    yum -y install centos-release-scl
-    yum -y install devtoolset-9 patch wget git make sudo
-    set +eu
-    source scl_source enable devtoolset-9
-    set -eu
+    if [[ $(rpm --eval '%{centos_ver}') == "7" ]]; then
+        yum -y install centos-release-scl
+        yum -y install devtoolset-9 patch wget git make sudo
+        set +eu
+        source scl_source enable devtoolset-9
+        set -eu
+    elif [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then
+        dnf install -y gcc-toolset-9-toolchain patch wget git make sudo
+        dnf install -y yum-utils
+        set +eu
+        source /opt/rh/gcc-toolset-9/enable
+        set -eu
+    fi
+
     command -v gcc
     gcc --version
 
