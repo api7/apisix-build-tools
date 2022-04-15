@@ -155,7 +155,7 @@ repo_upload)
     func_repo_upload /tmp/centos "${VAR_OSS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
-    func_repo_publish "${VAR_OSS_BUCKET_CI}" "${VAR_OSS_BUCKET_REPO}"
+    func_repo_publish "${VAR_OSS_BUCKET_CI}" "${VAR_OSS_BUCKET_REPO}" "centos"
     ;;
 repo_backup_remove)
     func_repo_backup_remove "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
