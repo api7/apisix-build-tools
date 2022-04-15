@@ -110,6 +110,14 @@ func_repo_upload() {
     ossutil64 cp -r "${1}" "oss://${2}/packages/${3}"
 }
 
+func_repo_publish() {
+    # ${1} - CI bucket
+    # ${2} - repo publish bucket
+    # ${3} - OSS path
+    ossutil64 rm -r -f "oss://${2}/packages/${3}"
+    ossutil64 cp -r "oss://${1}/packages/${3}" "oss://${2}/packages/${3}"
+}
+
 # =======================================
 # publish utils entry
 # =======================================
@@ -147,7 +155,7 @@ repo_upload)
     func_repo_upload /tmp/centos "${VAR_OSS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
-    ossutil64 cp -r "oss://${VAR_OSS_BUCKET_CI}" "oss://${VAR_OSS_BUCKET_REPO}"
+    func_repo_publish "${VAR_OSS_BUCKET_CI}" "${VAR_OSS_BUCKET_REPO}"
     ;;
 repo_backup_remove)
     func_repo_backup_remove "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
