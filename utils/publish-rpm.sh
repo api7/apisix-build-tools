@@ -115,7 +115,7 @@ func_repo_publish() {
     # ${2} - repo publish bucket
     # ${3} - OSS path
     ossutil64 rm -r -f "oss://${2}/packages/${3}"
-    ossutil64 cp -r "oss://${1}/packages/${3}" "oss://${2}/packages/${3}"
+    ossutil64 cp -r "oss://${1}/packages/${3}" "oss://${2}/packages"
 }
 
 # =======================================
