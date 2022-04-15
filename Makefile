@@ -109,6 +109,7 @@ define package
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
 	docker cp output:/output ${PWD}
+	docker stop output
 	docker system prune -a -f
 endef
 
