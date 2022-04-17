@@ -11,6 +11,8 @@ if [ "$ARTIFACT" != "0" ]; then
     artifact=${ARTIFACT}
 fi
 
+ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+
 openresty_zlib_version="1.2.11-3"
 openresty_openssl111_version="1.1.1n"
 openresty_pcre_version="8.44-1"
@@ -41,7 +43,12 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
     --config-files usr/lib/systemd/system/openresty.service \
     --prefix=/usr/local
 
+PACKAGE_ARCH="amd64"
+if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+    PACKAGE_ARCH="arm64"
+fi
+
 if [ "$PACKAGE_TYPE" == "deb" ]; then
     # Rename deb file with adding $DIST section
-    mv /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"_amd64.deb /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_amd64.deb
+    mv /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"_"${PACKAGE_ARCH}".deb /output/apisix-base_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_"${PACKAGE_ARCH}".deb
 fi

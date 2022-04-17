@@ -11,16 +11,47 @@ jobs:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
+    environment:
+      - TEST_VERSION: 0-latest
     steps:
       - checkout
       - run:
-          name: "build apisix base deb"
+          name: install dependencies
           command: |
-            sudo BUILD_PATH=~/project version=latest ./utils/build-common.sh build_apisix_base_deb
+            sudo apt-get install -y make
       - run:
-          name: "echo openresty version"
+          name: package apisix-base
           command: |
-            /usr/local/openresty/bin/openresty -V
+            make package type=deb app=apisix-base version=${TEST_VERSION}
+      - run:
+          name: package apisx
+          command: |
+            make package type=deb app=apisix version=${TEST_VERSION} checkout=master image_base=ubuntu image_tag=20.04
+      - run:
+          name: install apisix deb into container
+          command: |
+            docker build -t apache/apisix:${TEST_VERSION}-deb-test --build-arg APISIX_VERSION=${TEST_VERSION} -f test/apisix/Dockerfile.test.apisix.arm64.ubuntu20.04 .
+      - run:
+          name: start apisix and test
+          command: |
+            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
+            sleep 20
+            curl http://127.0.0.1:9080/apisix/admin/routes/1 \
+            -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
+              {
+                "uri": "/get",
+                "upstream": {
+                    "type": "roundrobin",
+                    "nodes": {
+                        "httpbin.org:80": 1
+                    }
+                }
+              }'
+            result_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/get`
+            if [[ $result_code -ne 200 ]]; then
+                printf "result_code: %s\n" "$result_code"
+                exit 125
+            fi
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows

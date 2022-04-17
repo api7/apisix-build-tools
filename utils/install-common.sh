@@ -2,6 +2,8 @@
 set -euo pipefail
 set -x
 
+ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+
 install_apisix_dependencies_deb() {
     install_dependencies_deb
     install_openresty_deb
@@ -29,11 +31,15 @@ install_dependencies_deb() {
 
 install_openresty_deb() {
     # install openresty and openssl111
+    arch_path=""
+    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+        arch_path="arm64/"
+    fi
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libldap2-dev libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-    echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
+    echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
 }
@@ -51,8 +57,12 @@ install_luarocks() {
 }
 
 install_etcd() {
-    wget https://github.com/etcd-io/etcd/releases/download/"${RUNNING_ETCD_VERSION}"/etcd-"${RUNNING_ETCD_VERSION}"-linux-amd64.tar.gz
-    tar -zxvf etcd-"${RUNNING_ETCD_VERSION}"-linux-amd64.tar.gz
+    ETCD_ARCH="amd64"
+    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+        ETCD_ARCH="arm64"
+    fi
+    wget https://github.com/etcd-io/etcd/releases/download/"${RUNNING_ETCD_VERSION}"/etcd-"${RUNNING_ETCD_VERSION}"-linux-"${ETCD_ARCH}".tar.gz
+    tar -zxvf etcd-"${RUNNING_ETCD_VERSION}"-linux-"${ETCD_ARCH}".tar.gz
 }
 
 version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; }
@@ -106,8 +116,12 @@ install_apisix() {
 }
 
 install_golang() {
-    wget https://dl.google.com/go/go1.16.linux-amd64.tar.gz
-    tar -xzf go1.16.linux-amd64.tar.gz
+    GO_ARCH="amd64"
+    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
+        GO_ARCH="arm64"
+    fi
+    wget https://dl.google.com/go/go1.16.linux-"${GO_ARCH}".tar.gz
+    tar -xzf go1.16.linux-"${GO_ARCH}".tar.gz
     mv go /usr/local
 }
 
