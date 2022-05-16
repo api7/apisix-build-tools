@@ -72,6 +72,10 @@ cd ..
 
 cd apisix-nginx-module/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
+sed -i '/ngx_http_lua_shdict.c/d' ../../openresty-${or_ver}/bundle/ngx_lua-0.10.20/config
+sed -i '/ngx_http_lua_shdict.h/d' ../../openresty-${or_ver}/bundle/ngx_lua-0.10.20/config
+sed -i '/ngx_stream_lua_shdict.c/d' ../../openresty-${or_ver}/bundle/ngx_stream_lua-0.0.10/config
+sed -i '/ngx_stream_lua_shdict.h/d' ../../openresty-${or_ver}/bundle/ngx_stream_lua-0.0.10/config
 cd ../..
 
 cd wasm-nginx-module || exit 1
@@ -92,6 +96,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
     --add-module=../apisix-nginx-module/src/stream \
+    --add-module=/usr/local/apisix-nginx-module/src/meta \
     --add-module=../wasm-nginx-module \
     --add-module=../lua-var-nginx-module \
     --with-poll_module \
