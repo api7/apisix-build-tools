@@ -49,7 +49,9 @@ if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $apisix_nginx_module_ver \
-        https://github.com/api7/apisix-nginx-module.git
+        #https://github.com/api7/apisix-nginx-module.git
+        # for CI, should remove before merge to master
+        https://github.com/tzssangglass/apisix-nginx-module.git -b unify_shdict
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
