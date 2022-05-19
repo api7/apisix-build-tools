@@ -12,6 +12,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     lua_var_nginx_module_ver=""
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
+    with_shared_shdict_module ="--add-module=../apisix-nginx-module/src/meta"
 else
     ngx_multi_upstream_module_ver="-b 1.0.1"
     mod_dubbo_ver="-b 1.0.2"
@@ -20,6 +21,7 @@ else
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
+    with_shared_shdict_module=${with_shared_shdict_module:-}
 fi
 
 prev_workdir="$PWD"
@@ -92,7 +94,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
     --add-module=../apisix-nginx-module/src/stream \
-    --add-module=../apisix-nginx-module/src/meta \
+    $with_shared_shdict_module \
     --add-module=../wasm-nginx-module \
     --add-module=../lua-var-nginx-module \
     --with-poll_module \
