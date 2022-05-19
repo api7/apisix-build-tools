@@ -50,7 +50,6 @@ if [ "$repo" == apisix-nginx-module ]; then
 else
     git clone --depth=1 $apisix_nginx_module_ver \
         https://github.com/api7/apisix-nginx-module.git
-
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
