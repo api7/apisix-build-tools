@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      PACKAGE_APISIX_VERSION: 2.12.0
+      PACKAGE_APISIX_VERSION: 0.0.0
 
     steps:
       - uses: actions/checkout@v2
@@ -30,8 +30,8 @@ jobs:
 
       - name: run apisix packaging
         run: |
-          make package type=deb app=apisix version=master checkout=master image_base=ubuntu image_tag=20.04
-          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} checkout=${PACKAGE_APISIX_VERSION}
+          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} checkout=master \
+            image_base=ubuntu image_tag=20.04
 
       - name: install apisix deb into container
         run: |
