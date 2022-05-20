@@ -10,7 +10,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     apisix_nginx_module_ver=""
     wasm_nginx_module_ver=""
     lua_var_nginx_module_ver=""
-    debug_args="--with-debug"
+    debug_args="--with-debug --add-module=../apisix-nginx-module/src/meta"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
     add_shared_shdict_module="--add-module=../apisix-nginx-module/src/meta"
 else
