@@ -15,8 +15,8 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="-b 1.0.1"
     mod_dubbo_ver="-b 1.0.2"
-    apisix_nginx_module_ver="-b 1.6.0"
-    wasm_nginx_module_ver="-b 0.5.1"
+    apisix_nginx_module_ver="-b 1.7.0"
+    wasm_nginx_module_ver="-b 0.6.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
