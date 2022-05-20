@@ -31,11 +31,15 @@ jobs:
       - name: run apisix packaging
         run: |
           ver=${PACKAGE_APISIX_VERSION}
-          if [[ $ver == "0.0.0" ]]; then
+          if [[ ${PACKAGE_APISIX_VERSION} == "0.0.0" ]]; then
             ver="master"
           fi
           make package type=deb app=apisix version=$ver checkout=$ver \
             image_base=ubuntu image_tag=20.04
+          if [[ ${PACKAGE_APISIX_VERSION} == "0.0.0" ]]; then
+            #  dpkg requires version number to start with digit
+            mv output/apisix_master-0~ubuntu20.04_amd64.deb output/apisix_0.0.0-0~ubuntu20.04_amd64.deb
+          fi
 
       - name: install apisix deb into container
         run: |
