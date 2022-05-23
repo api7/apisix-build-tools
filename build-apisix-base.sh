@@ -92,6 +92,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
     --add-module=../apisix-nginx-module/src/stream \
+    --add-module=../apisix-nginx-module/src/meta \
     --add-module=../wasm-nginx-module \
     --add-module=../lua-var-nginx-module \
     --with-poll_module \
