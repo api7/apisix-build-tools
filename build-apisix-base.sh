@@ -15,7 +15,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="-b 1.0.1"
     mod_dubbo_ver="-b 1.0.2"
-    apisix_nginx_module_ver="-b 1.7.0"
+    apisix_nginx_module_ver="-b 1.8.0"
     wasm_nginx_module_ver="-b 0.6.0"
     lua_var_nginx_module_ver="-b v0.5.2"
     debug_args=${debug_args:-}
@@ -92,6 +92,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../ngx_multi_upstream_module \
     --add-module=../apisix-nginx-module \
     --add-module=../apisix-nginx-module/src/stream \
+    --add-module=../apisix-nginx-module/src/meta \
     --add-module=../wasm-nginx-module \
     --add-module=../lua-var-nginx-module \
     --with-poll_module \
