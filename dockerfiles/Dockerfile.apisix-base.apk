@@ -90,7 +90,7 @@ ENV build_latest=${BUILD_LATEST:-}
 RUN cd /tmp \
     && curl --version \
     && source /root/.cargo/env \
-    && ./build-common.sh build_apisix_base_apk "${build_latest}" \
+    && ./build-common.sh build_apisix_base_apk build_latest \
     && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
     && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.d \
     && /usr/local/openresty/bin/openresty -V

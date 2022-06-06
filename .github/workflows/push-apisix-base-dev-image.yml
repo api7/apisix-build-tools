@@ -12,6 +12,7 @@ on:
 
 jobs:
   publish_image:
+    name: Build and Push apisix-base-dev image
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
