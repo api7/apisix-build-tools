@@ -86,7 +86,7 @@ RUN cd /tmp \
     && make -j${RESTY_J} install
 
 ENV version=${VERSION}
-ENV build_latest=${BUILD_LATEST}
+ENV build_latest=${BUILD_LATEST:-}
 
 RUN cd /tmp \
     && curl --version \

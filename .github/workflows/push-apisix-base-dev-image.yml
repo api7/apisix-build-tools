@@ -34,7 +34,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker buildx build -t turien/apisix-base:dev --push \
+          docker buildx build -t api7/apisix-base:dev --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             --platform linux/amd64,linux/arm64 \
             -f ./dockerfiles/Dockerfile.apisix-base.apk .
