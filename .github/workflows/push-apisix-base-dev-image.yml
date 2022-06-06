@@ -2,8 +2,6 @@ name: Build and Push apisix-base-dev to Docker DockerHub
 
 on:
   pull_request:
-    types:
-      - opened
     branches:
       - abdd
 # on:
