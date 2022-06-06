@@ -34,7 +34,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker buildx build -m 1g --memory-swap -1 -t turien/apisix-base:dev --push \
+          docker buildx build -m 2g --memory-swap -1 -t turien/apisix-base:dev --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             --platform linux/amd64,linux/arm64 \
             -f ./dockerfiles/Dockerfile.apisix-base.apk .
