@@ -1,10 +1,11 @@
 name: Build and Push apisix-base-dev to Docker DockerHub
 
 on:
-  push:
+  pull_request:
+    types:
+      - opened
     branches:
       - abdd
-
 # on:
 #   schedule:
 #     # UTC 0:00 AM (See https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07)
