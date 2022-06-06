@@ -49,7 +49,7 @@ build_apisix_base_deb() {
 
 build_apisix_base_apk() {
     export_openresty_variables
-    ${BUILD_PATH}/build-apisix-base.sh
+    ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
 }
 
 export_openresty_variables() {

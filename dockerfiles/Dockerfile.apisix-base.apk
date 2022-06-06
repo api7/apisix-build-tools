@@ -17,6 +17,7 @@ ARG RESTY_PCRE_VERSION="8.44"
 ARG RESTY_J="1"
 ARG RESTY_EVAL_PRE_CONFIGURE=""
 ARG VERSION
+ARG BUILD_LATEST
 
 LABEL resty_image_base="${RESTY_IMAGE_BASE}"
 LABEL resty_image_tag="${IMAGE_TAG}"
@@ -85,10 +86,11 @@ RUN cd /tmp \
     && make -j${RESTY_J} install
 
 ENV version=${VERSION}
+ENV build_latest=${BUILD_LATEST:-}
 RUN cd /tmp \
     && curl --version \
     && source /root/.cargo/env \
-    && ./build-common.sh build_apisix_base_apk \
+    && ./build-common.sh build_apisix_base_apk "${build_latest}" \
     && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.a \
     && rm /usr/local/openresty/wasmtime-c-api/lib/libwasmtime.d \
     && /usr/local/openresty/bin/openresty -V

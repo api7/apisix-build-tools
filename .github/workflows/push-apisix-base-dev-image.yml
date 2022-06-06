@@ -1,0 +1,41 @@
+name: Build and Push apisix-base-dev to Docker DockerHub
+
+on:
+  push:
+    branches:
+      - abdd
+
+# on:
+#   schedule:
+#     # UTC 0:00 AM (See https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07)
+#     - cron: "0 0 * * *"
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.5
+        with:
+          submodules: recursive
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        run: |
+          docker buildx build -t turien/apisix-base:dev --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            --platform linux/amd64,linux/arm64 \
+            -f ./dockerfiles/Dockerfile.apisix-base.apk .
