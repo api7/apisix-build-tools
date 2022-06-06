@@ -1,9 +1,10 @@
 name: Build and Push apisix-base-dev to Docker DockerHub
 
 on:
-  pull_request:
+  push:
     branches:
       - abdd
+
 # on:
 #   schedule:
 #     # UTC 0:00 AM (See https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07)
@@ -33,7 +34,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker buildx build -t api7/apisix-base:dev --push \
+          docker buildx build -m 1g --memory-swap -1 -t turien/apisix-base:dev --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             --platform linux/amd64,linux/arm64 \
             -f ./dockerfiles/Dockerfile.apisix-base.apk .
