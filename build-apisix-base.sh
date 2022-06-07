@@ -75,6 +75,8 @@ cd apisix-nginx-module/patch || exit 1
 cd ../..
 
 cd wasm-nginx-module || exit 1
+if [ -z $TARGETARCH ] ; then export TARGETARCH="amd64"; fi
+if [ "$TARGETARCH" = "arm64" ] ; then sed -i 's/x86_64/aarch64/g' ./install-wasmtime.sh; fi
 ./install-wasmtime.sh
 cd ..
 
