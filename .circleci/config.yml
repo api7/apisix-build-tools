@@ -69,7 +69,8 @@ jobs:
       - run:
           name: Build and Push Docker Image
           command: |
-            docker build -t turien/apisix-base:dev \
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t turien/apisix-base:dev-arm64-${CIRCLE_SHA1} --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
@@ -89,9 +90,25 @@ jobs:
       - run:
           name: Build and Push Docker Image
           command: |
-            docker build -t turien/apisix-base:dev \
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t turien/apisix-base:dev-x86_64-${CIRCLE_SHA1} --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  upload-manifest:
+    docker:
+      - image: cimg/python:3.8.2
+    steps:
+      - checkout
+      - deploy:
+          name: "Upload manifest to registry"
+          command: |
+            set -eu
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            docker manifest create turien/apisix-base:dev \
+                                   turien/apisix-base:dev-arm64-${CIRCLE_SHA1} \
+                                   turien/apisix-base:dev-x86_64-${CIRCLE_SHA1}
+            docker manifest push turien/apisix-base:dev
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -110,3 +127,7 @@ workflows:
         filters:
             branches:
               only: abdx
+      - upload-manifest:
+          requires:
+            - build-and-push-apisix-base-arm
+            - build-and-push-apisix-base-x86
