@@ -70,7 +70,7 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t turien/apisix-base:dev-arm64-${CIRCLE_SHA1} --push \
+            docker buildx build -t turien/apisix-base:dev-arm64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
