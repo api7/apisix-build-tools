@@ -91,7 +91,7 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t turien/apisix-base:dev-x86_64-${CIRCLE_SHA1} --push \
+            docker buildx build -t turien/apisix-base:dev-x86_64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
@@ -107,8 +107,8 @@ jobs:
             export DOCKER_CLI_EXPERIMENTAL=enabled
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker manifest create turien/apisix-base:dev \
-                                   turien/apisix-base:dev-arm64-${CIRCLE_SHA1} \
-                                   turien/apisix-base:dev-x86_64-${CIRCLE_SHA1}
+                                   turien/apisix-base:dev-arm64 \
+                                   turien/apisix-base:dev-x86_64
             docker manifest push turien/apisix-base:dev
 
 # Invoke jobs via workflows
