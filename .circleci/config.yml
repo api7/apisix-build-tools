@@ -53,6 +53,46 @@ jobs:
                 exit 125
             fi
 
+  build-and-push-apisix-base-arm:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker build -t turien/apisix-base:dev \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  build-and-push-apisix-base-x86:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker build -t turien/apisix-base:dev \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -62,3 +102,11 @@ workflows:
         filters:
             branches:
               only: master
+      - build-and-push-apisix-base-arm:
+        filters:
+            branches:
+              only: abdx
+      - build-and-push-apisix-base-x86:
+        filters:
+            branches:
+              only: abdx
