@@ -53,7 +53,7 @@ jobs:
                 exit 125
             fi
 
-  build-and-push-apisix-base-arm:
+  build-and-push-apisix-base-dev-arm:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
@@ -70,11 +70,11 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t turien/apisix-base:dev-arm64 --push \
+            docker buildx build -t api7/apisix-base:dev-arm64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
-  build-and-push-apisix-base-x86:
+  build-and-push-apisix-base-dev-x86:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: medium
@@ -91,7 +91,7 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t turien/apisix-base:dev-x86_64 --push \
+            docker buildx build -t api7/apisix-base:dev-x86_64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
@@ -106,10 +106,10 @@ jobs:
             set -eu
             export DOCKER_CLI_EXPERIMENTAL=enabled
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker manifest create turien/apisix-base:dev \
-                                   turien/apisix-base:dev-arm64 \
-                                   turien/apisix-base:dev-x86_64
-            docker manifest push turien/apisix-base:dev
+            docker manifest create api7/apisix-base:dev \
+                                   api7/apisix-base:dev-arm64 \
+                                   api7/apisix-base:dev-x86_64
+            docker manifest push api7/apisix-base:dev
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -120,14 +120,16 @@ workflows:
         filters:
             branches:
               only: master
-      - build-and-push-apisix-base-arm:
-        filters:
-            branches:
-              only: abdx
-      - build-and-push-apisix-base-x86:
-        filters:
-            branches:
-              only: abdx
+  build-and-push-apisix-base-dev:
+    jobs:
+      - build-and-push-apisix-base-dev-arm:
+        triggers:
+          - schedule:
+              cron: "0 0 * * *"
+      - build-and-push-apisix-base-dev-x86:
+        triggers:
+          - schedule:
+              cron: "0 0 * * *"
       - upload-manifest:
           requires:
             - build-and-push-apisix-base-arm
