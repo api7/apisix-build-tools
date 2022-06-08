@@ -12,11 +12,13 @@ WORKDIR /tmp
 ARG VERSION
 ARG IMAGE_BASE
 ARG IMAGE_TAG
+ARG BUILD_LATEST
 
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
+ENV build_latest=${BUILD_LATEST:-}
 
-RUN ./build-common.sh build_apisix_base_deb \
+RUN ./build-common.sh build_apisix_base_deb ${build_latest} \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh
