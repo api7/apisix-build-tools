@@ -123,13 +123,13 @@ workflows:
   build-and-push-apisix-base-dev:
     jobs:
       - build-and-push-apisix-base-dev-arm:
-        filters:
-            branches:
-              only: abdx
+        triggers:
+          - schedule:
+              cron: "0 0 * * *"
       - build-and-push-apisix-base-dev-x86:
-        filters:
-            branches:
-              only: abdx
+        triggers:
+          - schedule:
+              cron: "0 0 * * *"
       - upload-manifest:
           requires:
             - build-and-push-apisix-base-dev-arm
