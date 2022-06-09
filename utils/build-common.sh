@@ -44,6 +44,11 @@ build_apisix_base_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
+
+    # fix OR_PREFIX
+    if [[ $build_latest == "latest" ]]; then
+        unset OR_PREFIX
+    fi
     ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
 }
 
