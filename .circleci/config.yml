@@ -129,8 +129,8 @@ workflows:
               only:
                 - master
     jobs:
-      - build-and-push-apisix-base-dev-arm:
-      - build-and-push-apisix-base-dev-x86:
+      - build-and-push-apisix-base-dev-arm
+      - build-and-push-apisix-base-dev-x86
       - upload-manifest:
           requires:
             - build-and-push-apisix-base-dev-arm
