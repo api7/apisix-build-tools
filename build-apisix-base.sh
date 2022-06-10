@@ -27,7 +27,7 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-or_ver="1.19.9.1"
+or_ver="1.21.4.1"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
@@ -35,7 +35,7 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $ngx_multi_upstream_module_ver \
-        https://github.com/api7/ngx_multi_upstream_module.git
+        https://github.com/fesily/ngx_multi_upstream_module.git
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -48,15 +48,15 @@ fi
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $apisix_nginx_module_ver \
-        https://github.com/api7/apisix-nginx-module.git
+    git clone --depth=1 $apisix_nginx_module_ver -b upstream \
+        https://github.com/fesily/apisix-nginx-module.git
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git
+        https://github.com/fesily/wasm-nginx-module.git
 fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
