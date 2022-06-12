@@ -109,7 +109,7 @@ jobs:
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
         run: |
-          sudo -E ./utils/publish-rpm.sh init_oss_utils
+          sudo -E ./utils/publish-rpm.sh init_cos_utils
 
       - name: RPM repo init
         run: |
