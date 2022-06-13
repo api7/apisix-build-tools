@@ -53,6 +53,64 @@ jobs:
                 exit 125
             fi
 
+  build-and-push-apisix-base-dev-arm:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t api7/apisix-base:dev-arm64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  build-and-push-apisix-base-dev-x86:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t api7/apisix-base:dev-x86_64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  upload-manifest:
+    docker:
+      - image: cimg/python:3.8.2
+    steps:
+      - checkout
+      - deploy:
+          name: "Upload manifest to registry"
+          command: |
+            set -eu
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker manifest create api7/apisix-base:dev \
+                                   api7/apisix-base:dev-arm64 \
+                                   api7/apisix-base:dev-x86_64
+            docker manifest push api7/apisix-base:dev
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -62,3 +120,18 @@ workflows:
         filters:
             branches:
               only: master
+  build-and-push-apisix-base-dev:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build-and-push-apisix-base-dev-arm
+      - build-and-push-apisix-base-dev-x86
+      - upload-manifest:
+          requires:
+            - build-and-push-apisix-base-dev-arm
+            - build-and-push-apisix-base-dev-x86
