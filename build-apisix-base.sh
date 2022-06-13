@@ -35,7 +35,7 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $ngx_multi_upstream_module_ver \
-        https://github.com/fesily/ngx_multi_upstream_module.git
+        https://github.com/api7/ngx_multi_upstream_module.git
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -49,14 +49,14 @@ if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $apisix_nginx_module_ver -b upstream \
-        https://github.com/fesily/apisix-nginx-module.git
+        https://github.com/api7/apisix-nginx-module.git
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
     git clone --depth=1 $wasm_nginx_module_ver \
-        https://github.com/fesily/wasm-nginx-module.git
+        https://github.com/api7/wasm-nginx-module.git
 fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
