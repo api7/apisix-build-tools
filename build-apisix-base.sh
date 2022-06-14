@@ -27,7 +27,7 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-or_ver="1.19.9.1"
+or_ver="1.21.4.1"
 wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
 tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
