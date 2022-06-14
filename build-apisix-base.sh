@@ -5,19 +5,19 @@ set -x
 version=${version:-0.0.0}
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
-    ngx_multi_upstream_module_ver=""
-    mod_dubbo_ver=""
-    apisix_nginx_module_ver=""
-    wasm_nginx_module_ver=""
-    lua_var_nginx_module_ver=""
+    ngx_multi_upstream_module_ver="master"
+    mod_dubbo_ver="master"
+    apisix_nginx_module_ver="main"
+    wasm_nginx_module_ver="main"
+    lua_var_nginx_module_ver="master"
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
-    ngx_multi_upstream_module_ver="-b 1.0.1"
-    mod_dubbo_ver="-b 1.0.2"
-    apisix_nginx_module_ver="-b 1.8.0"
-    wasm_nginx_module_ver="-b 0.6.0"
-    lua_var_nginx_module_ver="-b v0.5.2"
+    ngx_multi_upstream_module_ver="1.0.1"
+    mod_dubbo_ver="1.0.2"
+    apisix_nginx_module_ver="1.8.0"
+    wasm_nginx_module_ver="0.6.0"
+    lua_var_nginx_module_ver="v0.5.2"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
@@ -34,47 +34,52 @@ tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $ngx_multi_upstream_module_ver \
-        https://github.com/api7/ngx_multi_upstream_module.git
+    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
+        https://github.com/api7/ngx_multi_upstream_module.git \
+        ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 
 if [ "$repo" == mod_dubbo ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $mod_dubbo_ver \
-        https://github.com/api7/mod_dubbo.git
+    git clone --depth=1 -b $mod_dubbo_ver \
+        https://github.com/api7/mod_dubbo.git \
+        mod_dubbo-${mod_dubbo_ver}
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $apisix_nginx_module_ver \
-        https://github.com/api7/apisix-nginx-module.git
+    git clone --depth=1 -b $apisix_nginx_module_ver \
+        https://github.com/api7/apisix-nginx-module.git \
+        apisix-nginx-module-${apisix-nginx-module_ver}
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git
+    git clone --depth=1 -b $wasm_nginx_module_ver \
+        https://github.com/api7/wasm-nginx-module.git \
+        wasm-nginx-module-${wasm-nginx-module_ver}
 fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
     cp -r "$prev_workdir" .
 else
-    git clone --depth=1 $lua_var_nginx_module_ver \
-        https://github.com/api7/lua-var-nginx-module
+    git clone --depth=1 -b $lua_var_nginx_module_ver \
+        https://github.com/api7/lua-var-nginx-module \
+        lua-var-nginx-module-${lua-var-nginx-module_ver}
 fi
 
-cd ngx_multi_upstream_module || exit 1
+cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
 ./patch.sh ../openresty-${or_ver}
 cd ..
 
-cd apisix-nginx-module/patch || exit 1
+cd apisix-nginx-module-${apisix-nginx-module_ver}/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
-cd wasm-nginx-module || exit 1
+cd wasm-nginx-module-${wasm-nginx-module_ver} || exit 1
 ./install-wasmtime.sh
 cd ..
 
@@ -89,12 +94,12 @@ cd openresty-${or_ver} || exit 1
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     $debug_args \
     --add-module=../mod_dubbo \
-    --add-module=../ngx_multi_upstream_module \
-    --add-module=../apisix-nginx-module \
-    --add-module=../apisix-nginx-module/src/stream \
-    --add-module=../apisix-nginx-module/src/meta \
-    --add-module=../wasm-nginx-module \
-    --add-module=../lua-var-nginx-module \
+    --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
+    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver} \
+    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver}/src/stream \
+    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver}/src/meta \
+    --add-module=../wasm-nginx-module-${wasm-nginx-module_ver} \
+    --add-module=../lua-var-nginx-module-${lua-var-nginx-module_ver} \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
@@ -129,10 +134,10 @@ make -j`nproc`
 sudo make install
 cd ..
 
-cd apisix-nginx-module || exit 1
+cd apisix-nginx-module-${apisix-nginx-module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
-cd wasm-nginx-module || exit 1
+cd wasm-nginx-module-${wasm-nginx-module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
