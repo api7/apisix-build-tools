@@ -93,7 +93,7 @@ cd openresty-${or_ver} || exit 1
     --with-cc-opt="-DAPISIX_BASE_VER=$version $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     $debug_args \
-    --add-module=../mod_dubbo \
+    --add-module=../mod_dubbo-${mod_dubbo_ver} \
     --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
     --add-module=../apisix-nginx-module-${apisix-nginx-module_ver} \
     --add-module=../apisix-nginx-module-${apisix-nginx-module_ver}/src/stream \
