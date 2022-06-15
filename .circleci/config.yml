@@ -70,7 +70,7 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-arm64 --push \
+            docker buildx build -t turien/apisix-base:dev-arm64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
@@ -91,7 +91,7 @@ jobs:
           name: Build and Push Docker Image
           command: |
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-x86_64 --push \
+            docker buildx build -t turien/apisix-base:dev-x86_64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
@@ -106,10 +106,10 @@ jobs:
             set -eu
             export DOCKER_CLI_EXPERIMENTAL=enabled
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker manifest create api7/apisix-base:dev \
-                                   api7/apisix-base:dev-arm64 \
-                                   api7/apisix-base:dev-x86_64
-            docker manifest push api7/apisix-base:dev
+            docker manifest create turien/apisix-base:dev \
+                                   turien/apisix-base:dev-arm64 \
+                                   tu ri en/apisix-base:dev-x86_64
+            docker manifest push turien/apisix-base:dev
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -121,13 +121,6 @@ workflows:
             branches:
               only: master
   build-and-push-apisix-base-dev:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
     jobs:
       - build-and-push-apisix-base-dev-arm
       - build-and-push-apisix-base-dev-x86

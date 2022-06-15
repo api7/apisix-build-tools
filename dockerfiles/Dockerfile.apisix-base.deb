@@ -1,7 +1,7 @@
 ARG IMAGE_BASE="debian"
-ARG IMAGE_TAG="buster-slim"
+ARG IMAGE_TAG="bullseye-slim"
 
-FROM ${IMAGE_BASE}:${IMAGE_TAG}
+FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
