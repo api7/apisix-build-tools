@@ -121,9 +121,6 @@ workflows:
             branches:
               only: master
   build-and-push-apisix-base-dev:
-    filters:
-        branches:
-          only: minideb
     jobs:
       - build-and-push-apisix-base-dev-arm
       - build-and-push-apisix-base-dev-x86
