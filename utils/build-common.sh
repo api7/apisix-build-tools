@@ -36,8 +36,8 @@ build_apisix_base_deb() {
         arch_path="arm64/"
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y sudo git libreadline-dev lsb-release libssl-dev perl build-essential
-    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends sudo git libreadline-dev lsb-release libssl-dev perl build-essential
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 
     if [[ $IMAGE_BASE == "ubuntu" ]]; then
@@ -58,6 +58,8 @@ build_apisix_base_deb() {
         unset OR_PREFIX
     fi
     ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
+
+    DEBIAN_FRONTEND=noninteractive apt-get clean
 }
 
 build_apisix_base_apk() {
