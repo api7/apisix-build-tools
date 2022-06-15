@@ -52,7 +52,7 @@ if [ "$repo" == apisix-nginx-module ]; then
 else
     git clone --depth=1 -b $apisix_nginx_module_ver \
         https://github.com/api7/apisix-nginx-module.git \
-        apisix-nginx-module-${apisix-nginx-module_ver}
+        apisix-nginx-module-${apisix_nginx_module_ver}
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
@@ -60,7 +60,7 @@ if [ "$repo" == wasm-nginx-module ]; then
 else
     git clone --depth=1 -b $wasm_nginx_module_ver \
         https://github.com/api7/wasm-nginx-module.git \
-        wasm-nginx-module-${wasm-nginx-module_ver}
+        wasm-nginx-module-${wasm_nginx_module_ver}
 fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
@@ -68,18 +68,18 @@ if [ "$repo" == lua-var-nginx-module ]; then
 else
     git clone --depth=1 -b $lua_var_nginx_module_ver \
         https://github.com/api7/lua-var-nginx-module \
-        lua-var-nginx-module-${lua-var-nginx-module_ver}
+        lua-var-nginx-module-${lua_var_nginx_module_ver}
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
 ./patch.sh ../openresty-${or_ver}
 cd ..
 
-cd apisix-nginx-module-${apisix-nginx-module_ver}/patch || exit 1
+cd apisix-nginx-module-${apisix_nginx_module_ver}/patch || exit 1
 ./patch.sh ../../openresty-${or_ver}
 cd ../..
 
-cd wasm-nginx-module-${wasm-nginx-module_ver} || exit 1
+cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 ./install-wasmtime.sh
 cd ..
 
@@ -95,11 +95,11 @@ cd openresty-${or_ver} || exit 1
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
     --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
-    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver} \
-    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver}/src/stream \
-    --add-module=../apisix-nginx-module-${apisix-nginx-module_ver}/src/meta \
-    --add-module=../wasm-nginx-module-${wasm-nginx-module_ver} \
-    --add-module=../lua-var-nginx-module-${lua-var-nginx-module_ver} \
+    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver} \
+    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver}/src/stream \
+    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver}/src/meta \
+    --add-module=../wasm-nginx-module-${wasm_nginx_module_ver} \
+    --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
@@ -134,10 +134,10 @@ make -j`nproc`
 sudo make install
 cd ..
 
-cd apisix-nginx-module-${apisix-nginx-module_ver} || exit 1
+cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
-cd wasm-nginx-module-${wasm-nginx-module_ver} || exit 1
+cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
