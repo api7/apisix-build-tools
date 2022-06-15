@@ -59,7 +59,8 @@ build_apisix_base_deb() {
     fi
     ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
 
-    DEBIAN_FRONTEND=noninteractive apt-get clean
+    DEBIAN_FRONTEND=noninteractive apt-get autoclean
+    rm -rf /var/lib/apt/lists/*
 }
 
 build_apisix_base_apk() {
