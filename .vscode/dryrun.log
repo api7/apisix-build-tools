@@ -1,0 +1,8 @@
+make --dry-run --always-make --keep-going --print-directory
+the app's value have to be apisix, dashboard or apisix-base!
+make: Entering directory `/usr/local/apisix-build-tools'
+git clone -b 0 "https://github.com/apache/apisix" ./apisix
+docker build -t apache/apisix-rpm:0 --build-arg checkout_v=0 --build-arg VERSION=0 --build-arg IMAGE_BASE="centos" --build-arg IMAGE_TAG="7" --build-arg CODE_PATH="./apisix" -f ./dockerfiles/Dockerfile.apisix.rpm .
+rm -fr ./apisix
+make: Leaving directory `/usr/local/apisix-build-tools'
+ 

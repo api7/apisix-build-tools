@@ -1,0 +1,406 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.82
+# Built for x86_64-redhat-linux-gnu
+# Copyright (C) 2010  Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+the app's value have to be apisix, dashboard or apisix-base!
+
+# Make data base, printed on Wed Jun 15 13:21:42 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# default
+.SHELLFLAGS := -c
+# environment
+VSCODE_AGENT_FOLDER = /root/.vscode-server
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# default
+MAKE_VERSION := 3.82
+# makefile
+CURDIR := /usr/local/apisix-build-tools
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"42e84e0914b17800d483f69e299e1b00.zh-cn","_translationsConfigFile":"/root/.vscode-server/data/clp/42e84e0914b17800d483f69e299e1b00.zh-cn/tcf.json","_cacheRoot":"/root/.vscode-server/data/clp/42e84e0914b17800d483f69e299e1b00.zh-cn","_resolvedLanguagePackCoreLocation":"/root/.vscode-server/data/clp/42e84e0914b17800d483f69e299e1b00.zh-cn/4af164ea3a06f701fe3e89a2bcbb421d2026b68f","_corruptedFile":"/root/.vscode-server/data/clp/42e84e0914b17800d483f69e299e1b00.zh-cn/corrupted.info","_languagePackSupport":true}
+# environment
+_ = /bin/make
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# environment
+HISTCONTROL = ignoredups
+# environment
+XDG_DATA_DIRS = /root/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# makefile (from `Makefile', line 19)
+checkout = 0
+# environment
+LESSOPEN = ||/usr/bin/lesspipe.sh %s
+# environment
+VSCODE_CWD = /root
+# environment
+SSH_CONNECTION = 10.211.55.2 60476 10.211.55.4 22
+# environment
+PATH = /root/.vscode-server/bin/4af164ea3a06f701fe3e89a2bcbb421d2026b68f/bin/remote-cli:/usr/local/stapxx:/usr/local/stapxx/samples:/nginx/sbin:/bin:/luajit/bin:/openssl111/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/root/bin:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph:/usr/local/wrk2:/usr/local/openresty-devel-utils:/usr/local/LDoc:/usr/local/go/bin:/home/gopath/bin:/usr/local/go/bin
+# environment
+LSCOLORS = Gxfxcxdxbxegedabagacad
+# environment
+XDG_RUNTIME_DIR = /run/user/0
+# makefile (from `Makefile', line 26)
+openresty = "openresty"
+# makefile (from `Makefile', line 20)
+app = 0
+# environment
+GOPATH = /home/gopath
+# environment
+VSCODE_LOG_STACK = false
+# makefile (from `Makefile', line 27)
+artifact = "0"
+# environment
+SELINUX_USE_CURRENT_RANGE = 
+# makefile (from `Makefile', line 46)
+build = 	docker build -t apache/$(1)-$(3):$(version) --build-arg checkout_v=$(checkout) --build-arg VERSION=$(version) --build-arg IMAGE_BASE=$(image_base) --build-arg IMAGE_TAG=$(image_tag) --build-arg CODE_PATH=$(4) -f ./dockerfiles/Dockerfile.$(2).$(3) .
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver check-symlink
+# environment
+LS_COLORS = 
+# makefile (from `Makefile', line 37)
+buildx = 0
+# automatic
+%F = $(notdir $%)
+# makefile (from `Makefile', line 38)
+cache_from = type=local,src=/tmp/.buildx-cache
+# makefile (from `Makefile', line 78)
+build-image = 	docker build -t apache/$(1)-$(3):$(version) --build-arg OPENRESTY_NAME=$(4) --build-arg OPENRESTY_VERSION=$(5) --build-arg CODE_PATH=$(6) -f ./dockerfiles/Dockerfile.$(2).$(3) .
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /usr/local/apisix-build-tools
+# environment
+VSCODE_IPC_HOOK_CLI = /run/user/0/vscode-ipc-a9b71f56-2cff-432f-baa2-be18350133fa.sock
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /root
+# makefile (from `Makefile', line 23)
+image_tag = "7"
+# environment
+PERL5LIB = .:
+# environment
+LOGNAME = root
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# makefile (from `Makefile', line 24)
+iteration = 0
+# automatic
++F = $(notdir $+)
+# environment
+SELINUX_LEVEL_REQUESTED = 
+# environment
+ZSH = /root/.oh-my-zsh
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+HOSTNAME = centos-linux.shared
+# makefile (from `Makefile', line 39)
+cache_to = type=local,dest=/tmp/.buildx-cache
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# makefile (from `Makefile', line 22)
+image_base = "centos"
+# environment
+SHLVL = 4
+# makefile (from `Makefile', line 18)
+version = 0
+# environment
+LUA_CPATH = /usr/local/lib/lua/5.1/?.so;;
+# environment
+XDG_SESSION_ID = 3116
+# environment
+USER = root
+# makefile
+.DEFAULT_GOAL := build-apisix-rpm
+# environment
+GOROOT = /usr/local/go
+# makefile (from `Makefile', line 29)
+dashboard_repo = "https://github.com/apache/apisix-dashboard"
+# makefile (from `Makefile', line 101)
+define package
+	docker build -t apache/$(1)-packaged-$(2):$(version) --build-arg VERSION=$(version) --build-arg ITERATION=$(iteration) --build-arg PACKAGE_VERSION=$(version) --build-arg PACKAGE_TYPE=$(2) --build-arg OPENRESTY=$(openresty) --build-arg ARTIFACT=$(artifact) -f ./dockerfiles/Dockerfile.package.$(1) .
+	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
+	docker cp output:/output ${PWD}
+	docker stop output
+	docker system prune -a -f
+endef
+# environment
+LESS = -R
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := make
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+PYTHONPATH = :/usr/local/openresty-gdb-utils
+# makefile
+MAKEFLAGS = Rrqp
+# makefile (from `Makefile', line 21)
+type = 0
+# environment
+MFLAGS = -Rrqp
+# environment
+SSH_CLIENT = 10.211.55.2 60476 22
+# environment
+MAIL = /var/spool/mail/root
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+BROWSER = /root/.vscode-server/bin/4af164ea3a06f701fe3e89a2bcbb421d2026b68f/bin/helpers/browser.sh
+# environment
+VSCODE_HANDLES_SIGPIPE = true
+# default
+MAKEFILES := 
+# makefile (from `Makefile', line 28)
+apisix_repo = "https://github.com/apache/apisix"
+# makefile (from `Makefile', line 25)
+local_code_path = 0
+# automatic
+<F = $(notdir $<)
+# environment
+PAGER = less
+# environment
+LC_ALL = C
+# environment
+LUA_PATH = /usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/?.lua;;
+# environment
+STAP_PLUS_HOME = /usr/local/stapxx
+# automatic
+^F = $(notdir $^)
+# environment
+SELINUX_ROLE_REQUESTED = 
+# default
+SUFFIXES := 
+# environment
+HISTSIZE = 50000
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# default
+.RECIPEPREFIX := 
+# environment
+LANG = C
+# environment
+VSCODE_EXTHOST_WILL_SEND_SOCKET = true
+# variable set hash-table stats:
+# Load=98/1024=10%, Rehash=0, Collisions=11/129=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 64768, inode 3288034): 23 files, no impossibilities.
+
+# 23 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+build-apisix-base-apk:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 188):
+	$(call build,apisix-base,apisix-base,apk,$(local_code_path))
+
+package-dashboard-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 175):
+	$(call package,apisix-dashboard,deb)
+
+build-apisix-base-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 184):
+	$(call build,apisix-base,apisix-base,deb,$(local_code_path))
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+package-dashboard-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 170):
+	$(call package,apisix-dashboard,rpm)
+
+build-apisix-base-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 180):
+	$(call build,apisix-base,apisix-base,rpm,$(local_code_path))
+
+.PHONY: build-apisix-rpm build-apisix-deb package-apisix-rpm package-apisix-deb build-dashboard-rpm build-dashboard-deb package-dashboard-rpm package-dashboard-deb build-apisix-base-rpm build-apisix-base-deb build-apisix-base-apk package-apisix-base-rpm package-apisix-base-deb build-fpm
+ 
+make: *** No rule to make target `all'.  Stop.
+
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+build-fpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 204):
+	docker build -t api7/fpm - < ./dockerfiles/Dockerfile.fpm
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-01-12 02:06:29.676484939
+#  File has been updated.
+#  Successfully updated.
+
+package-apisix-base-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 198):
+	$(call package,apisix-base,deb)
+
+build-apisix-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 130):
+	git clone -b $(checkout) $(apisix_repo) ./apisix
+	$(call build,apisix,apisix,deb,"./apisix")
+	rm -fr ./apisix
+
+package-apisix-base-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 193):
+	$(call package,apisix-base,rpm)
+
+build-apisix-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 120):
+	git clone -b $(checkout) $(apisix_repo) ./apisix
+	$(call build,apisix,apisix,rpm,"./apisix")
+	rm -fr ./apisix
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+package-apisix-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 144):
+	$(call package,apisix,deb)
+
+package-apisix-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 140):
+	$(call package,apisix,rpm)
+
+build-dashboard-deb:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 160):
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
+	$(call build,apisix-dashboard,dashboard,deb,"./apisix-dashboard")
+	rm -fr ./apisix-dashboard
+
+build-dashboard-rpm:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 150):
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
+	$(call build,apisix-dashboard,dashboard,rpm,"./apisix-dashboard")
+	rm -fr ./apisix-dashboard
+
+# files hash-table stats:
+# Load=19/1024=2%, Rehash=0, Collisions=1/70=1%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 0 / lookups = 102 / hits = 102
+# # of strcache buffers: 1 (* 8176 B/buffer = 8176 B)
+# strcache used: total = 0 (622) / max = 0 / min = 8176 / avg = 0
+# strcache free: total = 0 (7554) / max = 0 / min = 8176 / avg = 0
+
+# strcache hash-table stats:
+# Load=43/8192=1%, Rehash=0, Collisions=1/102=1%
+# Finished Make data base on Wed Jun 15 13:21:42 2022
+
+ 
