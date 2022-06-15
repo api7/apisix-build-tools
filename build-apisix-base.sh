@@ -32,7 +32,7 @@ wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.t
 tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
-    cp -r "$prev_workdir" .
+    cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
     git clone --depth=1 -b $ngx_multi_upstream_module_ver \
         https://github.com/api7/ngx_multi_upstream_module.git \
@@ -40,7 +40,7 @@ else
 fi
 
 if [ "$repo" == mod_dubbo ]; then
-    cp -r "$prev_workdir" .
+    cp -r "$prev_workdir" ./mod_dubbo-${mod_dubbo_ver}
 else
     git clone --depth=1 -b $mod_dubbo_ver \
         https://github.com/api7/mod_dubbo.git \
@@ -48,7 +48,7 @@ else
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
-    cp -r "$prev_workdir" .
+    cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
     git clone --depth=1 -b $apisix_nginx_module_ver \
         https://github.com/api7/apisix-nginx-module.git \
@@ -56,7 +56,7 @@ else
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
-    cp -r "$prev_workdir" .
+    cp -r "$prev_workdir" ./wasm-nginx-module-${wasm_nginx_module_ver}
 else
     git clone --depth=1 -b $wasm_nginx_module_ver \
         https://github.com/api7/wasm-nginx-module.git \
@@ -64,7 +64,7 @@ else
 fi
 
 if [ "$repo" == lua-var-nginx-module ]; then
-    cp -r "$prev_workdir" .
+    cp -r "$prev_workdir" ./lua-var-nginx-module-${lua_var_nginx_module_ver}
 else
     git clone --depth=1 -b $lua_var_nginx_module_ver \
         https://github.com/api7/lua-var-nginx-module \
