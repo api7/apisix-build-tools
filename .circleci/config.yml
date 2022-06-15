@@ -108,7 +108,7 @@ jobs:
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker manifest create turien/apisix-base:dev \
                                    turien/apisix-base:dev-arm64 \
-                                   tu ri en/apisix-base:dev-x86_64
+                                   turien/apisix-base:dev-x86_64
             docker manifest push turien/apisix-base:dev
 
 # Invoke jobs via workflows
