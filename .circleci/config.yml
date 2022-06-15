@@ -121,6 +121,13 @@ workflows:
             branches:
               only: master
   build-and-push-apisix-base-dev:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - build-and-push-apisix-base-dev-arm
       - build-and-push-apisix-base-dev-x86
