@@ -19,6 +19,8 @@ FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
 COPY --from=build /usr/local/openresty /usr/local/openresty
 COPY --from=build /usr/bin /usr/bin
 COPY --from=build /usr/lib /usr/lib
+COPY --from=build /usr/share /usr/share
+
 COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
