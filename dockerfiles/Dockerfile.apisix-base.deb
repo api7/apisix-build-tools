@@ -5,23 +5,6 @@ ARG IMAGE_TAG="bullseye-slim"
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
-
-WORKDIR /tmp
-
-ARG IMAGE_BASE
-ENV IMAGE_BASE=${IMAGE_BASE}
-
-RUN ./build-common.sh build_apisix_base_deb_dependence
-
-# STAGE 2
-FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
-
-COPY --from=build /usr/local/openresty /usr/local/openresty
-COPY --from=build /usr/bin /usr/bin
-COPY --from=build /usr/lib /usr/lib
-COPY --from=build /usr/share /usr/share
-
-COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
@@ -40,3 +23,12 @@ ENV build_latest=${BUILD_LATEST:-}
 RUN ./build-common.sh build_apisix_base_deb ${build_latest} \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh
+
+# STAGE 2
+FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
+
+COPY --from=build /usr/local/openresty /usr/local/openresty
+COPY --from=build /usr/local/openresty-debug /usr/local/openresty-debug
+
+ENV PATH=$PATH:/usr/local/openresty-debug/luajit/bin:/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/bin
+

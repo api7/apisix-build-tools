@@ -30,7 +30,7 @@ build_apisix_base_rpm() {
     ${BUILD_PATH}/build-apisix-base.sh
 }
 
-build_apisix_base_deb_dependence() {
+build_apisix_base_deb() {
     arch_path=""
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
@@ -51,17 +51,15 @@ build_apisix_base_deb_dependence() {
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
-    DEBIAN_FRONTEND=noninteractive apt-get autoclean
-    rm -rf /var/lib/apt/lists/*
-}
-
-build_apisix_base_deb() {
     export_openresty_variables
     # fix OR_PREFIX
     if [[ $build_latest == "latest" ]]; then
         unset OR_PREFIX
     fi
     ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
+
+    DEBIAN_FRONTEND=noninteractive apt-get autoclean
+    rm -rf /var/lib/apt/lists/*
 }
 
 build_apisix_base_apk() {
@@ -90,8 +88,5 @@ build_apisix_base_deb)
     ;;
 build_apisix_base_apk)
     build_apisix_base_apk
-    ;;
-build_apisix_base_deb_dependence)
-    build_apisix_base_deb_dependence
     ;;
 esac
