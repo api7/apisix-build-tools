@@ -35,10 +35,6 @@ build_apisix_base_deb() {
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
     fi
-    DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends sudo git libreadline-dev lsb-release libssl-dev perl build-essential
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wget gnupg ca-certificates
-    wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 
     if [[ $IMAGE_BASE == "ubuntu" ]]; then
         echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
@@ -48,8 +44,10 @@ build_apisix_base_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
 
+    wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
+
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends sudo git libreadline-dev lsb-release libssl-dev perl build-essential wget gnupg ca-certificates openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
 
