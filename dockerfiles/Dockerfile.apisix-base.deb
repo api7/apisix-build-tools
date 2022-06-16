@@ -26,4 +26,4 @@ RUN ./build-common.sh build_apisix_base_deb ${build_latest} \
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
 
 COPY --from=build /usr/local /usr/local
-
+COPY --from=build /tmp/dist /tmp/dist
