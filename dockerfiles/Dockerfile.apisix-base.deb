@@ -5,8 +5,6 @@ ARG IMAGE_TAG="bullseye-slim"
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
 COPY ./utils/build-common.sh /tmp/build-common.sh
-COPY build-apisix-base.sh /tmp/build-apisix-base.sh
-COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
 WORKDIR /tmp
 
@@ -19,6 +17,9 @@ RUN ./build-common.sh build_apisix_base_deb_dependence
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
 
 COPY --from=build /usr/local/openresty /usr/local/openresty
+COPY ./utils/build-common.sh /tmp/build-common.sh
+COPY build-apisix-base.sh /tmp/build-apisix-base.sh
+COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 
 WORKDIR /tmp
 
