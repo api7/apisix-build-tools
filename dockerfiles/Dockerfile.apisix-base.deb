@@ -17,6 +17,7 @@ RUN ./build-common.sh build_apisix_base_deb_dependence
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as prod
 
 COPY --from=build /usr/local/openresty /usr/local/openresty
+COPY --from=build /usr/bin /usr/bin
 COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
