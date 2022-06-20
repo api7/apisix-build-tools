@@ -13,12 +13,14 @@ fi
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
-openresty_zlib_version="1.2.11-3"
-openresty_openssl111_version="1.1.1n"
-openresty_pcre_version="8.44-1"
+openresty_zlib_version="1.2.12-1"
+openresty_openssl111_version="1.1.1n-1"
+openresty_pcre_version="8.45-1"
 if [ "$PACKAGE_TYPE" == "deb" ]; then
-    openresty_zlib_version="1.2.11-3~focal1"
-    openresty_pcre_version="8.44-1~focal1"
+    pkg_suffix="focal1"
+    openresty_zlib_version="$openresty_zlib_version~$pkg_suffix"
+    openresty_openssl111_version="$openresty_openssl111_version~$pkg_suffix"
+    openresty_pcre_version="$openresty_pcre_version~$pkg_suffix"
 fi
 
 fpm -f -s dir -t "$PACKAGE_TYPE" \
