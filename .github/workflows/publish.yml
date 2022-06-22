@@ -143,3 +143,8 @@ jobs:
       - name: RPM repo publish
         run: |
           sudo -E ./utils/publish-rpm.sh repo_publish
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
