@@ -4,12 +4,10 @@
 set -euo pipefail
 set -x
 
-env
-
 # =======================================
 # Runtime default config
 # =======================================
-VAR_TENCENT_COS_UTILS_VERSION=${VAR_TENCENT_COS_UTILS_VERSION:-v0.11.0-beta}
+VAR_ALIYUN_OSS_UTILS_VERSION=${VAR_ALIYUN_OSS_UTILS_VERSION:-1.7.10}
 VAR_RPM_WORKBENCH_DIR=${VAR_RPM_WORKBENCH_DIR:-/tmp/output}
 VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/rpm-gpg-publish.private}
 VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/rpm-gpg-publish.passphrase}
@@ -39,30 +37,29 @@ func_gpg_key_load() {
 }
 
 # =======================================
-# COS extension
+# OSS extension
 # =======================================
-func_cos_utils_install() {
-    # ${1} - COS util version
-    curl -o /usr/bin/coscli -L "https://github.com/tencentyun/coscli/releases/download/${1}/coscli-linux"
-    chmod 755 /usr/bin/coscli
+func_oss_utils_install() {
+    # ${1} - OSS util version
+    curl -o /usr/bin/ossutil64 "http://gosspublic.alicdn.com/ossutil/${1}/ossutil64"
+    chmod 755 /usr/bin/ossutil64
 }
 
-func_cos_utils_credential_init() {
-    # ${1} - COS endpoint
-    # ${2} - COS SECRET_ID
-    # ${3} - COS SECRET_KEY
-    cat > "${HOME}/.cos.yaml" <<_EOC_
-cos:
-  base:
-    secretid: ${2}
-    secretkey: ${3}
-    sessiontoken: ""
-    protocol: https
+func_oss_utils_credential_init() {
+    # ${1} - OSS endpoint
+    # ${2} - ACCESS_KEY_ID
+    # ${3} - ACCESS_KEY_SECRET
+    cat > "$(eval echo ~${USER})/.ossutilconfig" <<_EOC_
+[Credentials]
+language=EN
+endpoint=${1}
+accessKeyID=${2}
+accessKeySecret=${3}
 _EOC_
 }
 
 # =======================================
-# COS repo extension
+# OSS repo extension
 # =======================================
 func_repo_init() {
     # ${1} - repo workbench path
@@ -71,23 +68,23 @@ func_repo_init() {
 
 func_repo_clone() {
     # ${1} - bucket name
-    # ${2} - COS path
+    # ${2} - OSS path
     # ${3} - target path
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${2}" "${3}"
+    ossutil64 cp -r -f "oss://${1}/packages/${2}" "${3}"
 }
 
 func_repo_backup() {
     # ${1} - bucket name
-    # ${2} - COS path
+    # ${2} - OSS path
     # ${3} - backup tag
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
+    ossutil64 cp -r "oss://${1}/packages/${2}" "oss://${1}/packages/backup/${2}_${3}"
 }
 
 func_repo_backup_remove() {
     # ${1} - bucket name
-    # ${2} - COS path
+    # ${2} - OSS path
     # ${3} - backup tag
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${1}/packages/backup/${2}_${3}"
+    ossutil64 rm -r -f "oss://${1}/packages/backup/${2}_${3}"
 }
 
 func_repo_repodata_rebuild() {
@@ -108,17 +105,17 @@ func_repo_repodata_sign() {
 func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
-    # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}"
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "${1}" "cos://${2}/packages/${3}"
+    # ${3} - OSS path
+    ossutil64 rm -r -f "oss://${2}/packages/${3}"
+    ossutil64 cp -r "${1}" "oss://${2}/packages/${3}"
 }
 
 func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
-    # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}"
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${3}" "cos://${2}/packages"
+    # ${3} - OSS path
+    ossutil64 rm -r -f "oss://${2}/packages/${3}"
+    ossutil64 cp -r "oss://${1}/packages/${3}" "oss://${2}/packages"
 }
 
 # =======================================
@@ -127,9 +124,9 @@ func_repo_publish() {
 case_opt=$1
 
 case ${case_opt} in
-init_cos_utils)
-    func_cos_utils_install "${VAR_TENCENT_COS_UTILS_VERSION}"
-    func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}"
+init_oss_utils)
+    func_oss_utils_install "${VAR_ALIYUN_OSS_UTILS_VERSION}"
+    func_oss_utils_credential_init "${VAR_OSS_ENDPOINT}" "${ACCESS_KEY_ID}" "${ACCESS_KEY_SECRET}"
     ;;
 repo_init)
     # create basic repo directory structure
@@ -137,10 +134,10 @@ repo_init)
     func_repo_init /tmp
     ;;
 repo_backup)
-    func_repo_backup "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
+    func_repo_backup "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
 repo_clone)
-    func_repo_clone "${VAR_COS_BUCKET_REPO}" "centos" /tmp/centos
+    func_repo_clone "${VAR_OSS_BUCKET_REPO}" "centos" /tmp
     ;;
 repo_package_sync)
     VAR_REPO_MAJOR_VER=(7 8)
@@ -155,13 +152,13 @@ repo_repodata_rebuild)
     func_repo_repodata_sign /tmp/centos
     ;;
 repo_upload)
-    func_repo_upload /tmp/centos "${VAR_COS_BUCKET_CI}" "centos"
+    func_repo_upload /tmp/centos "${VAR_OSS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
-    func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "centos"
+    func_repo_publish "${VAR_OSS_BUCKET_CI}" "${VAR_OSS_BUCKET_REPO}" "centos"
     ;;
 repo_backup_remove)
-    func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
+    func_repo_backup_remove "${VAR_OSS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
 rpm_gpg_sign)
     func_rpmsign_macros_init

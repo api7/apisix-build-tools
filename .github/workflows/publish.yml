@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     env:
-      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
-      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
+      VAR_OSS_BUCKET_CI: ${{ secrets.VAR_OSS_BUCKET_CI }}
+      VAR_OSS_BUCKET_REPO: ${{ secrets.VAR_OSS_BUCKET_REPO }}
+      VAR_OSS_ENDPOINT: ${{ secrets.VAR_OSS_ENDPOINT }}
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
     steps:
@@ -106,10 +106,10 @@ jobs:
 
       - name: RPM repo deps init
         env:
-          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
-          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
         run: |
-          sudo -E ./utils/publish-rpm.sh init_cos_utils
+          sudo -E ./utils/publish-rpm.sh init_oss_utils
 
       - name: RPM repo init
         run: |
