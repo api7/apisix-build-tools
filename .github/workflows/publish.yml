@@ -136,10 +136,10 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
           sudo -E ./utils/publish-rpm.sh repo_upload
 
-      - name: RPM repo remove backup
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup_remove
-
       - name: RPM repo publish
         run: |
           sudo -E ./utils/publish-rpm.sh repo_publish
+
+      - name: RPM repo remove backup
+        run: |
+          sudo -E ./utils/publish-rpm.sh repo_backup_remove
