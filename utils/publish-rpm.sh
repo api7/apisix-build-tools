@@ -109,7 +109,7 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}"
+    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
     coscli -e "${VAR_COS_ENDPOINT}" cp -r "${1}" "cos://${2}/packages/${3}"
 }
 
@@ -117,8 +117,8 @@ func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}"
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${3}" "cos://${2}/packages"
+    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
+    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
 }
 
 # =======================================
