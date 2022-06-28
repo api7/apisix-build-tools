@@ -73,6 +73,11 @@ func_repo_clone() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - target path
+
+    #
+    # when the file is larger than --part-size, coscli will first chunk the file by --part-size.
+    # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
+    # which will generate cosresumabletask file and interfere with the file integrity.
     coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
 }
 
