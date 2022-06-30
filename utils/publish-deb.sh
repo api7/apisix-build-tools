@@ -49,14 +49,6 @@ func_repo_upload() {
         -exec coscli -e "${VAR_COS_ENDPOINT}" cp {} "cos://${2}/packages/${3}/pool/main/a/apisix-base/{}" \;
 }
 
-func_repo_publish() {
-    # ${1} - CI bucket
-    # ${2} - repo publish bucket
-    # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
-}
-
 # =======================================
 # publish utils entry
 # =======================================
@@ -68,10 +60,7 @@ init_cos_utils)
     func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}"
     ;;
 repo_upload)
-    func_repo_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_CI}" "debian"
-    ;;
-repo_publish)
-    func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "debian"
+    func_repo_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_REPO}" "debian"
     ;;
 *)
     echo "Unknown method!"

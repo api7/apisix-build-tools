@@ -87,7 +87,3 @@ jobs:
       - name: deb upload
         run: |
           sudo -E ./utils/publish-deb.sh repo_upload
-
-      - name: deb repo publish
-        run: |
-          sudo -E ./utils/publish-deb.sh repo_publish
