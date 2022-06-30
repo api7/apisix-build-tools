@@ -1,0 +1,71 @@
+name: Build and Publish Package
+
+on:
+  push
+
+jobs:
+  publish_apisix:
+    name: Build and Publish deb Package
+    runs-on: ubuntu-18.04
+    timeout-minutes: 60
+    env:
+      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
+      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
+      VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
+      VAR_DEB_WORKBENCH_DIR: /tmp/output
+      APISIX_TAG_VERSION: 2.13.2
+      APISIX_BASE_TAG_VERSION: 1.19.9.1.5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.5
+        with:
+          submodules: recursive
+
+      - name: Init basic publish env
+        run: |
+          mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
+          # init env var
+          TAG_DATE=$(date +%Y%m%d)
+          echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
+
+      - name: Build apisix deb Package
+        run: |
+          # build apisix
+          make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=debian image_tag=bullseye-slim
+          mv ./output/apisix_${APISIX_TAG_VERSION}-0~debianbullseye-slim_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+          echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
+
+      - name: Build apisix-base deb Package
+        run: |
+          # build apisix-base
+          make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=debian image_tag=bullseye-slim
+          mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~debianbullseye-slim_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+          echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
+
+      - name: Upload apisix Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix_${{ env.APISIX_TAG_VERSION }}-0~debianbullseye-slim_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix_${{ env.APISIX_TAG_VERSION }}-0~debianbullseye-slim_amd64.deb"
+
+      - name: Upload apisix-base Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-base_${{ env.APISIX_BASE_TAG_VERSION }}-0~debianbullseye-slim_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ env.APISIX_BASE_TAG_VERSION }}-0~debianbullseye-slim_amd64.deb"
+
+      - name: deb repo deps init
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          sudo -E ./utils/publish-deb.sh init_cos_utils
+
+      - name: deb upload
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_upload
+
+      - name: deb repo publish
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_publish
