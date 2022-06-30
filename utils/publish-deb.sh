@@ -42,7 +42,7 @@ func_repo_upload() {
     # ${3} - COS path
     find "${1}" -type f -name "*.deb" \
         -exec echo "upload : {}" \; \
-        -exec coscli -e "${VAR_COS_ENDPOINT}" cp -r {} "cos://${2}/packages/${3}/pool/main/a/" \;
+        -exec coscli -e "${VAR_COS_ENDPOINT}" cp -r {} "cos://${2}/packages/${3}/pool/main/a" \;
 }
 
 func_repo_publish() {
