@@ -40,19 +40,13 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    dir=`pwd`
-    cd $1
-    file=`ls |grep apisix_`
-    if [[ -n $file ]]; then
-        coscli -e "${VAR_COS_ENDPOINT}" cp $file "cos://${2}/packages/${3}/pool/main/a/apisix/$file"
-    fi
+    find "${1}" -type f -name "apsix_*.deb" \
+        -exec echo "upload : {}" \; \
+        -exec coscli -e "${VAR_COS_ENDPOINT}" cp {} "cos://${2}/packages/${3}/pool/main/a/apisix/{}" \;
 
-    file=`ls |grep apisix-base`
-    if [[ -n $file ]]; then
-        coscli -e "${VAR_COS_ENDPOINT}" cp $file "cos://${2}/packages/${3}/pool/main/a/apisix-base/$file"
-    fi
-
-    cd $dir
+    find "${1}" -type f -name "apsix-base*.deb" \
+        -exec echo "upload : {}" \; \
+        -exec coscli -e "${VAR_COS_ENDPOINT}" cp {} "cos://${2}/packages/${3}/pool/main/a/apisix-base/{}" \;
 }
 
 func_repo_publish() {
