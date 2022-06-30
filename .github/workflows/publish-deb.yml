@@ -13,8 +13,6 @@ jobs:
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
       VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
       VAR_DEB_WORKBENCH_DIR: /tmp/output
-      APISIX_TAG_VERSION: 2.13.2
-      APISIX_BASE_TAG_VERSION: 1.19.9.1.5
 
     steps:
       - name: Check out code
