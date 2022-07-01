@@ -43,12 +43,12 @@ func_repo_upload() {
     find "${1}" -type f -name "apsix_*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'file=$(basename {}); \
-                    coscli -e "${VAR_COS_ENDPOINT}" cp {} "cos://${2}/packages/${3}/pool/main/a/apisix/${file}"' \;
+                    coscli -e "${VAR_COS_ENDPOINT}" cp {} --part-size 1000 "cos://${2}/packages/${3}/pool/main/a/apisix/${file}"' \;
 
     find "${1}" -type f -name "apsix-base*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'file=$(basename {}); \
-                    coscli -e "${VAR_COS_ENDPOINT}" cp {} "cos://${2}/packages/${3}/pool/main/a/apisix-base/${file}"' \;
+                    coscli -e "${VAR_COS_ENDPOINT}" cp {} --part-size 1000 "cos://${2}/packages/${3}/pool/main/a/apisix-base/${file}"' \;
 }
 
 # =======================================
