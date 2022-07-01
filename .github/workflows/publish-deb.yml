@@ -1,7 +1,7 @@
 name: Build and Publish Package
 
 on:
-  push
+  create
 
 jobs:
   publish_apisix:
