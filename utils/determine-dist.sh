@@ -9,6 +9,9 @@ then
 elif [ "${IMAGE_BASE}" == "ubuntu" ]
 then
     dist="${IMAGE_BASE}${IMAGE_TAG}"
+elif [ "${IMAGE_BASE}" == "debian" ]
+then
+    dist="${IMAGE_BASE}${IMAGE_TAG}"
 fi
 
 echo "${dist}" > /tmp/dist
