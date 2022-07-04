@@ -111,6 +111,72 @@ jobs:
                                    api7/apisix-base:dev-x86_64
             docker manifest push api7/apisix-base:dev
 
+  build-and-publish-debian-arm64-package:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    environment:
+      - VAR_DEB_WORKBENCH_DIR: /tmp/output
+      - VAR_PACKAGE_OS: debian
+      - VAR_PACKAGE_OS_RELEASE: bullseye-slim
+    
+    steps:
+      - checkout
+      - run:
+          name: Init basic publish env
+          command: |
+            mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
+            wget https://github.com/tencentyun/coscli/archive/refs/tags/v0.11.0-beta.tar.gz
+            tar -zxvf v0.11.0-beta.tar.gz
+            cd coscli-0.11.0-beta && go build
+            sudo mv coscli ../
+            cat \<< EOF > "${HOME}/.cos.yaml"
+            cos:
+              base:
+                secretid: ${TENCENT_COS_SECRETID}
+                secretkey: ${TENCENT_COS_SECRETKEY}
+                protocol: https
+            EOF
+
+      - when:
+          condition:
+            # enclose a pattern in ^ and $ to avoid accidental partial matches
+            # https://circleci.com/docs/2.0/configuration-reference#logic-statements
+            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+          steps:
+            - run:
+                name: build apisix deb package
+                command: |
+                  APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  echo "apisix version: $APISIX_TAG_VERSION"
+                  make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_PACKAGE_OS} image_tag=${VAR_PACKAGE_OS_RELEASE}
+                  mv ./output/apisix_${APISIX_TAG_VERSION}-0~debianbullseye-slim_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+      - when:
+          condition:
+            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+          steps:
+            - run:
+                name: build apisix-base deb package
+                command: |
+                  APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
+                  make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_PACKAGE_OS} image_tag=${VAR_PACKAGE_OS_RELEASE}
+                  mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~debianbullseye-slim_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - run:
+          name: upload deb package
+          command: |
+            find "${VAR_DEB_WORKBENCH_DIR}" -type f -name "apisix_*.deb" \
+              -exec echo "upload : {}" \; \
+              -exec sh -c 'file=$(basename {}); \
+                      ./coscli -e "${VAR_COS_ENDPOINT}" \
+                                      cp --part-size 1000 {} "cos://${VAR_COS_BUCKET_REPO}/packages/arm64/debian/pool/main/a/apisix/${file}"' \;
+            find "${VAR_DEB_WORKBENCH_DIR}" -type f -name "apisix-base*.deb" \
+                -exec echo "upload : {}" \; \
+                -exec sh -c 'file=$(basename {}); \
+                       ./coscli -e "${VAR_COS_ENDPOINT}" \
+                                      cp --part-size 1000 {} "cos://${VAR_COS_BUCKET_REPO}/packages/arm64/debian/pool/main/a/apisix-base/${file}"' \;
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -118,8 +184,8 @@ workflows:
     jobs:
       - build:
         filters:
-            branches:
-              only: master
+          branches:
+            only: master
   build-and-push-apisix-base-dev:
     triggers:
       - schedule:
@@ -135,3 +201,9 @@ workflows:
           requires:
             - build-and-push-apisix-base-dev-arm
             - build-and-push-apisix-base-dev-x86
+  build-and-publish-debian-package:
+    jobs:
+      - build-and-publish-debian-arm64-package:
+          filters:
+            tags:
+              only: /^apisix.*/
