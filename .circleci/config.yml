@@ -117,9 +117,8 @@ jobs:
     resource_class: arm.medium
     environment:
       - VAR_DEB_WORKBENCH_DIR: /tmp/output
-      - VAR_PACKAGE_OS: debian
-      - VAR_PACKAGE_OS_RELEASE: bullseye-slim
-      - VAR_PACKAGE_VERSION: debianbullseye-slim
+      - VAR_OS: debian
+      - VAR_OS_RELEASE: bullseye-slim
     
     steps:
       - checkout
@@ -150,8 +149,8 @@ jobs:
                 command: |
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix version: $APISIX_TAG_VERSION"
-                  make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_PACKAGE_OS} image_tag=${VAR_PACKAGE_OS_RELEASE}
-                  mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_PACKAGE_VERSION}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+                  make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
+                  mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
 
             - run:
                 name: upload deb package
@@ -171,8 +170,8 @@ jobs:
                 command: |
                   APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
-                  make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_PACKAGE_OS} image_tag=${VAR_PACKAGE_OS_RELEASE}
-                  mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_PACKAGE_VERSION}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+                  make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
+                  mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
             - run:
                 name: upload deb package
                 command: |
