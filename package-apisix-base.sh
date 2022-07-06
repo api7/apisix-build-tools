@@ -17,7 +17,8 @@ openresty_zlib_version="1.2.12-1"
 openresty_openssl111_version="1.1.1n-1"
 openresty_pcre_version="8.45-1"
 if [ "$PACKAGE_TYPE" == "deb" ]; then
-    pkg_suffix="focal1"
+    codename=`cat /etc/os-release |grep VERSION_CODENAME|awk -F '=' '{print $2}'`
+    pkg_suffix="${codename}1"
     openresty_zlib_version="$openresty_zlib_version~$pkg_suffix"
     openresty_openssl111_version="$openresty_openssl111_version~$pkg_suffix"
     openresty_pcre_version="$openresty_pcre_version~$pkg_suffix"
