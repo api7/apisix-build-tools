@@ -79,12 +79,12 @@ jobs:
 
       - name: Init publish utils
         env:
-          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
           TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
-          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
-          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
           ./utils/publish-deb.sh init_cos_utils
           sudo -E ./utils/publish-deb.sh init_freight_utils
           sudo -E ./utils/publish-deb.sh init_gpg

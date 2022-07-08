@@ -28,7 +28,7 @@ func_gpg_key_load() {
     gpg --import --pinentry-mode loopback \
         --batch --passphrase-file "${VAR_GPG_PASSPHRASE}" "${VAR_GPG_PRIV_KET}"
 
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
+    gpg --list-keys --fingerprint | grep "${DEB_GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
     | gpg --import-ownertrust
 
@@ -192,7 +192,7 @@ init_cos_utils)
     ;;
 init_freight_utils)
     func_freight_utils_install
-    func_freight_utils_init ${GPG_MAIL} "/tmp/freight"
+    func_freight_utils_init ${DEB_GPG_MAIL} "/tmp/freight"
     ;;
 init_gpg)
     func_gpg_key_load
