@@ -14,6 +14,7 @@ jobs:
       VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
       VAR_DEB_WORKBENCH_DIR: /tmp/output
       VAR_OS: debian
+      VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
 
     steps:
@@ -97,8 +98,6 @@ jobs:
           sudo -E ./utils/publish-deb.sh repo_clone
 
       - name: rebuild deb repo
-        env:
-          VAR_CODENAME: bullseye
         run:
           sudo -E ./utils/publish-deb.sh repo_rebuild
 
