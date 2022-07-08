@@ -152,6 +152,7 @@ func_deb_upload() {
     # We will only upload apisix and apisix-base,
     # so the directory is fixed: pool/main/a.
     # Regardless of other packages.
+
     export COS_CMD=$COS_CMD
     export arch_path=$arch_path
     export BUCKET=$2
