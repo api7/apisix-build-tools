@@ -13,6 +13,8 @@ jobs:
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
       VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
       VAR_DEB_WORKBENCH_DIR: /tmp/output
+      VAR_OS: debian
+      VAR_OS_RELEASE: bullseye-slim
 
     steps:
       - name: Check out code
@@ -22,10 +24,21 @@ jobs:
 
       - name: Init basic publish env
         run: |
+          sudo apt-get update
+          sudo apt install -y gpg ca-certificates
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
-          # init env var
-          TAG_DATE=$(date +%Y%m%d)
-          echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
+
+      - name: Init publish utils
+        env:
+          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          ./utils/publish-deb.sh init_cos_utils
+          sudo -E ./utils/publish-deb.sh init_freight_utils
+          sudo -E ./utils/publish-deb.sh init_gpg
 
       - name: Extract Tags name
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -47,9 +60,8 @@ jobs:
           APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix
-          make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=debian image_tag=bullseye-slim
-          mv ./output/apisix_${APISIX_TAG_VERSION}-0~debianbullseye-slim_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
-          echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
+          make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
+          mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Build apisix-base deb Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
@@ -59,31 +71,42 @@ jobs:
           # build apisix-base
           echo ${{ steps.tag_env.outputs.version}}
           echo ${{ steps.tag_type.outputs.version}}
-          make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=debian image_tag=bullseye-slim
-          mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~debianbullseye-slim_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
-          echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
+          make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
+          mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix_${{ steps.tag_env.outputs.version}}-0~debianbullseye-slim_amd64.deb"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix_${{ steps.tag_env.outputs.version}}-0~debianbullseye-slim_amd64.deb"
+          name: "apisix_${{ steps.tag_env.outputs.version}}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
 
       - name: Upload apisix-base Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-base_${{ steps.tag_env.outputs.version}}-0~debianbullseye-slim_amd64.deb"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.tag_env.outputs.version}}-0~debianbullseye-slim_amd64.deb"
+          name: "apisix-base_${{ steps.tag_env.outputs.version}}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
 
-      - name: deb repo deps init
+      - name: backup dists to ci bucket
+        run:
+          sudo -E ./utils/publish-deb.sh dists_backup
+
+      - name: download pool dir to local
+        run:
+          sudo -E ./utils/publish-deb.sh repo_clone
+
+      - name: rebuild deb repo
         env:
-          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
-          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
-        run: |
-          sudo -E ./utils/publish-deb.sh init_cos_utils
+          VAR_CODENAME: bullseye
+        run:
+          sudo -E ./utils/publish-deb.sh repo_rebuild
 
-      - name: deb upload
-        run: |
+      - name: upload repo
+        run:
           sudo -E ./utils/publish-deb.sh repo_upload
+
+      - name: pulish repo
+        run:
+          sudo -E ./utils/publish-deb.sh repo_publish
+          sudo -E ./utils/publish-deb.sh repo_backup_remove
