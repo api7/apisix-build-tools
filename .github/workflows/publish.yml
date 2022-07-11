@@ -88,14 +88,14 @@ jobs:
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: Upload apisix-base Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: Upload apisix-dashboard Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
