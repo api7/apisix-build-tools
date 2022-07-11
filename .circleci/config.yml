@@ -1,6 +1,11 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+parameters:
+  release_version:
+    type: string
+    default: apisix/2.14.1
+
 commands:
   description: publish deb package
   publish_package:
@@ -38,9 +43,6 @@ jobs:
       - VAR_OS: debian
       - VAR_CODENAME: bullseye
       - VAR_OS_RELEASE: bullseye-slim
-    parameters:
-      release_version:
-        type: string
 
     steps:
       - checkout
@@ -62,12 +64,12 @@ jobs:
             # enclose a pattern in ^ and $ to avoid accidental partial matches
             # https://circleci.com/docs/2.0/configuration-reference#logic-statements
             #matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
-            matches: { pattern: "^apisix/(.*)\\d+$", value: << parameters.release_version >> }
+            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.parameters.release_version >> }
           steps:
             - run:
                 name: build apisix deb package
                 command: |
-                  CIRCLE_TAG="<< parameters.release_version >>"
+                  CIRCLE_TAG="<< pipeline.parameters.release_version >>"
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
@@ -77,12 +79,12 @@ jobs:
 
       - when:
           condition:
-            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << parameters.release_version >> }
+            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.parameters.release_version >> }
           steps:
             - run:
                 name: build apisix-base deb package
                 command: |
-                  CIRCLE_TAG="<< parameters.release_version >>"
+                  CIRCLE_TAG="<< pipeline.parameters.release_version >>"
                   APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
                   make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
@@ -96,8 +98,6 @@ workflows:
   build-and-publish-debian-package:
     jobs:
       - build-and-publish-debian-arm64-package:
-          release_version:
-            apisix.2.14.1
           filters:
             tags:
               only: /^apisix.*/
