@@ -29,112 +29,6 @@ commands:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-    environment:
-      - TEST_VERSION: 0-latest
-    steps:
-      - checkout
-      - run:
-          name: install dependencies
-          command: |
-            sudo apt-get install -y make
-      - run:
-          name: package apisix-base
-          command: |
-            make package type=deb app=apisix-base version=${TEST_VERSION}
-      - run:
-          name: package apisx
-          command: |
-            make package type=deb app=apisix version=${TEST_VERSION} checkout=master image_base=ubuntu image_tag=20.04
-      - run:
-          name: install apisix deb into container
-          command: |
-            docker build -t apache/apisix:${TEST_VERSION}-deb-test --build-arg APISIX_VERSION=${TEST_VERSION} -f test/apisix/Dockerfile.test.apisix.arm64.ubuntu20.04 .
-      - run:
-          name: start apisix and test
-          command: |
-            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
-            sleep 20
-            curl http://127.0.0.1:9080/apisix/admin/routes/1 \
-            -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
-              {
-                "uri": "/get",
-                "upstream": {
-                    "type": "roundrobin",
-                    "nodes": {
-                        "httpbin.org:80": 1
-                    }
-                }
-              }'
-            result_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/get`
-            if [[ $result_code -ne 200 ]]; then
-                printf "result_code: %s\n" "$result_code"
-                exit 125
-            fi
-
-  build-and-push-apisix-base-dev-arm:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-
-    steps:
-      - checkout
-      - run:
-          name: submodule
-          command: |
-            git submodule sync
-            git submodule update --init
-
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-arm64 --push \
-            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
-            -f ./dockerfiles/Dockerfile.apisix-base.deb .
-
-  build-and-push-apisix-base-dev-x86:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: medium
-
-    steps:
-      - checkout
-      - run:
-          name: submodule
-          command: |
-            git submodule sync
-            git submodule update --init
-
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-x86_64 --push \
-            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
-            -f ./dockerfiles/Dockerfile.apisix-base.deb .
-
-  upload-manifest:
-    docker:
-      - image: cimg/python:3.8.2
-    steps:
-      - checkout
-      - deploy:
-          name: "Upload manifest to registry"
-          command: |
-            set -eu
-            export DOCKER_CLI_EXPERIMENTAL=enabled
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker manifest create api7/apisix-base:dev \
-                                   api7/apisix-base:dev-arm64 \
-                                   api7/apisix-base:dev-x86_64
-            docker manifest push api7/apisix-base:dev
-
   build-and-publish-debian-arm64-package:
     machine:
       image: ubuntu-2004:202101-01
@@ -144,7 +38,10 @@ jobs:
       - VAR_OS: debian
       - VAR_CODENAME: bullseye
       - VAR_OS_RELEASE: bullseye-slim
-    
+    parameters:
+      release_version:
+        type: string
+
     steps:
       - checkout
       - run:
@@ -164,11 +61,13 @@ jobs:
           condition:
             # enclose a pattern in ^ and $ to avoid accidental partial matches
             # https://circleci.com/docs/2.0/configuration-reference#logic-statements
-            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+            #matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+            matches: { pattern: "^apisix/(.*)\\d+$", value: << parameters.release_version >> }
           steps:
             - run:
                 name: build apisix deb package
                 command: |
+                  CIRCLE_TAG="<< parameters.release_version >>"
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
@@ -178,11 +77,12 @@ jobs:
 
       - when:
           condition:
-            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << parameters.release_version >> }
           steps:
             - run:
                 name: build apisix-base deb package
                 command: |
+                  CIRCLE_TAG="<< parameters.release_version >>"
                   APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
                   make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
@@ -193,30 +93,11 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-apisix-base:
-    jobs:
-      - build:
-        filters:
-          branches:
-            only: master
-  build-and-push-apisix-base-dev:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build-and-push-apisix-base-dev-arm
-      - build-and-push-apisix-base-dev-x86
-      - upload-manifest:
-          requires:
-            - build-and-push-apisix-base-dev-arm
-            - build-and-push-apisix-base-dev-x86
   build-and-publish-debian-package:
     jobs:
       - build-and-publish-debian-arm64-package:
+          release_version:
+            apisix.2.14.1
           filters:
             tags:
               only: /^apisix.*/

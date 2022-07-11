@@ -29,53 +29,53 @@ jobs:
           sudo apt install -y gpg ca-certificates
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
-      - name: Extract Tags name
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        id: tag_env
+      - name: Extract release name
+        id: release_env
         shell: bash
         run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
-
-      - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        id: tag_type
-        shell: bash
-        run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+          title="${{ github.event.head_commit.message }}"
+          re="^feat: release (apisix|apisix-base)/(\S+)$"
+          if [[ $title =~ $re ]]; then
+              echo "##[set-output name=type;]${BASH_REMATCH[1]}"
+              echo "##[set-output name=version;]${BASH_REMATCH[2]}"
+          else
+              echo "commit format is not correct"
+              exit 1
+          fi
 
       - name: Build apisix deb Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        if: ${{ startsWith(steps.release_env.outputs.type, 'apisix') }}
         env:
-          APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+          APISIX_TAG_VERSION: ${{ steps.release_env.outputs.version}}
         run: |
           # build apisix
           make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
           mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Build apisix-base deb Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        if: ${{ startsWith(steps.release_env.outputs.type, 'apisix-base') }}
         env:
-          APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+          APISIX_BASE_TAG_VERSION: ${{ steps.release_env.outputs.version}}
         run: |
           # build apisix-base
-          echo ${{ steps.tag_env.outputs.version}}
-          echo ${{ steps.tag_type.outputs.version}}
+          echo ${{ steps.release_env.outputs.type}}
+          echo ${{ steps.release_env.outputs.version}}
           make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
           mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix Artifact
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        if: ${{ startsWith(steps.release_env.outputs.type, 'apisix') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix_${{ steps.tag_env.outputs.version}}-0~${{ VAR_OS }}${{ VAR_OS_RELEASE }}_amd64.deb"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          name: "apisix_${{ steps.release_env.outputs.version}}-0~${{ VAR_OS }}${{ VAR_OS_RELEASE }}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix_${{ steps.release_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
 
       - name: Upload apisix-base Artifact
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        if: ${{ startsWith(steps.release_env.outputs.type, 'apisix-base') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ VAR_OS }}${{ VAR_OS_RELEASE }}_amd64.deb"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          name: "apisix-base_${{ steps.release_env.outputs.version}}-0~${{ VAR_OS }}${{ VAR_OS_RELEASE }}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.release_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
 
       - name: Init publish utils
         env:
