@@ -153,9 +153,9 @@ jobs:
             mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
             sudo apt-get update
             sudo apt install -y gpg ca-certificates
-            RPM_GPG_PRIV_KEY=$(echo $RPM_GPG_PRIV_KEY_BASE64 | base64 -d)
-            echo "${RPM_GPG_PRIV_KEY}" >> /tmp/deb-gpg-publish.private
-            echo "${RPM_GPG_PASSPHRASE}" >> /tmp/deb-gpg-publish.passphrase
+            DEB_GPG_PRIV_KEY=$(echo $DEB_GPG_PRIV_KEY_BASE64 | base64 -d)
+            echo "${DEB_GPG_PRIV_KEY}" >> /tmp/deb-gpg-publish.private
+            echo "${DEB_GPG_PASSPHRASE}" >> /tmp/deb-gpg-publish.passphrase
             ./utils/publish-deb.sh init_cos_utils
             sudo -E ./utils/publish-deb.sh init_freight_utils
             sudo -E ./utils/publish-deb.sh init_gpg
