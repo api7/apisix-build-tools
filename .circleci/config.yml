@@ -4,7 +4,7 @@ version: 2.1
 parameters:
   release_version:
     type: string
-    default: apisix-base/2.14.1
+    default: apisix-base/1.19.9.1.6
 
 commands:
   description: publish deb package
