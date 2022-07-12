@@ -1,4 +1,4 @@
-name: Build and Publish debian Package
+name: Build and upload debian Package
 
 on:
   push
@@ -9,9 +9,6 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     env:
-      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
-      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
       VAR_DEB_WORKBENCH_DIR: /tmp/output
       VAR_OS: debian
       VAR_CODENAME: bullseye
@@ -26,7 +23,6 @@ jobs:
       - name: Init basic publish env
         run: |
           sudo apt-get update
-          sudo apt install -y gpg ca-certificates
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
       - name: Extract release name
@@ -77,35 +73,3 @@ jobs:
           name: "apisix-base_${{ steps.release_env.outputs.version }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
           path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.release_env.outputs.version }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
 
-      - name: Init publish utils
-        env:
-          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
-          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
-          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
-        run: |
-          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
-          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
-          ./utils/publish-deb.sh init_cos_utils
-          sudo -E ./utils/publish-deb.sh init_freight_utils
-          sudo -E ./utils/publish-deb.sh init_gpg
-
-      - name: backup dists to ci bucket
-        run:
-          sudo -E ./utils/publish-deb.sh dists_backup
-
-      - name: download pool dir to local
-        run:
-          sudo -E ./utils/publish-deb.sh repo_clone
-
-      - name: rebuild deb repo
-        run:
-          sudo -E ./utils/publish-deb.sh repo_rebuild
-
-      - name: upload repo
-        run:
-          sudo -E ./utils/publish-deb.sh repo_upload
-
-      - name: pulish repo
-        run:
-          sudo -E ./utils/publish-deb.sh repo_publish
-          sudo -E ./utils/publish-deb.sh repo_backup_remove
