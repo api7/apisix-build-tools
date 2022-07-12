@@ -44,8 +44,7 @@ jobs:
                   mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
 
             - store_artifacts:
-                name: "apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb"
-                path: "${VAR_DEB_WORKBENCH_DIR}/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb"
+                path: /tmp/output
 
       - when:
           condition:
@@ -61,8 +60,7 @@ jobs:
                   mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
 
             - store_artifacts:
-                name: "apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb"
-                path: "${VAR_DEB_WORKBENCH_DIR}/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb"
+                path: /tmp/output
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
