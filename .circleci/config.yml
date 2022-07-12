@@ -4,7 +4,7 @@ version: 2.1
 parameters:
   release_version:
     type: string
-    default: apisix-base/1.19.9.1.3
+    default: apisix-base/1.19.9.1.2
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
