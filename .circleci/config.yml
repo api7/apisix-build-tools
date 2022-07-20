@@ -1,31 +1,6 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-commands:
-  description: publish deb package
-  publish_package:
-    steps:
-      - run:
-          name: backup dists to ci bucket
-          command: |
-            sudo -E ./utils/publish-deb.sh dists_backup
-      - run:
-          name: download pool dir to local
-          command: |
-            sudo -E ./utils/publish-deb.sh repo_clone
-      - run:
-          name: rebuild deb repo
-          command: |
-            sudo -E ./utils/publish-deb.sh repo_rebuild
-      - run:
-          name: upload repo
-          command: |
-            sudo -E ./utils/publish-deb.sh repo_upload
-      - run:
-          name: pulish repo
-          command: |
-            sudo -E ./utils/publish-deb.sh repo_publish
-            sudo -E ./utils/publish-deb.sh repo_backup_remove
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -152,13 +127,6 @@ jobs:
           command: |
             mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
             sudo apt-get update
-            sudo apt install -y gpg ca-certificates
-            DEB_GPG_PRIV_KEY=$(echo $DEB_GPG_PRIV_KEY_BASE64 | base64 -d)
-            echo "${DEB_GPG_PRIV_KEY}" >> /tmp/deb-gpg-publish.private
-            echo "${DEB_GPG_PASSPHRASE}" >> /tmp/deb-gpg-publish.passphrase
-            ./utils/publish-deb.sh init_cos_utils
-            sudo -E ./utils/publish-deb.sh init_freight_utils
-            sudo -E ./utils/publish-deb.sh init_gpg
 
       - when:
           condition:
@@ -174,7 +142,8 @@ jobs:
                   make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
                   mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
 
-            - publish_package
+            - store_artifacts:
+                path: /tmp/output
 
       - when:
           condition:
@@ -188,7 +157,8 @@ jobs:
                   make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
                   mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
 
-            - publish_package
+            - store_artifacts:
+                path: /tmp/output
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
