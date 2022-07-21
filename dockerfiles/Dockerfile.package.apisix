@@ -18,6 +18,7 @@ ENV ARTIFACT=${ARTIFACT}
 
 COPY --from=APISIX /tmp/build/output /tmp/build/output
 COPY --from=APISIX /tmp/dist /tmp/dist
+COPY --from=APISIX /tmp/codename /tmp/codename
 COPY package-apisix.sh /package-apisix.sh
 COPY usr /usr
 

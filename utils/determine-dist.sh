@@ -15,3 +15,5 @@ then
 fi
 
 echo "${dist}" > /tmp/dist
+
+echo `cat /etc/os-release |grep VERSION_CODENAME|awk -F '=' '{print $2}'` > /tmp/codename
