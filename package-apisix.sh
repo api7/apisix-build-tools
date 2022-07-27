@@ -36,7 +36,7 @@ then
     # For CI
     OPENRESTY="apisix-base"
     min_or_version="latest"
-	max_or_version="latest-0"
+	max_or_version="latest-1"
 fi
 
 # Determine the name of artifact
