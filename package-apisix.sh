@@ -25,15 +25,18 @@ then
 fi
 
 # Determine the min version of openresty or apisix-base
-or_version="1.17.8.2"
+min_or_version="1.17.8.2"
+max_or_version="1.21.4.1"
 if [ "$OPENRESTY" == "apisix-base" ]
 then
-	or_version="1.19.9.1.6"
+	min_or_version="1.19.9.1.6"
+	max_or_version="1.21.4.1.1"
 elif [ "$OPENRESTY" == "apisix-base-latest" ]
 then
     # For CI
     OPENRESTY="apisix-base"
-    or_version="latest"
+    min_or_version="latest"
+	max_or_version="latest"
 fi
 
 # Determine the name of artifact
@@ -50,7 +53,8 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
 	-a "$(uname -i)" \
 	-v "$PACKAGE_VERSION" \
 	--iteration "$ITERATION" \
-	-d "$OPENRESTY >= $or_version" \
+	-d "$OPENRESTY >= $min_or_version" \
+	-d "$OPENRESTY <= $max_or_version" \
 	-d "$dep_ldap" \
 	-d "$dep_pcre" \
 	-d "$dep_which" \
