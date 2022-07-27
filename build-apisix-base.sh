@@ -13,11 +13,11 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
-    ngx_multi_upstream_module_ver="1.1.0"
+    ngx_multi_upstream_module_ver="1.1.1"
     mod_dubbo_ver="1.0.2"
     apisix_nginx_module_ver="1.9.0"
-    wasm_nginx_module_ver="0.6.1"
-    lua_var_nginx_module_ver="v0.5.2"
+    wasm_nginx_module_ver="0.6.2"
+    lua_var_nginx_module_ver="v0.5.3"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
