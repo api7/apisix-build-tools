@@ -22,7 +22,7 @@ RUN /install-common.sh install_dashboard_dependencies_rpm
 
 ARG checkout_v="v2.3"
 ARG iteration="0"
-ARG goproxy
+ARG goproxy=""
 ARG IMAGE_BASE
 ARG IMAGE_TAG
 ARG CODE_PATH
