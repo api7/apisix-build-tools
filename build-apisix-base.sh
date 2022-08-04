@@ -3,6 +3,7 @@ set -euo pipefail
 set -x
 
 version=${version:-0.0.0}
+grpc_client_nginx_module_ver="main"
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver="master"
@@ -10,7 +11,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     apisix_nginx_module_ver="main"
     wasm_nginx_module_ver="main"
     lua_var_nginx_module_ver="master"
-    debug_args="--with-debug"
+    debug_args="--with-debug --add-module=../grpc-client-nginx-module-${grpc_client_nginx_module_ver} "
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
     ngx_multi_upstream_module_ver="1.1.1"
@@ -69,6 +70,14 @@ else
     git clone --depth=1 -b $lua_var_nginx_module_ver \
         https://github.com/api7/lua-var-nginx-module \
         lua-var-nginx-module-${lua_var_nginx_module_ver}
+fi
+
+if [ "$repo" == grpc-client-nginx-module ]; then
+    cp -r "$prev_workdir" ./grpc-client-nginx-module-${grpc_client_nginx_module_ver}
+else
+    git clone --depth=1 -b $grpc_client_nginx_module_ver \
+        https://github.com/api7/grpc-client-nginx-module \
+        grpc-client-nginx-module-${grpc_client_nginx_module_ver}
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
