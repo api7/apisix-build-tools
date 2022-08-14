@@ -135,8 +135,7 @@ install_dashboard_dependencies_rpm() {
     yum install -y wget curl git which gcc make
     curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
     sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_14.x)"
-    yum install -y nodejs yarn
-    npm install -g pnpm
+    yum install -y nodejs yarn pnpm
     install_golang
 }
 
