@@ -136,6 +136,8 @@ install_dashboard_dependencies_rpm() {
     curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
     sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_14.x)"
     yum install -y nodejs yarn
+    corepack enable
+    npm install -g pnpm
     install_golang
 }
 
@@ -145,6 +147,7 @@ install_dashboard_dependencies_deb() {
     curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
     DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
     npm install -g yarn
+    npm install -g pnpm
     install_golang
 }
 
