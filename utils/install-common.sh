@@ -137,6 +137,7 @@ install_dashboard_dependencies_rpm() {
     sh -c "$(curl -fsSL https://rpm.nodesource.com/setup_14.x)"
     yum install -y nodejs yarn
     npm install -g pnpm
+    npm config set strict-peer-dependencies=false
     install_golang
 }
 
@@ -147,6 +148,7 @@ install_dashboard_dependencies_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
     npm install -g yarn
     npm install -g pnpm
+    npm config set strict-peer-dependencies=false
     install_golang
 }
 
