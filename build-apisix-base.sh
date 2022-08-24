@@ -153,7 +153,7 @@ cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
 ls
-sed -i |install-util.sh|./install-util.sh|g Makefile
+sed -i 's|install-util.sh|./install-util.sh|g' Makefile
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 file $OPENRESTY_PREFIX/libgrpc_engine.so
