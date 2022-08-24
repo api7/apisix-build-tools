@@ -27,7 +27,7 @@ jobs:
 
       - name: build apisix-base apk
         run: |
-          make package version=${BUILD_APISIX_BASE_VERSION} image_base=alpine image_tag=3.12 app=apisix-base type=apk
+          make package version=${BUILD_APISIX_BASE_VERSION} image_base=alpine image_tag=3.15 app=apisix-base type=apk
 
       - name: Run apisix-base image
         run: |
