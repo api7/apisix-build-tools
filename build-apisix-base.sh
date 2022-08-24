@@ -152,7 +152,17 @@ sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-sed -i 's|install-util.sh|./install-util.sh|g' Makefile
+cat  > Makefile <<_EOC_;
+OPENRESTY_PREFIX ?= /usr/local/openresty
+INSTALL ?= install
+
+.PHONY: install
+install:
+	if [ ! -f /usr/local/go/bin/go ]; then ./install-util.sh install_go; fi 
+	cd ./grpc-engine && PATH=\$PATH:/usr/local/go/bin go build -o libgrpc_engine.so -buildmode=c-shared main.go
+	\$(INSTALL) -m 664 ./grpc-engine/libgrpc_engine.so \$(OPENRESTY_PREFIX)/
+_EOC_
+
 cat  > install-util.sh <<_EOC_;
 #!/usr/bin/env bash
 set -euo pipefail
@@ -163,12 +173,14 @@ arch=\$(uname -m | tr '[:upper:]' '[:lower:]')
 if [ "\$arch" = "x86_64" ]; then
     arch="amd64"
 fi
+if [ "\$arch" = "aarch64" ]; then
+    arch="arm64"
+fi
 
 install_go() {
     GO_VER=1.19
     wget https://go.dev/dl/go\${GO_VER}.linux-\$arch.tar.gz > /dev/null
     rm -rf /usr/local/go && tar -C /usr/local -xzf go\${GO_VER}.linux-\$arch.tar.gz
-    ls /usr/local/go/bin
     /usr/local/go/bin/go version
 }
 
