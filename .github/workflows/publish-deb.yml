@@ -6,7 +6,7 @@ on:
 jobs:
   publish_apisix:
     name: Build and Publish deb Package
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     timeout-minutes: 60
     env:
       VAR_DEB_WORKBENCH_DIR: /tmp/output
