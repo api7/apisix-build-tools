@@ -110,23 +110,41 @@ jobs:
                                    api7/apisix-base:dev-x86_64
             docker manifest push api7/apisix-base:dev
 
-  build-and-publish-debian-arm64-package:
+  build-arm64-package:
+    parameters:
+      var_os:
+        type: string
+      var_os_release:
+        type: string
+      var_build_rpm:
+        type: boolean
+        default: false
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - VAR_DEB_WORKBENCH_DIR: /tmp/output
-      - VAR_OS: debian
-      - VAR_CODENAME: bullseye
-      - VAR_OS_RELEASE: bullseye-slim
+      - VAR_WORKBENCH_DIR: /tmp/output
     
     steps:
       - checkout
       - run:
           name: Init basic publish env
           command: |
-            mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
+            mkdir -p "${VAR_WORKBENCH_DIR}"
             sudo apt-get update
+
+      - when:
+          condition: << parameters.var_build_rpm >>
+          steps:
+            - run:
+                command: |
+                  echo 'export PACK_TYPE=rpm' >> $BASH_ENV
+      - unless:
+          condition: << parameters.var_build_rpm >>
+          steps:
+            - run:
+                command: |
+                   echo 'export PACK_TYPE=deb' >> $BASH_ENV
 
       - when:
           condition:
@@ -135,12 +153,12 @@ jobs:
             matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
           steps:
             - run:
-                name: build apisix deb package
+                name: build apisix package
                 command: |
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix version: $APISIX_TAG_VERSION"
-                  make package type=deb app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
-                  mv ./output/apisix_${APISIX_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+                  make package type=${PACK_TYPE} app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
+                  mv ./output/apisix*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
 
             - store_artifacts:
                 path: /tmp/output
@@ -150,12 +168,12 @@ jobs:
             matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
           steps:
             - run:
-                name: build apisix-base deb package
+                name: build apisix-base package
                 command: |
                   APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
-                  make package type=deb app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
-                  mv ./output/apisix-base_${APISIX_BASE_TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_arm64.deb ${VAR_DEB_WORKBENCH_DIR}
+                  make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
+                  mv ./output/apisix-base*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
 
             - store_artifacts:
                 path: /tmp/output
@@ -186,7 +204,26 @@ workflows:
             - build-and-push-apisix-base-dev-x86
   build-and-publish-debian-package:
     jobs:
-      - build-and-publish-debian-arm64-package:
+      - build-arm64-package:
+          name: debian-bullseye
+          var_os: debian
+          var_os_release: bullseye-slim
+          filters:
+            tags:
+              only: /^apisix.*/
+      - build-arm64-package:
+          name: centos 7
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          filters:
+            tags:
+              only: /^apisix.*/
+      - build-arm64-package:
+          name: centos 8
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
           filters:
             tags:
               only: /^apisix.*/
