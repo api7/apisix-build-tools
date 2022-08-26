@@ -202,7 +202,7 @@ workflows:
           requires:
             - build-and-push-apisix-base-dev-arm
             - build-and-push-apisix-base-dev-x86
-  build-and-publish-debian-package:
+  build-mutil-platform-arm64-apckage:
     jobs:
       - build-arm64-package:
           name: debian-bullseye
