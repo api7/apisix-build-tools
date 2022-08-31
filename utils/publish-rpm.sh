@@ -13,6 +13,7 @@ VAR_TENCENT_COS_UTILS_VERSION=${VAR_TENCENT_COS_UTILS_VERSION:-v0.11.0-beta}
 VAR_RPM_WORKBENCH_DIR=${VAR_RPM_WORKBENCH_DIR:-/tmp/output}
 VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/rpm-gpg-publish.private}
 VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/rpm-gpg-publish.passphrase}
+ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
 # =======================================
 # GPG extension
@@ -66,7 +67,7 @@ _EOC_
 # =======================================
 func_repo_init() {
     # ${1} - repo workbench path
-    mkdir -p "${1}"/centos/{7,8}/x86_64
+    mkdir -p "${1}"/centos/{7,8}/${ARCH}
 }
 
 func_repo_clone() {
@@ -98,7 +99,7 @@ func_repo_backup_remove() {
 
 func_repo_repodata_rebuild() {
     # ${1} - repo parent path
-    find "${1}" -type d -name "x86_64" \
+    find "${1}" -type d -name "${ARCH}" \
         -exec echo "createrepo for: {}" \; \
         -exec rm -rf {}/repodata \; \
         -exec createrepo {} \;
@@ -151,9 +152,9 @@ repo_clone)
 repo_package_sync)
     VAR_REPO_MAJOR_VER=(7 8)
     for i in "${VAR_REPO_MAJOR_VER[@]}"; do
-        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.x86_64.rpm" \
+        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
             -exec echo "repo sync for: {}" \; \
-            -exec cp -a {} /tmp/centos/"${i}"/x86_64 \;
+            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
     done
     ;;
 repo_repodata_rebuild)
