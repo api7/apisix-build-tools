@@ -119,6 +119,8 @@ jobs:
       var_build_rpm:
         type: boolean
         default: false
+      release_tag:
+        type: string
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
@@ -150,11 +152,13 @@ jobs:
           condition:
             # enclose a pattern in ^ and $ to avoid accidental partial matches
             # https://circleci.com/docs/2.0/configuration-reference#logic-statements
-            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+            # matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+            matches: { pattern: "^apisix/(.*)\\d+$", value: << parameters.release_tag >> }
           steps:
             - run:
                 name: build apisix package
                 command: |
+                  CIRCLE_TAG=<<parameters.release_tag>>
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
@@ -165,11 +169,13 @@ jobs:
 
       - when:
           condition:
-            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+            # matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << parameters.release_tag >> }
           steps:
             - run:
                 name: build apisix-base package
                 command: |
+                  CIRCLE_TAG=<<parameters.release_tag>>
                   APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
@@ -205,25 +211,128 @@ workflows:
   build-mutil-platform-arm64-apckage:
     jobs:
       - build-arm64-package:
-          name: debian-bullseye
-          var_os: debian
-          var_os_release: bullseye-slim
-          filters:
-            tags:
-              only: /^apisix.*/
-      - build-arm64-package:
-          name: centos 7
+          name: centos 7 apisix/2.13.2
           var_os: centos
           var_os_release: "7"
           var_build_rpm: true
+          release_tag: apisix/2.13.2
           filters:
             tags:
-              only: /^apisix.*/
+              only: centos-arm-release
       - build-arm64-package:
-          name: centos 8
+          name: centos 7 apisix/2.13.3
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix/2.13.3
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix/2.14.1
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix/2.14.1
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix/2.15.0
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix/2.15.0
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix-base/1.19.9.1.6
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix-base/1.19.9.1.6
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix-base/1.21.4.1.0
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix-base/1.21.4.1.0
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix-base/1.21.4.1.1
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix-base/1.21.4.1.1
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix/2.13.2
           var_os: centos
           var_os_release: "8"
           var_build_rpm: true
+          release_tag: apisix/2.13.2
           filters:
             tags:
-              only: /^apisix.*/
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix/2.13.3
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix/2.13.3
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix/2.14.1
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix/2.14.1
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix/2.15.0
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix/2.15.0
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix-base/1.19.9.1.6
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix-base/1.19.9.1.6
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix-base/1.21.4.1.0
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix-base/1.21.4.1.0
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 8 apisix-base/1.21.4.1.1
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          release_tag: apisix-base/1.21.4.1.1
+          filters:
+            tags:
+              only: centos-arm-release
