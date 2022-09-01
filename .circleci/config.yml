@@ -211,29 +211,11 @@ workflows:
   build-mutil-platform-arm64-apckage:
     jobs:
       - build-arm64-package:
-          name: centos 7 apisix/2.13.2
-          var_os: centos
-          var_os_release: "7"
-          var_build_rpm: true
-          release_tag: apisix/2.13.2
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
           name: centos 7 apisix/2.13.3
           var_os: centos
           var_os_release: "7"
           var_build_rpm: true
           release_tag: apisix/2.13.3
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 7 apisix/2.14.1
-          var_os: centos
-          var_os_release: "7"
-          var_build_rpm: true
-          release_tag: apisix/2.14.1
           filters:
             tags:
               only: centos-arm-release
@@ -247,47 +229,11 @@ workflows:
             tags:
               only: centos-arm-release
       - build-arm64-package:
-          name: centos 7 apisix-base/1.19.9.1.6
-          var_os: centos
-          var_os_release: "7"
-          var_build_rpm: true
-          release_tag: apisix-base/1.19.9.1.6
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 7 apisix-base/1.21.4.1.0
-          var_os: centos
-          var_os_release: "7"
-          var_build_rpm: true
-          release_tag: apisix-base/1.21.4.1.0
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
           name: centos 7 apisix-base/1.21.4.1.1
           var_os: centos
           var_os_release: "7"
           var_build_rpm: true
           release_tag: apisix-base/1.21.4.1.1
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 7 apisix-base/1.21.4.1.2
-          var_os: centos
-          var_os_release: "7"
-          var_build_rpm: true
-          release_tag: apisix-base/1.21.4.1.2
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 8 apisix/2.13.2
-          var_os: centos
-          var_os_release: "8"
-          var_build_rpm: true
-          release_tag: apisix/2.13.2
           filters:
             tags:
               only: centos-arm-release
@@ -301,38 +247,11 @@ workflows:
             tags:
               only: centos-arm-release
       - build-arm64-package:
-          name: centos 8 apisix/2.14.1
-          var_os: centos
-          var_os_release: "8"
-          var_build_rpm: true
-          release_tag: apisix/2.14.1
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
           name: centos 8 apisix/2.15.0
           var_os: centos
           var_os_release: "8"
           var_build_rpm: true
           release_tag: apisix/2.15.0
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 8 apisix-base/1.19.9.1.6
-          var_os: centos
-          var_os_release: "8"
-          var_build_rpm: true
-          release_tag: apisix-base/1.19.9.1.6
-          filters:
-            tags:
-              only: centos-arm-release
-      - build-arm64-package:
-          name: centos 8 apisix-base/1.21.4.1.0
-          var_os: centos
-          var_os_release: "8"
-          var_build_rpm: true
-          release_tag: apisix-base/1.21.4.1.0
           filters:
             tags:
               only: centos-arm-release
