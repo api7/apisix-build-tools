@@ -190,9 +190,9 @@ workflows:
   build-apisix-base:
     jobs:
       - build:
-        filters:
-          branches:
-            only: master
+          filters:
+            branches:
+              only: master
   build-and-push-apisix-base-dev:
     triggers:
       - schedule:
@@ -270,6 +270,15 @@ workflows:
           var_os_release: "7"
           var_build_rpm: true
           release_tag: apisix-base/1.21.4.1.1
+          filters:
+            tags:
+              only: centos-arm-release
+      - build-arm64-package:
+          name: centos 7 apisix-base/1.21.4.1.2
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          release_tag: apisix-base/1.21.4.1.2
           filters:
             tags:
               only: centos-arm-release
