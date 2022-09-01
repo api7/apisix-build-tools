@@ -17,7 +17,7 @@ else
     ngx_multi_upstream_module_ver="1.1.1"
     mod_dubbo_ver="1.0.2"
     apisix_nginx_module_ver="1.9.0"
-    wasm_nginx_module_ver="fix/build-source-code-centos-arm"
+    wasm_nginx_module_ver="0.6.3"
     lua_var_nginx_module_ver="v0.5.3"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
@@ -60,7 +60,7 @@ if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" ./wasm-nginx-module-${wasm_nginx_module_ver}
 else
     git clone --depth=1 -b $wasm_nginx_module_ver \
-        https://github.com/soulbird/wasm-nginx-module.git \
+        https://github.com/api7/wasm-nginx-module.git \
         wasm-nginx-module-${wasm_nginx_module_ver}
 fi
 
