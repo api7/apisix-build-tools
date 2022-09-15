@@ -19,7 +19,7 @@ else
     apisix_nginx_module_ver="1.9.0"
     wasm_nginx_module_ver="0.6.3"
     lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.2.1"
+    grpc_client_nginx_module_ver="v0.2.2"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
