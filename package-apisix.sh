@@ -25,18 +25,19 @@ then
 fi
 
 # Determine the min version of openresty or apisix-base
-min_or_version="1.17.8.2"
-max_or_version="1.21.5"
 if [ "$OPENRESTY" == "apisix-base" ]
 then
-	min_or_version="1.21.4.1.1"
-	max_or_version="1.21.5"
+    min_or_version="1.21.4.1.2"
+    max_or_version="1.21.5"
 elif [ "$OPENRESTY" == "apisix-base-latest" ]
 then
     # For CI
     OPENRESTY="apisix-base"
     min_or_version="latest"
     max_or_version="latest-1"
+else
+    min_or_version="1.19.3.2"
+    max_or_version="1.21.5"
 fi
 
 # Determine the name of artifact
