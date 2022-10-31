@@ -24,6 +24,13 @@ else
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
+use_musl=
+if echo "int main(void) {}" | gcc -o /dev/null -v -x c - &> /dev/stdout| grep collect | tr -s " " "\012" | grep musl; then
+    # shared library compiled by cgo can't be loaded via dlopen with musl
+    # https://github.com/golang/go/issues/54805
+    use_musl=true
+fi
+
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
@@ -73,12 +80,17 @@ else
         lua-var-nginx-module-${lua_var_nginx_module_ver}
 fi
 
-if [ "$repo" == grpc-client-nginx-module ]; then
-    cp -r "$prev_workdir" ./grpc-client-nginx-module-${grpc_client_nginx_module_ver}
-else
-    git clone --depth=1 -b $grpc_client_nginx_module_ver \
-        https://github.com/api7/grpc-client-nginx-module \
-        grpc-client-nginx-module-${grpc_client_nginx_module_ver}
+add_grpc_client_nginx_module=
+if [ -z "$use_musl" ]; then
+    if [ "$repo" == grpc-client-nginx-module ]; then
+        cp -r "$prev_workdir" ./grpc-client-nginx-module-${grpc_client_nginx_module_ver}
+    else
+        git clone --depth=1 -b $grpc_client_nginx_module_ver \
+            https://github.com/api7/grpc-client-nginx-module \
+            grpc-client-nginx-module-${grpc_client_nginx_module_ver}
+
+        add_grpc_client_nginx_module="--add-module=../grpc-client-nginx-module-${grpc_client_nginx_module_ver}"
+    fi
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
@@ -113,7 +125,7 @@ cd openresty-${or_ver} || exit 1
     --add-module=../apisix-nginx-module-${apisix_nginx_module_ver}/src/meta \
     --add-module=../wasm-nginx-module-${wasm_nginx_module_ver} \
     --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
-    --add-module=../grpc-client-nginx-module-${grpc_client_nginx_module_ver} \
+    $add_grpc_client_nginx_module \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
@@ -156,6 +168,8 @@ cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
-cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
-cd ..
+if [ -z "$use_musl" ]; then
+    cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
+    sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+    cd ..
+fi
