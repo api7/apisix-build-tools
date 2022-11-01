@@ -97,9 +97,7 @@ cc_opt=${cc_opt:-}
 ld_opt=${ld_opt:-}
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
 no_pool_patch=${no_pool_patch:-}
-# TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
-# version of grpc-client-nginx-module
-grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
+grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
 
 cd openresty-${or_ver} || exit 1
 ./configure --prefix="$OR_PREFIX" \
