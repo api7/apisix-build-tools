@@ -47,8 +47,8 @@ jobs:
 
       - name: run apisix-dashboard(-local) packaging test
         run: |
-          git clone -b release/${DASHBOARD_VERSION} https://github.com/apache/apisix-dashboard.git
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_VERSION} \
+          git clone -b ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} \
             image_base=centos image_tag=7 local_code_path=./apisix-dashboard artifact=apisix-dashboard-local
 
       - name: Run centos7 docker and mapping rpm into container
