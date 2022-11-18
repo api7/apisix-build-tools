@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      DASHBOARD_VERSION: "2.13"
+      DASHBOARD_VERSION: "2.13.1"
+      DASHBOARD_BRANCH: "release/2.13"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -41,13 +42,13 @@ jobs:
 
       - name: run apisix-dashboard(-remote) packaging test
         run: |
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} \
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} \
             image_base=centos image_tag=7 artifact=apisix-dashboard-remote
 
       - name: run apisix-dashboard(-local) packaging test
         run: |
-          git clone -b release/${DASHBOARD_VERSION} https://github.com/apache/apisix-dashboard.git
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_VERSION} \
+          git clone -b ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} \
             image_base=centos image_tag=7 local_code_path=./apisix-dashboard artifact=apisix-dashboard-local
 
       - name: Run centos7 docker and mapping rpm into container
@@ -102,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      DASHBOARD_VERSION: "2.13"
+      DASHBOARD_VERSION: "2.13.1"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
