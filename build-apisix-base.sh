@@ -171,5 +171,5 @@ sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd amesh-${amesh_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" PATH="$(PATH):/usr/local/go/bin" make install
+sudo OPENRESTY_PREFIX="$OR_PREFIX" sh -c 'PATH="${PATH}:/usr/local/go/bin" make install'
 cd ..
