@@ -11,6 +11,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     wasm_nginx_module_ver="main"
     lua_var_nginx_module_ver="master"
     grpc_client_nginx_module_ver="main"
+    amesh_ver="main"
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
@@ -20,6 +21,7 @@ else
     wasm_nginx_module_ver="0.6.4"
     lua_var_nginx_module_ver="v0.5.3"
     grpc_client_nginx_module_ver="v0.3.1"
+    amesh_ver="main"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
@@ -79,6 +81,14 @@ else
     git clone --depth=1 -b $grpc_client_nginx_module_ver \
         https://github.com/api7/grpc-client-nginx-module \
         grpc-client-nginx-module-${grpc_client_nginx_module_ver}
+fi
+
+if [ "$repo" == amesh ]; then
+    cp -r "$prev_workdir" ./amesh-${amesh_ver}
+else
+    git clone --depth=1 -b $amesh_ver \
+        https://github.com/api7/amesh \
+        amesh-${amesh_ver}
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
@@ -157,5 +167,9 @@ sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+cd ..
+
+cd amesh-${amesh_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
