@@ -53,6 +53,7 @@ jobs:
 
       - name: check and ensure apisix-base is installed
         run: |
+          docker exec centos8Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
           export APISIX_BASE_VER=$(docker exec centos8Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_BASE_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_BASE_VER" != "${BUILD_APISIX_BASE_VERSION}" ]; then exit 1; fi
 
