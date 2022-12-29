@@ -27,7 +27,7 @@ fi
 # Determine the min version of openresty or apisix-base
 if [ "$OPENRESTY" == "apisix-base" ]
 then
-    min_or_version="1.21.4.1.4"
+    min_or_version="1.21.4.1.5"
     max_or_version="1.21.5"
 elif [ "$OPENRESTY" == "apisix-base-latest" ]
 then
