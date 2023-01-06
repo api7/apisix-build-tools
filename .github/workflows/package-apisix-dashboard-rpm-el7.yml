@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      DASHBOARD_VERSION: "2.14.0"
+      DASHBOARD_VERSION: "2.15.0"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
