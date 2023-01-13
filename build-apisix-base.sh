@@ -158,20 +158,21 @@ make -j`nproc`
 sudo make install
 cd ..
 
+OPENRESTY_PREFIX=$OR_PREFIX
 cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo make install
 cd ..
 
 cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo make install
 cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo make install
 cd ..
 
 cd amesh-${amesh_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" sh -c 'PATH="${PATH}:/usr/local/go/bin" make install'
+sudo sh -c 'PATH="${PATH}:/usr/local/go/bin" make install'
 cd ..
 
 # package etcdctl
