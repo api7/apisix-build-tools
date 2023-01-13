@@ -5,6 +5,10 @@
 - Make
 - rpm (if your host system is Ubuntu, should install rpmbuild by `sudo apt-get install rpm`)
 
+**Note:**
+
+If you want to build testing environment for apisix (apisix-base), as suggested [here](https://github.com/apache/apisix/blob/master/docs/en/latest/building-apisix.md#building-runtime-for-apisix). Run [package-apisix-base.sh](https://github.com/shreemaan-abhishek/apisix-build-tools/blob/master/package-apisix-base.sh)
+
 ## Parameters
 |Parameter      |Required   |Description        |Example|
 |---------|---------|----|-----------|
