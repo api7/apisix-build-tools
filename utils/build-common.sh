@@ -40,11 +40,11 @@ build_apisix_base_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 
-    if [[ $IMAGE_BASE == "ubuntu" ]]; then
+    if [[ "${IMAGE_BASE/*\/}" == "ubuntu" ]]; then
         echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
     fi
 
-    if [[ $IMAGE_BASE == "debian" ]]; then
+    if [[ "${IMAGE_BASE/*\/}" == "debian" ]]; then
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
 
