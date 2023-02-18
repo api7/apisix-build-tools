@@ -1,5 +1,5 @@
 ARG IMAGE_BASE="alpine"
-ARG IMAGE_TAG="3.14"
+ARG IMAGE_TAG="3.15"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 

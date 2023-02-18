@@ -1,7 +1,6 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -34,9 +33,9 @@ jobs:
       - run:
           name: start apisix and test
           command: |
-            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
+            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
             sleep 20
-            curl http://127.0.0.1:9080/apisix/admin/routes/1 \
+            curl http://127.0.0.1:9180/apisix/admin/routes/1 \
             -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
               {
                 "uri": "/get",
@@ -53,6 +52,132 @@ jobs:
                 exit 125
             fi
 
+  build-and-push-apisix-base-dev-arm:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t api7/apisix-base:dev-arm64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  build-and-push-apisix-base-dev-x86:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t api7/apisix-base:dev-x86_64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-base.deb .
+
+  upload-manifest:
+    docker:
+      - image: cimg/python:3.8.2
+    steps:
+      - checkout
+      - deploy:
+          name: "Upload manifest to registry"
+          command: |
+            set -eu
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker manifest create api7/apisix-base:dev \
+                                   api7/apisix-base:dev-arm64 \
+                                   api7/apisix-base:dev-x86_64
+            docker manifest push api7/apisix-base:dev
+
+  build-arm64-package:
+    parameters:
+      var_os:
+        type: string
+      var_os_release:
+        type: string
+      var_build_rpm:
+        type: boolean
+        default: false
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    environment:
+      - VAR_WORKBENCH_DIR: /tmp/output
+    
+    steps:
+      - checkout
+      - run:
+          name: Init basic publish env
+          command: |
+            mkdir -p "${VAR_WORKBENCH_DIR}"
+            sudo apt-get update
+
+      - when:
+          condition: << parameters.var_build_rpm >>
+          steps:
+            - run:
+                command: |
+                  echo 'export PACK_TYPE=rpm' >> $BASH_ENV
+      - unless:
+          condition: << parameters.var_build_rpm >>
+          steps:
+            - run:
+                command: |
+                   echo 'export PACK_TYPE=deb' >> $BASH_ENV
+
+      - when:
+          condition:
+            # enclose a pattern in ^ and $ to avoid accidental partial matches
+            # https://circleci.com/docs/2.0/configuration-reference#logic-statements
+            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+          steps:
+            - run:
+                name: build apisix package
+                command: |
+                  APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  echo "apisix version: $APISIX_TAG_VERSION"
+                  make package type=${PACK_TYPE} app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
+                  mv ./output/apisix*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
+
+            - store_artifacts:
+                path: /tmp/output
+
+      - when:
+          condition:
+            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+          steps:
+            - run:
+                name: build apisix-base package
+                command: |
+                  APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
+                  make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
+                  mv ./output/apisix-base*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
+
+            - store_artifacts:
+                path: /tmp/output
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -60,5 +185,45 @@ workflows:
     jobs:
       - build:
         filters:
+          branches:
+            only: master
+  build-and-push-apisix-base-dev:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
             branches:
-              only: master
+              only:
+                - master
+    jobs:
+      - build-and-push-apisix-base-dev-arm
+      - build-and-push-apisix-base-dev-x86
+      - upload-manifest:
+          requires:
+            - build-and-push-apisix-base-dev-arm
+            - build-and-push-apisix-base-dev-x86
+  build-mutil-platform-arm64-apckage:
+    jobs:
+      - build-arm64-package:
+          name: debian-bullseye
+          var_os: debian
+          var_os_release: bullseye-slim
+          filters:
+            tags:
+              only: /^apisix.*/
+      - build-arm64-package:
+          name: centos 7
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          filters:
+            tags:
+              only: /^apisix.*/
+      - build-arm64-package:
+          name: centos 8
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          filters:
+            tags:
+              only: /^apisix.*/

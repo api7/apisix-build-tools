@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_BASE_VERSION: 1.19.3.2.0
+      BUILD_APISIX_BASE_VERSION: 1.21.4.1.5
     steps:
       - uses: actions/checkout@v2
 
@@ -41,7 +41,7 @@ jobs:
           docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libssl-dev perl build-essential"
           docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates"
           docker exec ubuntu20.04Instance bash -c "wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -"
-          docker exec ubuntu20.04Instance bash -c "echo \"deb http://openresty.org/package/ubuntu $(lsb_release -sc) main\" | tee /etc/apt/sources.list.d/openresty.list"
+          docker exec ubuntu20.04Instance bash -c 'echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list'
           docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
           docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install openresty-openssl111 openresty-pcre openresty-zlib"
 
@@ -51,6 +51,7 @@ jobs:
 
       - name: check and ensure apisix-base is installed
         run: |
+          docker exec ubuntu20.04Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
           export APISIX_BASE_VER=$(docker exec ubuntu20.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_BASE_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_BASE_VER" != "${BUILD_APISIX_BASE_VERSION}" ]; then exit 1; fi
 

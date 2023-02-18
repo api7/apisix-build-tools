@@ -39,12 +39,24 @@ build_apisix_base_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y sudo git libreadline-dev lsb-release libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-    echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
+
+    if [[ $IMAGE_BASE == "ubuntu" ]]; then
+        echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
+    fi
+
+    if [[ $IMAGE_BASE == "debian" ]]; then
+        echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
+    fi
+
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
 
     export_openresty_variables
-    ${BUILD_PATH}/build-apisix-base.sh
+    # fix OR_PREFIX
+    if [[ $build_latest == "latest" ]]; then
+        unset OR_PREFIX
+    fi
+    ${BUILD_PATH}/build-apisix-base.sh ${build_latest}
 }
 
 build_apisix_base_apk() {

@@ -16,6 +16,7 @@ ENV ARTIFACT=${ARTIFACT}
 
 COPY --from=APISIX-BASE /usr/local/openresty /tmp/build/output/openresty
 COPY --from=APISIX-BASE /tmp/dist /tmp/dist
+COPY --from=APISIX-BASE /tmp/codename /tmp/codename
 COPY package-apisix-base.sh /package-apisix-base.sh
 COPY post-install-apisix-base.sh /post-install-apisix-base.sh
 COPY usr /usr

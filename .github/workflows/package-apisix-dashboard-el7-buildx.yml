@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      DASHBOARD_VERSION: "2.10"
+      DASHBOARD_VERSION: "3.0.0"
+      DASHBOARD_BRANCH: "release/3.0"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -51,7 +52,7 @@ jobs:
 
       - name: run apisix-dashboard packaging test
         run: |
-          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=release/${DASHBOARD_VERSION} image_base=centos image_tag=7 buildx=True
+          make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} image_base=centos image_tag=7 buildx=True
 
       - name: Run centos7 docker and mapping rpm into container
         run: |

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_BASE_VERSION: 1.19.3.2.0
+      BUILD_APISIX_BASE_VERSION: 1.21.4.1.5
     steps:
       - uses: actions/checkout@v2
 
@@ -46,6 +46,7 @@ jobs:
 
       - name: check and ensure apisix-base is installed
         run: |
+          docker exec centos7Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
           export APISIX_BASE_VER=$(docker exec centos7Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_BASE_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_BASE_VER" != "${BUILD_APISIX_BASE_VERSION}" ]; then exit 1; fi
 

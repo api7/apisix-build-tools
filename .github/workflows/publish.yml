@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-18.04
     timeout-minutes: 60
     env:
-      VAR_OSS_BUCKET_CI: ${{ secrets.VAR_OSS_BUCKET_CI }}
-      VAR_OSS_BUCKET_REPO: ${{ secrets.VAR_OSS_BUCKET_REPO }}
-      VAR_OSS_ENDPOINT: ${{ secrets.VAR_OSS_ENDPOINT }}
+      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
+      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
+      VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
     steps:
@@ -88,14 +88,14 @@ jobs:
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "./apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: Upload apisix-base Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "./apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: Upload apisix-dashboard Artifact
         if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
@@ -106,10 +106,10 @@ jobs:
 
       - name: RPM repo deps init
         env:
-          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
-          sudo -E ./utils/publish-rpm.sh init_oss_utils
+          sudo -E ./utils/publish-rpm.sh init_cos_utils
 
       - name: RPM repo init
         run: |
@@ -136,9 +136,9 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
           sudo -E ./utils/publish-rpm.sh repo_upload
 
-      - name: RPM repo verify
+      - name: RPM repo remove backup
         run: |
-          echo "verify"
+          sudo -E ./utils/publish-rpm.sh repo_backup_remove
 
       - name: RPM repo publish
         run: |
