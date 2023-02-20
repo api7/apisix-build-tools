@@ -112,6 +112,13 @@ no_pool_patch=${no_pool_patch:-}
 grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
 
 cd openresty-${or_ver} || exit 1
+# FIXME: remove this once 1.21.4.2 is released
+rm -rf bundle/LuaJIT-2.1-20220411
+lj_ver=2.1-20230119
+wget "https://github.com/openresty/luajit2/archive/v$lj_ver.tar.gz" -O "LuaJIT-$lj_ver.tar.gz"
+tar -xzf LuaJIT-$lj_ver.tar.gz
+mv luajit2-* bundle/LuaJIT-2.1-20220411
+
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_BASE_VER=$version $grpc_engine_path $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
