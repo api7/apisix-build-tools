@@ -23,6 +23,10 @@ install_dependencies_rpm() {
     yum install -y yum-utils readline-devel
 }
 
+install lua_resty_ldap() {
+    luarocks install lua-resty-ldap
+}
+
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
