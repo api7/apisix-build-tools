@@ -20,7 +20,7 @@ else
     apisix_nginx_module_ver="1.12.0"
     wasm_nginx_module_ver="0.6.4"
     lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.4.1"
+    grpc_client_nginx_module_ver="v0.4.2"
     amesh_ver="main"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
