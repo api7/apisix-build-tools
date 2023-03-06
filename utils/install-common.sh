@@ -122,12 +122,13 @@ install_apisix() {
 }
 
 install_golang() {
+    GO_VERSION="1.19.6"
     GO_ARCH="amd64"
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         GO_ARCH="arm64"
     fi
-    wget https://dl.google.com/go/go1.16.linux-"${GO_ARCH}".tar.gz
-    tar -xzf go1.16.linux-"${GO_ARCH}".tar.gz
+    wget https://dl.google.com/go/go"${GO_VERSION}".linux-"${GO_ARCH}".tar.gz
+    tar -xzf go"${GO_VERSION}".linux-"${GO_ARCH}".tar.gz
     mv go /usr/local
 }
 
