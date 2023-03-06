@@ -116,10 +116,8 @@ jobs:
     steps:
       - name: Install podman
         run: |
-          echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/testing/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:testing.list
-          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:testing/xUbuntu_20.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_testing.gpg > /dev/null
           sudo apt update
-          sudo apt install podman
+          sudo apt -y install podman
 
       - name: Download artifact
         uses: actions/download-artifact@v2
