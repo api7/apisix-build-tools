@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 60
     env:
       DASHBOARD_VERSION: "3.0.0"
@@ -100,7 +100,7 @@ jobs:
           retention-days: 5
           if-no-files-found: error
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     env:
       DASHBOARD_VERSION: "3.0.0"
