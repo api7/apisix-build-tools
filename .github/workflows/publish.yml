@@ -28,7 +28,7 @@ jobs:
         run: |
           # install publish env deps
           sudo apt-get update
-          sudo apt install -y createrepo_c
+          sudo apt install -y createrepo-c
           mkdir -p "${VAR_RPM_WORKBENCH_DIR}"
           # init env var
           TAG_DATE=$(date +%Y%m%d)
