@@ -1,9 +1,7 @@
 name: Build and Publish Package
 
 on:
-  pull_request:
-    branches:
-      - master
+  create
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
