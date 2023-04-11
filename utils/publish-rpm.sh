@@ -100,9 +100,9 @@ func_repo_backup_remove() {
 func_repo_repodata_rebuild() {
     # ${1} - repo parent path
     find "${1}" -type d -name "${ARCH}" \
-        -exec echo "createrepo for: {}" \; \
+        -exec echo "createrepo_c for: {}" \; \
         -exec rm -rf {}/repodata \; \
-        -exec createrepo {} \;
+        -exec createrepo_c {} \;
 }
 
 func_repo_repodata_sign() {

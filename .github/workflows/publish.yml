@@ -10,7 +10,7 @@ concurrency:
 jobs:
   publish_apisix:
     name: Build and Publish RPM Package
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
@@ -28,7 +28,7 @@ jobs:
         run: |
           # install publish env deps
           sudo apt-get update
-          sudo apt install -y createrepo
+          sudo apt install -y createrepo-c
           mkdir -p "${VAR_RPM_WORKBENCH_DIR}"
           # init env var
           TAG_DATE=$(date +%Y%m%d)
