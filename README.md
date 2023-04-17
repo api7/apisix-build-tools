@@ -14,7 +14,7 @@
 |version  |True |the version of the package|version=10.10|
 |local_code_path  |False | the path of local code diretory of apisix or dashboard, which depends on the app parameter|local_code_path=/home/vagrant/apisix|
 |openresty  |False |the openresty type that apisix depends on, its value can be `openresty` or `apisix-base`, the default is `openresty`|openresty=apisix-base|
-|artifact  |False |the final name of the generated artifact, if not specified, this will be the same as `app`|artifact=apisixty|
+|artifact  |False |the final name of the generated artifact, if not specified, this will be the same as `app`|artifact=apisix|
 |image_base|False |the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`|image_base=centos|
 |image_tag|False |the environment for packaging, it's value can be `16.04\|18.04\|20.04\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `20.04`|image_tag=7|
 |buildx|False|if `True`, use buildx to build docker images, which may speed up GitHub Actions|buildx=True|
