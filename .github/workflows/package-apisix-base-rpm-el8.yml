@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_BASE_VERSION: 1.21.4.1.7
+      BUILD_APISIX_BASE_VERSION: 1.21.4.1.8
     steps:
       - uses: actions/checkout@v2
 
@@ -42,7 +42,7 @@ jobs:
           docker exec centos8Instance bash -c "dnf install -y centos-release-stream"
           docker exec centos8Instance bash -c "dnf swap -y centos-{linux,stream}-repos"
           docker exec centos8Instance bash -c "dnf distro-sync -y"
-          
+
           docker exec centos8Instance bash -c "dnf install -y yum-utils"
           docker exec centos8Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
           docker exec centos8Instance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"
