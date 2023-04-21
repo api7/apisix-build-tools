@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     env:
-      DASHBOARD_VERSION: "3.0.0"
+      DASHBOARD_VERSION: "3.0.1"
       DASHBOARD_BRANCH: "release/3.0"
     services:
       etcd:
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: build
     env:
-      DASHBOARD_VERSION: "3.0.0"
+      DASHBOARD_VERSION: "3.0.1"
     services:
       etcd:
         image: bitnami/etcd:3.4.0
