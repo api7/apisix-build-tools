@@ -33,16 +33,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker Hub
+      - name: Login to the Container registry
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4 
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
-        run: |
-          docker buildx build -t api7/apisix-base:${{ steps.tag_env.outputs.version }} --push \
-            --build-arg VERSION=${{ steps.tag_env.outputs.version }} --platform linux/amd64,linux/arm64 \
-            -f ./dockerfiles/Dockerfile.apisix-base.apk .
+        with:
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/fleashiro/apisix-base:${{ steps.tag_env.outputs.version }}
+          file: ./dockerfiles/Dockerfile.apisix-base.apk
+          build-args: |
+            VERSION=${{ steps.tag_env.outputs.version }}
