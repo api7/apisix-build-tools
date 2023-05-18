@@ -44,11 +44,11 @@ jobs:
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=registry.access.redhat.com/ubi8/ubi image_tag=latest local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=master image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.8 local_code_path=./apisix artifact=apisix-local
 
       - name: run ubi8 docker and mapping rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:latest /bin/bash
+          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.8 /bin/bash
           docker exec ubiInstance bash -c "dnf install -y centos-release-stream"
           docker exec ubiInstance bash -c "dnf swap -y centos-{linux,stream}-repos"
           docker exec ubiInstance bash -c "dnf distro-sync -y"

@@ -29,11 +29,11 @@ jobs:
 
       - name: build apisix-base rpm
         run: |
-          make package type=rpm app=apisix-base version=${BUILD_APISIX_BASE_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=latest
+          make package type=rpm app=apisix-base version=${BUILD_APISIX_BASE_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.8
 
       - name: run ubi8 docker and mapping apisix-base rpm into container
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:latest /bin/bash
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.8 /bin/bash
 
       - name: install dependencies in container
         run: |
