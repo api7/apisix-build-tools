@@ -49,9 +49,6 @@ jobs:
       - name: run ubi8 docker and mapping rpm into container
         run: |
           docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.8 /bin/bash
-          docker exec ubiInstance bash -c "dnf install -y centos-release-stream"
-          docker exec ubiInstance bash -c "dnf swap -y centos-{linux,stream}-repos"
-          docker exec ubiInstance bash -c "dnf distro-sync -y"
 
       - name: enable apisix repository in container
         run: |

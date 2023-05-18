@@ -37,10 +37,6 @@ jobs:
 
       - name: install dependencies in container
         run: |
-          docker exec ubiInstance bash -c "dnf install -y centos-release-stream"
-          docker exec ubiInstance bash -c "dnf swap -y centos-{linux,stream}-repos"
-          docker exec ubiInstance bash -c "dnf distro-sync -y"
-
           docker exec ubiInstance bash -c "dnf install -y yum-utils"
           docker exec ubiInstance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
           docker exec ubiInstance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"

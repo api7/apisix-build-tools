@@ -49,11 +49,7 @@ jobs:
           docker run -itd -v $PWD/output:/apisix-dashboard --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.8 /bin/bash
 
       - name: Install rpm package
-        run: |
-          docker exec ubiInstance bash -c "dnf install -y centos-release-stream"
-          docker exec ubiInstance bash -c "dnf swap -y centos-{linux,stream}-repos"
-          docker exec ubiInstance bash -c "dnf distro-sync -y"
-          
+        run: |          
           docker exec ubiInstance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.el8.x86_64.rpm"
           docker logs ubiInstance
           docker exec ubiInstance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
