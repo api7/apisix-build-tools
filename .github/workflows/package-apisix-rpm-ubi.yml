@@ -57,7 +57,7 @@ jobs:
 
       - name: install APISIX(-remote) master by rpm in container
         run: |
-          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.el8.x86_64.rpm"
+          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.ubi8.6.x86_64.rpm"
           docker exec ubiInstance bash -c "apisix start"
 
       - name: check and ensure APISIX(-remote) master is installed
@@ -75,7 +75,7 @@ jobs:
 
       - name: install APISIX(-remote) master by rpm in container
         run: |
-          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.el8.x86_64.rpm"
+          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.ubi8.6.x86_64.rpm"
           docker exec ubiInstance bash -c "apisix start"
 
       - name: check and ensure APISIX(-remote) master is installed
@@ -93,7 +93,7 @@ jobs:
 
       - name: install APISIX(-local) by rpm in container
         run: |
-          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-local-master-0.el8.x86_64.rpm"
+          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-local-master-0.ubi8.6.x86_64.rpm"
           docker exec ubiInstance bash -c "apisix start"
 
       - name: check and ensure APISIX(-local) is installed

@@ -58,8 +58,8 @@ install_openresty_deb() {
 
 install_openresty_rpm() {
     # install openresty and openssl111
-        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {
