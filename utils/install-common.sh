@@ -58,14 +58,8 @@ install_openresty_deb() {
 
 install_openresty_rpm() {
     # install openresty and openssl111
-    if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
         yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
-    else 
-        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-        yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
-    fi
-
 }
 
 install_luarocks() {

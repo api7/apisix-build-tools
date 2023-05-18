@@ -1,4 +1,4 @@
-name: package apisix-dashabord rpm for el8
+name: package apisix-dashabord rpm for ubi
 
 on:
   push:

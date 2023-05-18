@@ -1,4 +1,4 @@
-name: package apisix rpm for el8
+name: package apisix rpm for ubi
 
 on:
   push:
