@@ -19,6 +19,7 @@ build_apisix_base_rpm() {
         source /opt/rh/gcc-toolset-9/enable
         set -eu
     else
+        dnf install -y yum-utils
         yum update --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms -y && rm -rf /var/cache/yum
         yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms gcc gcc-c++ patch wget git make sudo
     fi
