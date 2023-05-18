@@ -70,7 +70,8 @@ jobs:
 
       - name: stop and uninstall APISIX(-remote) master
         run: |
-          docker exec ubiInstance bash -c "pkill -f nginx"
+          docker exec ubiInstance bash -c "PIDS=$(pgrep -f nginx)" 
+          docker exec ubiInstance bash -c "for PID in $PIDS; do kill -TERM $PID done"
           docker exec ubiInstance bash -c "yum -y erase apisix-remote-master"
 
       - name: install APISIX(-remote) master by rpm in container
