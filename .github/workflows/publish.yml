@@ -14,7 +14,7 @@ jobs:
   publish_apisix:
     name: Build and Publish RPM Package
     runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    timeout-minutes: 100
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
