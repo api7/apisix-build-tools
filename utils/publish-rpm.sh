@@ -71,7 +71,7 @@ func_repo_init() {
     if [[ "$2" == "centos" ]];then
        mkdir -p "${1}"/centos/{7,8}/${ARCH}
     else 
-        mkdir -p "${1}"/redhat/8.6/${ARCH}
+        mkdir -p "${1}"/redhat/8/${ARCH}
     fi
  
 }
@@ -169,7 +169,7 @@ repo_package_sync)
     else #redhat ubi
         find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
-        -exec cp -a {} /tmp/redhat/ubi8.6/${ARCH} \;
+        -exec cp -a {} /tmp/redhat/8/${ARCH} \;
     fi
 
     ;;
