@@ -67,7 +67,13 @@ _EOC_
 # =======================================
 func_repo_init() {
     # ${1} - repo workbench path
-    mkdir -p "${1}"/centos/{7,8}/${ARCH}
+    # ${2} - dist - centos or redhat
+    if [[ "$2" == "centos" ]];then
+       mkdir -p "${1}"/centos/{7,8}/${ARCH}
+    else 
+        mkdir -p "${1}"/redhat/8.6/${ARCH}
+    fi
+ 
 }
 
 func_repo_clone() {
@@ -132,7 +138,10 @@ func_repo_publish() {
 # publish utils entry
 # =======================================
 case_opt=$1
-
+dist="centos"
+if [[ "$2" != "" ]];then
+    dist=$2
+fi
 case ${case_opt} in
 init_cos_utils)
     func_cos_utils_install "${VAR_TENCENT_COS_UTILS_VERSION}"
@@ -141,34 +150,41 @@ init_cos_utils)
 repo_init)
     # create basic repo directory structure
     # useful when a new repo added
-    func_repo_init /tmp
+    func_repo_init /tmp "$dist"
     ;;
 repo_backup)
-    func_repo_backup "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
+    func_repo_backup "${VAR_COS_BUCKET_REPO}" "$dist" "${TAG_DATE}"
     ;;
 repo_clone)
-    func_repo_clone "${VAR_COS_BUCKET_REPO}" "centos" /tmp/centos
+    func_repo_clone "${VAR_COS_BUCKET_REPO}" "$dist" /tmp/"$dist"
     ;;
 repo_package_sync)
-    VAR_REPO_MAJOR_VER=(7 8)
-    for i in "${VAR_REPO_MAJOR_VER[@]}"; do
-        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
-            -exec echo "repo sync for: {}" \; \
-            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
-    done
+    if [[ "$dist" == "centos" ]];then
+        VAR_REPO_MAJOR_VER=(7 8)
+        for i in "${VAR_REPO_MAJOR_VER[@]}"; do
+            find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
+                -exec echo "repo sync for: {}" \; \
+                -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
+        done
+    else #redhat ubi
+        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
+        -exec echo "repo sync for: {}" \; \
+        -exec cp -a {} /tmp/redhat/ubi8.6/${ARCH} \;
+    fi
+
     ;;
 repo_repodata_rebuild)
-    func_repo_repodata_rebuild /tmp/centos
-    func_repo_repodata_sign /tmp/centos
+    func_repo_repodata_rebuild /tmp/"$dist"
+    func_repo_repodata_sign /tmp/"$dist"
     ;;
 repo_upload)
-    func_repo_upload /tmp/centos "${VAR_COS_BUCKET_CI}" "centos"
+    func_repo_upload /tmp/"$dist" "${VAR_COS_BUCKET_CI}" "$dist"
     ;;
 repo_publish)
-    func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "centos"
+    func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "$dist"
     ;;
 repo_backup_remove)
-    func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
+    func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "$dist" "${TAG_DATE}"
     ;;
 rpm_gpg_sign)
     func_rpmsign_macros_init
