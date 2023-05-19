@@ -73,24 +73,6 @@ jobs:
           docker exec centos7Instance bash -c "pkill -f nginx"
           docker exec centos7Instance bash -c "yum -y erase apisix-remote-master"
 
-      - name: install APISIX(-remote) master by rpm in container
-        run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-remote-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
-
-      - name: check and ensure APISIX(-remote) master is installed
-        run: |
-          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
-          if [ ! $code -eq 200 ]; then
-              echo "failed: failed to install Apache APISIX by rpm"
-              exit 1
-          fi
-
-      - name: stop and uninstall APISIX(-remote) master
-        run: |
-          docker exec centos7Instance bash -c "pkill -f nginx"
-          docker exec centos7Instance bash -c "yum -y erase apisix-remote-master"
-
       - name: install APISIX(-local) by rpm in container
         run: |
           docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm"
