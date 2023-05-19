@@ -157,7 +157,7 @@ jobs:
 
       - name: RPM repo remove backup for centos
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup_remove
+          sudo -E ./utils/publish-rpm.sh repo_backup_remove centos
 
       - name: RPM repo remove backup for redhat
         run: |
