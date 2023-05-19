@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_BASE_VERSION: 1.21.4.1.8
+      BUILD_APISIX_BASE_VERSION: 1.21.4.1.9
     steps:
       - uses: actions/checkout@v2
 
