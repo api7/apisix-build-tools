@@ -1,7 +1,10 @@
 name: Build and Publish Package
 
 on:
-  create
+  create:
+  push:
+    branches:
+      - '*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
@@ -111,7 +114,7 @@ jobs:
           TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
-          sudo -E ./utils/publish-rpm.sh init_cos_utils
+          sudo -E ./utils/publish-rpm.sh init_cos_utils centos
 
       - name: RPM repo init for centos
         run: |
@@ -131,8 +134,8 @@ jobs:
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
           echo "${{ secrets.RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
-          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
-          sudo -E ./utils/publish-rpm.sh repo_package_sync
+          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign centos
+          sudo -E ./utils/publish-rpm.sh repo_package_sync centos
 
       - name: RPM repo backup for centos
         run: |

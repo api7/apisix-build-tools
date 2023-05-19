@@ -70,10 +70,9 @@ func_repo_init() {
     # ${2} - dist - centos or redhat
     if [[ "$2" == "centos" ]];then
        mkdir -p "${1}"/centos/{7,8}/${ARCH}
-    else 
+    else
         mkdir -p "${1}"/redhat/8/${ARCH}
     fi
- 
 }
 
 func_repo_clone() {
