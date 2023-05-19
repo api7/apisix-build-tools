@@ -1,4 +1,4 @@
-name: package apisix rpm for el7
+name: package apisix rpm for ubi
 
 on:
   push:
@@ -11,8 +11,6 @@ on:
     branches: [ master ]
     paths-ignore:
       - '*.md'
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
   build:
@@ -39,26 +37,26 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=master image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=master image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 local_code_path=./apisix artifact=apisix-local
 
-      - name: run centos7 docker and mapping rpm into container
+      - name: run ubi8 docker and mapping rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
 
       - name: enable apisix repository in container
         run: |
-          docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
+          docker exec ubiInstance bash -c "rpm --import https://repos.apiseven.com/KEYS"
+          docker exec ubiInstance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
       - name: install APISIX(-remote) master by rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-remote-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
+          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.ubi8.6.x86_64.rpm"
+          docker exec ubiInstance bash -c "apisix start"
 
       - name: check and ensure APISIX(-remote) master is installed
         run: |
@@ -70,13 +68,13 @@ jobs:
 
       - name: stop and uninstall APISIX(-remote) master
         run: |
-          docker exec centos7Instance bash -c "pkill -f nginx"
-          docker exec centos7Instance bash -c "yum -y erase apisix-remote-master"
+          docker exec ubiInstance bash -c 'PIDS=$(pgrep -f nginx); for PID in $PIDS; do kill -TERM $PID; done'
+          docker exec ubiInstance bash -c "yum -y erase apisix-remote-master"
 
       - name: install APISIX(-local) by rpm in container
         run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
+          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-local-master-0.ubi8.6.x86_64.rpm"
+          docker exec ubiInstance bash -c "apisix start"
 
       - name: check and ensure APISIX(-local) is installed
         run: |
