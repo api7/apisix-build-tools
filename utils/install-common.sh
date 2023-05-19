@@ -19,11 +19,11 @@ install_apisix_dependencies_rpm() {
 install_dependencies_rpm() {
     # install basic dependencies
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
-        yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms wget tar gcc automake autoconf libtool make curl git which unzip sudo
+        yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms wget tar gcc automake autoconf libtool make curl git which unzip sudo
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms yum-utils
     else 
-        yum -y install wget tar gcc automake autoconf libtool make curl git which unzip sudo
-        yum -y install epel-release
+        yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo
+        yum install -y epel-release
         yum install -y yum-utils readline-devel
     fi
 }
