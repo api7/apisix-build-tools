@@ -117,7 +117,7 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
+    # coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
     coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
 }
 
@@ -125,7 +125,7 @@ func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
+    # coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
     coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
 }
 
@@ -145,7 +145,7 @@ repo_init)
     ;;
 repo_backup)
     func_repo_backup "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
-    func_repo_backup "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
+    func_repo_backup "${VAR_COS_BUCKET_REPO}" "redhat" "${TAG_DATE}"
     ;;
 repo_clone)
     func_repo_clone "${VAR_COS_BUCKET_REPO}" "centos" /tmp/centos
