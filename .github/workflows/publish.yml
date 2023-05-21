@@ -54,10 +54,8 @@ jobs:
           APISIX_TAG_VERSION: 3.3.0
         run: |
           # build apisix
-          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
-          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=8
           make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-${APISIX_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-3.3.0-0.ubi8.6.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
@@ -68,10 +66,8 @@ jobs:
           # build apisix-base
           echo ${{ steps.tag_env.outputs.version}}
           echo ${{ steps.tag_type.outputs.version}}
-          make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=7
-          make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=centos image_tag=8
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-base-1.21.4.1.8-0.ubi8.6.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
@@ -80,8 +76,6 @@ jobs:
           APISIX_DASHBOARD_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix dashboard
-          make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
-          make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=8
           make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
           mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-dashboard" >> "$GITHUB_ENV"
@@ -90,47 +84,19 @@ jobs:
         run: |
           ls -al "${VAR_RPM_WORKBENCH_DIR}"
 
-      - name: Upload apisix Artifact for Centos
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
-        uses: actions/upload-artifact@v2.2.3
-        with:
-          name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-
-      - name: Upload apisix-base Artifact for Centos
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
-        uses: actions/upload-artifact@v2.2.3
-        with:
-          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-
-      - name: Upload apisix-dashboard Artifact for Centos
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
-        uses: actions/upload-artifact@v2.2.3
-        with:
-          name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-          path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
-
       - name: Upload apisix Artifact for Redhat
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          name: "apisix-3.3.0-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-3.3.0-0.ubi8.6.x86_64.rpm"
 
       - name: Upload apisix-base Artifact for Redhat
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
-
-      - name: Upload apisix-dashboard Artifact for Redhat
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
-        uses: actions/upload-artifact@v2.2.3
-        with:
-          name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
-          path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+          name: "apisix-base-1.21.4.1.8-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-1.21.4.1.8-0.ubi8.6.x86_64.rpm"
 
       - name: RPM repo deps init
         env:
@@ -154,6 +120,11 @@ jobs:
           echo "${{ secrets.RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
           sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
           sudo -E ./utils/publish-rpm.sh repo_package_sync
+
+      - name: RPM repo refresh for redhat
+        run: |
+          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
+          sudo -E ./utils/publish-rpm.sh repo_upload       
 
       - name: RPM repo publish for centos and redhat
         run: |
