@@ -36,7 +36,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential apt-utils
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 

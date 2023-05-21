@@ -75,9 +75,9 @@ jobs:
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
         env:
-          APISIX_DASHBOARD_TAG_VERSION: 3.0.1
+          APISIX_DASHBOARD_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix dashboard
           make package type=rpm app=dashboard checkout=${APISIX_DASHBOARD_TAG_VERSION} version=${APISIX_DASHBOARD_TAG_VERSION} image_base=centos image_tag=7
