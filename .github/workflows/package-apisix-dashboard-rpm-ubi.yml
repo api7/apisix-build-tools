@@ -50,13 +50,7 @@ jobs:
 
 
       - name: Install rpm package
-        run: |
-          docker exec ubiInstance bash -c "sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*"
-          docker exec ubiInstance bash -c "sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*"
-          docker exec ubiInstance bash -c "dnf install -y centos-release-stream"
-          docker exec ubiInstance bash -c "dnf swap -y centos-{linux,stream}-repos"
-          docker exec ubiInstance bash -c "dnf distro-sync -y"
-          
+        run: |      
           docker exec ubiInstance bash -c "yum install -y /apisix-dashboard/apisix-dashboard-${DASHBOARD_VERSION}-0.el8.x86_64.rpm"
           docker logs ubiInstance
           docker exec ubiInstance bash -c "cd /usr/local/apisix/dashboard/ && nohup ./manager-api &"
