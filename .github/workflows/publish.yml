@@ -49,9 +49,9 @@ jobs:
           echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
 
       - name: Build apisix RPM Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
         env:
-          APISIX_TAG_VERSION: 3.3.0
+          APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix
           make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
@@ -63,7 +63,7 @@ jobs:
       - name: Build apisix-base RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         env:
-          APISIX_BASE_TAG_VERSION: 1.21.4.1.8
+           APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix-base
           echo ${{ steps.tag_env.outputs.version}}
