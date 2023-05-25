@@ -63,7 +63,7 @@ jobs:
       - name: Build apisix-base RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         env:
-           APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+          APISIX_BASE_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
           # build apisix-base
           echo ${{ steps.tag_env.outputs.version}}
