@@ -49,7 +49,7 @@ jobs:
           echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
 
       - name: Build apisix RPM Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         env:
           APISIX_TAG_VERSION: 3.3.0
         run: |
@@ -61,7 +61,7 @@ jobs:
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         env:
           APISIX_BASE_TAG_VERSION: 1.21.4.1.8
         run: |
@@ -91,18 +91,39 @@ jobs:
           ls -al "${VAR_RPM_WORKBENCH_DIR}"
 
       - name: Upload apisix Artifact for Redhat
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-3.3.0-0.ubi8.6.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-3.3.0-0.ubi8.6.x86_64.rpm"
+          name: "apisix-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+
+      - name: Upload apisix Artifact for Centos
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: Upload apisix-base Artifact for Redhat
-        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') || startsWith(steps.tag_type.outputs.version, 'build-all/') }}
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: "apisix-base-1.21.4.1.8-0.ubi8.6.x86_64.rpm"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-1.21.4.1.8-0.ubi8.6.x86_64.rpm"
+          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+
+      - name: Upload apisix-base Artifact for Centos
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+
+      - name: Upload apisix-dashboard Artifact
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
+          path: "./apisix-dashboard-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
       - name: RPM repo deps init
         env:
