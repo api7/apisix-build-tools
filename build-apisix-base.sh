@@ -171,6 +171,7 @@ fi
     --with-threads \
     --with-compat \
     --with-luajit-xcflags="$luajit_xcflags" \
+    --with-ipv6 \
     $no_pool_patch \
     -j`nproc`
 
