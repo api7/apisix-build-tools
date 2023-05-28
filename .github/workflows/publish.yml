@@ -148,6 +148,10 @@ jobs:
           sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
           sudo -E ./utils/publish-rpm.sh repo_package_sync
 
+      - name: RPM repo backup for centos and redhat
+        run: |
+          sudo -E ./utils/publish-rpm.sh repo_backup 
+
       - name: RPM repo refresh for centos and redhat
         run: |
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
