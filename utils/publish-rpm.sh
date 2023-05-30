@@ -162,12 +162,15 @@ repo_repodata_rebuild)
     ;;
 repo_upload)
     func_repo_upload /tmp/redhat "${VAR_COS_BUCKET_CI}" "redhat"
+    func_repo_upload /tmp/redhat "${VAR_COS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
     func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "redhat"
+    func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "centos"
     ;;
 repo_backup_remove)
     func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "redhat" "${TAG_DATE}"
+    func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
 rpm_gpg_sign)
     func_rpmsign_macros_init
