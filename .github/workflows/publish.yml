@@ -2,9 +2,6 @@ name: Build and Publish Package
 
 on:
   create:
-  push:
-    branches:
-      - '*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
@@ -14,7 +11,7 @@ jobs:
   publish_apisix:
     name: Build and Publish RPM Package
     runs-on: ubuntu-22.04
-    timeout-minutes: 100
+    timeout-minutes: 180
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
@@ -88,14 +85,33 @@ jobs:
           mv ./output/apisix-dashboard-${APISIX_DASHBOARD_TAG_VERSION}-0.el{7,8}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-dashboard" >> "$GITHUB_ENV"
 
-      - name: Upload apisix Artifact
+
+      - name: Ensure the upload dir
+        run: |
+          ls -al "${VAR_RPM_WORKBENCH_DIR}"
+
+      - name: Upload apisix Artifact for Redhat
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+
+      - name: Upload apisix Artifact for Centos
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
           path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-${{ steps.tag_env.outputs.version}}-0.el7.x86_64.rpm"
 
-      - name: Upload apisix-base Artifact
+      - name: Upload apisix-base Artifact for Redhat
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/apisix-base-${{ steps.tag_env.outputs.version}}-0.ubi8.6.x86_64.rpm"
+
+      - name: Upload apisix-base Artifact for Centos
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-base/') }}
         uses: actions/upload-artifact@v2.2.3
         with:
@@ -114,19 +130,14 @@ jobs:
           TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
-          sudo -E ./utils/publish-rpm.sh init_cos_utils centos
+          sudo -E ./utils/publish-rpm.sh init_cos_utils
 
-      - name: RPM repo init for centos
+      - name: RPM repo init for centos and redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_init centos
-          sudo -E ./utils/publish-rpm.sh repo_clone centos
+          sudo -E ./utils/publish-rpm.sh repo_init
+          sudo -E ./utils/publish-rpm.sh repo_clone
 
-      - name: RPM repo init for redhat ubi
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_init redhat
-          sudo -E ./utils/publish-rpm.sh repo_clone redhat
-
-      - name: RPM repo package update
+      - name: RPM repo package update 
         env:
           GPG_NAME: ${{ secrets.GPG_NAME }}
           GPG_MAIL: ${{ secrets.GPG_MAIL }}
@@ -134,39 +145,18 @@ jobs:
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
           echo "${{ secrets.RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
-          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign centos
-          sudo -E ./utils/publish-rpm.sh repo_package_sync centos
+          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
+          sudo -E ./utils/publish-rpm.sh repo_package_sync
 
-      - name: RPM repo backup for centos
+      - name: RPM repo backup for centos and redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup centos
+          sudo -E ./utils/publish-rpm.sh repo_backup 
 
-      - name: RPM repo backup for redhat
+      - name: RPM repo refresh for centos and redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup redhat
+          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
+          sudo -E ./utils/publish-rpm.sh repo_upload       
 
-      - name: RPM repo refresh for centos
+      - name: RPM repo publish for centos and redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild centos
-          sudo -E ./utils/publish-rpm.sh repo_upload centos
-
-      - name: RPM repo refresh for redhat
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild redhat
-          sudo -E ./utils/publish-rpm.sh repo_upload redhat
-
-      - name: RPM repo remove backup for centos
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup_remove centos
-
-      - name: RPM repo remove backup for redhat
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup_remove redhat
-
-      - name: RPM repo publish for centos
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_publish centos
-
-      - name: RPM repo publish for redhat
-        run: |
-          sudo -E ./utils/publish-rpm.sh repo_publish redhat
+          sudo -E ./utils/publish-rpm.sh repo_publish
