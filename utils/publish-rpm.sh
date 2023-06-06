@@ -152,6 +152,12 @@ repo_clone)
     func_repo_clone "${VAR_COS_BUCKET_REPO}" "redhat" /tmp/redhat
     ;;
 repo_package_sync)
+    VAR_REPO_MAJOR_VER=(7 8)
+    for i in "${VAR_REPO_MAJOR_VER[@]}"; do
+        find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
+            -exec echo "repo sync for: {}" \; \
+            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
+    done
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
         -exec cp -a {} /tmp/redhat/8/${ARCH} \;
