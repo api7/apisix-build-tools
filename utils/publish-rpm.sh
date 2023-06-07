@@ -168,7 +168,7 @@ repo_repodata_rebuild)
     ;;
 repo_upload)
     func_repo_upload /tmp/redhat "${VAR_COS_BUCKET_CI}" "redhat"
-    func_repo_upload /tmp/redhat "${VAR_COS_BUCKET_CI}" "centos"
+    func_repo_upload /tmp/centos "${VAR_COS_BUCKET_CI}" "centos"
     ;;
 repo_publish)
     func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "redhat"
