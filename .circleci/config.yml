@@ -112,6 +112,8 @@ jobs:
 
   build-arm64-package:
     parameters:
+      var_build_tag:
+        type: string
       var_os:
         type: string
       var_os_release:
@@ -150,12 +152,14 @@ jobs:
           condition:
             # enclose a pattern in ^ and $ to avoid accidental partial matches
             # https://circleci.com/docs/2.0/configuration-reference#logic-statements
-            matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+            or:
+              - matches: { pattern: "^apisix/(.*)\\d+$", value: << pipeline.git.tag >> }
+              - matches: { pattern: "^apisix/(.*)\\d+$", value: << parameters.var_build_tag >> }
           steps:
             - run:
                 name: build apisix package
                 command: |
-                  APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  APISIX_TAG_VERSION=3.2.1
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
                   mv ./output/apisix*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
@@ -165,12 +169,14 @@ jobs:
 
       - when:
           condition:
-            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+            or:
+              - matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
+              - matches: { pattern: "^apisix-base/(.*)\\d+$", value: << parameters.var_build_tag >> }
           steps:
             - run:
                 name: build apisix-base package
                 command: |
-                  APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  APISIX_BASE_TAG_VERSION=1.21.4.1.10
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
                   mv ./output/apisix-base*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
@@ -276,6 +282,7 @@ workflows:
           name: debian-bullseye
           var_os: debian
           var_os_release: bullseye-slim
+          var_build_tag: ""
           filters:
             tags:
               only: /^apisix.*/
@@ -284,6 +291,7 @@ workflows:
           var_os: centos
           var_os_release: "7"
           var_build_rpm: true
+          var_build_tag: ""
           filters:
             tags:
               only: /^apisix.*/
@@ -292,6 +300,7 @@ workflows:
           var_os: centos
           var_os_release: "8"
           var_build_rpm: true
+          var_build_tag: ""
           filters:
             tags:
               only: /^apisix.*/
@@ -299,6 +308,25 @@ workflows:
           filters:
             tags:
               only: /^apisix.*/
+          requires:
+            - centos 7
+            - centos 8
+
+  build-mutil-platform-arm64-sync-cos:
+    jobs:
+      - build-arm64-package:
+          name: centos 7
+          var_os: centos
+          var_os_release: "7"
+          var_build_rpm: true
+          var_build_tag: apisix/3.2.1
+      - build-arm64-package:
+          name: centos 8
+          var_os: centos
+          var_os_release: "8"
+          var_build_rpm: true
+          var_build_tag: apisix/3.2.1
+      - sync_package_to_cos:
           requires:
             - centos 7
             - centos 8
