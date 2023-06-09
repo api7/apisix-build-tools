@@ -178,6 +178,74 @@ jobs:
             - store_artifacts:
                 path: /tmp/output
 
+  sync_package_to_cos:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    environment:
+      - VAR_WORKBENCH_DIR: /tmp/output
+      - VAR_COS_BUCKET_CI: ${{ env.VAR_COS_BUCKET_CI }}
+      - VAR_COS_BUCKET_REPO: ${{ env.VAR_COS_BUCKET_REPO }}
+      - VAR_COS_ENDPOINT: ${{ env.VAR_COS_ENDPOINT }}
+      - TENCENT_COS_SECRETID: ${{ env.TENCENT_COS_SECRETID }}
+      - TENCENT_COS_SECRETKEY: ${{ env.TENCENT_COS_SECRETKEY }}
+      - GPG_NAME: ${{ env.GPG_NAME }}
+      - GPG_MAIL: ${{ env.GPG_MAIL }}
+      - RPM_GPG_PRIV_KEY_BASE64: ${{ env.DEB_GPG_PRIV_KEY_BASE64 }}
+      - RPM_GPG_PASSPHRASE: ${{ env.RPM_GPG_PASSPHRASE }}
+      - RPM_GPG_PUB_KEY: ${{ env.RPM_GPG_PUB_KEY }}
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: "${VAR_WORKBENCH_DIR}"
+
+      - run:
+          name: list file
+          command: |
+            ls -l ${VAR_WORKBENCH_DIR}
+
+      - run:
+          name: Init basic publish env
+          command: |
+            sudo apt-get update
+
+      - run:
+          name: RPM repo deps init
+          command: |
+            sudo -E ./utils/publish-rpm.sh init_cos_utils
+
+      - run:
+          name: RPM repo init for centos and redhat
+          command: |
+            sudo -E ./utils/publish-rpm.sh repo_init
+            sudo -E ./utils/publish-rpm.sh repo_clone
+
+      - run:
+          name: RPM repo package update
+          command: |
+            echo "${{ RPM_GPG_PRIV_KEY_BASE64 }}" | base64 -d >> /tmp/rpm-gpg-publish.private
+            echo "${{ RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
+            echo "${{ RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
+            sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
+            sudo -E ./utils/publish-rpm.sh repo_package_sync
+
+      - run:
+          name: RPM repo backup for centos and redhat
+          command: |
+            sudo -E ./utils/publish-rpm.sh repo_backup
+
+      - run:
+          name: RPM repo refresh for centos and redhat
+          command: |
+            sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
+            sudo -E ./utils/publish-rpm.sh repo_upload
+
+      - run:
+          name: RPM repo publish for centos and redhat
+          command: |
+            sudo -E ./utils/publish-rpm.sh repo_publish
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -227,3 +295,10 @@ workflows:
           filters:
             tags:
               only: /^apisix.*/
+      - sync_package_to_cos:
+          filters:
+            tags:
+              only: /^apisix.*/
+          requires:
+            - centos 7
+            - centos 8
