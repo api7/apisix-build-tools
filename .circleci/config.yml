@@ -163,7 +163,10 @@ jobs:
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
                   mv ./output/apisix*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
-
+            - persist_to_workspace:
+                root: /tmp/
+                paths:
+                  - output/*
             - store_artifacts:
                 path: /tmp/output
 
@@ -180,7 +183,10 @@ jobs:
                   echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
                   mv ./output/apisix-base*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
-
+            - persist_to_workspace:
+                root: /tmp/
+                paths:
+                  - output/*
             - store_artifacts:
                 path: /tmp/output
 
@@ -190,31 +196,27 @@ jobs:
     resource_class: arm.medium
     environment:
       - VAR_WORKBENCH_DIR: /tmp/output
-      - VAR_COS_BUCKET_CI: ${{ env.VAR_COS_BUCKET_CI }}
-      - VAR_COS_BUCKET_REPO: ${{ env.VAR_COS_BUCKET_REPO }}
-      - VAR_COS_ENDPOINT: ${{ env.VAR_COS_ENDPOINT }}
-      - TENCENT_COS_SECRETID: ${{ env.TENCENT_COS_SECRETID }}
-      - TENCENT_COS_SECRETKEY: ${{ env.TENCENT_COS_SECRETKEY }}
-      - GPG_NAME: ${{ env.GPG_NAME }}
-      - GPG_MAIL: ${{ env.GPG_MAIL }}
-      - RPM_GPG_PRIV_KEY_BASE64: ${{ env.DEB_GPG_PRIV_KEY_BASE64 }}
-      - RPM_GPG_PASSPHRASE: ${{ env.RPM_GPG_PASSPHRASE }}
-      - RPM_GPG_PUB_KEY: ${{ env.RPM_GPG_PUB_KEY }}
+      - VAR_TENCENT_COS_UTILS_VERSION: "arm64"
 
     steps:
       - checkout
       - attach_workspace:
-          at: "${VAR_WORKBENCH_DIR}"
+          at: /tmp
 
       - run:
-          name: list file
+          name: prepare output
           command: |
-            ls -l ${VAR_WORKBENCH_DIR}
+            ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+            mkdir -p /tmp/output/centos/${ARCH}
+            for file in $(ls /tmp/output/*.rpm); do
+              mv $file /tmp/output/centos/${ARCH}/
+            done
 
       - run:
           name: Init basic publish env
           command: |
             sudo apt-get update
+            sudo apt-get install rpm -y
 
       - run:
           name: RPM repo deps init
@@ -225,14 +227,16 @@ jobs:
           name: RPM repo init for centos and redhat
           command: |
             sudo -E ./utils/publish-rpm.sh repo_init
-            sudo -E ./utils/publish-rpm.sh repo_clone
+            sudo -E ./utils/publish-rpm.sh clone_repo
 
       - run:
           name: RPM repo package update
           command: |
-            echo "${{ RPM_GPG_PRIV_KEY_BASE64 }}" | base64 -d >> /tmp/rpm-gpg-publish.private
-            echo "${{ RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
-            echo "${{ RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
+            echo $DEB_GPG_PRIV_KEY_BASE64 | base64 -d >> /tmp/rpm-gpg-publish.private
+            echo $DEB_GPG_PASSPHRASE >> /tmp/rpm-gpg-publish.passphrase
+            export GPG_NAME="Shirui Zhao"
+            export GPG_MAIL=$DEB_GPG_MAIL                    
+            chown -R $USER /home/circleci/.gnupg
             sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
             sudo -E ./utils/publish-rpm.sh repo_package_sync
 
@@ -304,13 +308,6 @@ workflows:
           filters:
             tags:
               only: /^apisix.*/
-      - sync_package_to_cos:
-          filters:
-            tags:
-              only: /^apisix.*/
-          requires:
-            - centos 7
-            - centos 8
 
   build-mutil-platform-arm64-sync-cos:
     jobs:
@@ -320,13 +317,6 @@ workflows:
           var_os_release: "7"
           var_build_rpm: true
           var_build_tag: apisix/3.2.1
-      - build-arm64-package:
-          name: centos 8
-          var_os: centos
-          var_os_release: "8"
-          var_build_rpm: true
-          var_build_tag: apisix/3.2.1
       - sync_package_to_cos:
           requires:
             - centos 7
-            - centos 8

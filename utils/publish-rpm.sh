@@ -44,8 +44,13 @@ func_gpg_key_load() {
 # =======================================
 func_cos_utils_install() {
     # ${1} - COS util version
-    curl -o /usr/bin/coscli -L "https://github.com/tencentyun/coscli/releases/download/${1}/coscli-linux"
-    chmod 755 /usr/bin/coscli
+    if [ $1 == "arm64" ]; then
+        cp utils/coscli /usr/bin/coscli
+        chmod 755 /usr/bin/coscli
+    else
+        curl -o /usr/bin/coscli -L "https://github.com/tencentyun/coscli/releases/download/${1}/coscli-linux"
+        chmod 755 /usr/bin/coscli
+    fi
 }
 
 func_cos_utils_credential_init() {
@@ -117,7 +122,6 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
     coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
 }
 
@@ -125,7 +129,6 @@ func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
     coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
 }
 
@@ -144,6 +147,7 @@ repo_init)
     func_repo_init /tmp
     ;;
 repo_backup)
+    export TAG_DATE=$(date +%Y%m%d)
     func_repo_backup "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     func_repo_backup "${VAR_COS_BUCKET_REPO}" "redhat" "${TAG_DATE}"
     ;;
@@ -177,6 +181,7 @@ repo_publish)
     func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "centos"
     ;;
 repo_backup_remove)
+    export TAG_DATE=$(date +%Y%m%d)
     func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "redhat" "${TAG_DATE}"
     func_repo_backup_remove "${VAR_COS_BUCKET_REPO}" "centos" "${TAG_DATE}"
     ;;
