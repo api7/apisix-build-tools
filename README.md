@@ -56,7 +56,7 @@ apisix-dashboard-2.4-0.el7.x86_64.rpm
 
 Packaging an Ubuntu 20.04 package of Apache APISIX Dashboard
 ```sh
-make package type=deb app=apisix version=2.2 checkout=2.2
+make package type=deb app=dashboard version=2.2 checkout=2.2
 ls output/
 apisix-dashboard_2.2-0~ubuntu20.04_amd64.deb
 ```
