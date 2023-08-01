@@ -1,6 +1,9 @@
 name: Build and Publish Package
 
 on:
+  pull_request:
+    branches:
+      - master
   create:
 
 concurrency:
@@ -15,7 +18,7 @@ jobs:
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      VAR_COS_ENDPOINT: ${{ secrets.VAR_COS_ENDPOINT }}
+      VAR_COS_ENDPOINT: cos.accelerate.myqcloud.com
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
     steps:
@@ -35,14 +38,14 @@ jobs:
           echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
 
       - name: Extract Tags name
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith('refs/tags/apisix/3.0.0-dev', 'refs/tags/') }}
         id: tag_env
         shell: bash
         run: |
           echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith('refs/tags/apisix/3.0.0-dev', 'refs/tags/') }}
         id: tag_type
         shell: bash
         run: |
