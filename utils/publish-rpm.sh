@@ -45,15 +45,15 @@ func_gpg_key_load() {
 func_cos_utils_install() {
     # ${1} - COS util version
     coscmd -v
-    echo "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}"
+    echo "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" > a.out
 }
 
 func_cos_utils_credential_init() {
     # ${1} - COS endpoint
     # ${2} - COS SECRET_ID
     # ${3} - COS SECRET_KEY
-    echo "${1}" "${2}" "${3}"
-    coscmd config -e "${1}" -a "${2}" -s "${3}"
+    echo "${1}" "${2}" "${3}" >> a.out
+    coscmd config -e "${1}" -a "${2}" -s "${3}" -b "${VAR_COS_BUCKET_REPO}"
 }
 
 # =======================================
