@@ -18,7 +18,7 @@ jobs:
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      CI_BRANCH: refs/tags/apisix/2.99.0
+      CI_BRANCH: refs/tags/apisix-base/1.21.4.1.3
       VAR_COS_ENDPOINT: cos.accelerate.myqcloud.com 
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
