@@ -18,8 +18,7 @@ jobs:
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
-      TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+
       CI_BRANCH: refs/tags/apisix-base/1.21.4.1.3
       VAR_COS_ENDPOINT: cos.accelerate.myqcloud.com 
       VAR_RPM_WORKBENCH_DIR: /tmp/output
@@ -31,6 +30,9 @@ jobs:
           submodules: recursive
 
       - name: Init basic publish env
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
           # install publish env deps
           sudo apt-get update
@@ -42,8 +44,13 @@ jobs:
           echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
 
           echo hello world > a.out
-          coscmd config -e "${VAR_COS_ENDPOINT}" -a "${TENCENT_COS_SECRETID}" -s "${TENCENT_COS_SECRETKEY}" -b "${VAR_COS_BUCKET_REPO}"
-          coscmd copy a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
+          coscmd config -e ${VAR_COS_ENDPOINT} -a ${TENCENT_COS_SECRETID} -s "${TENCENT_COS_SECRETKEY} -b "${VAR_COS_BUCKET_REPO}
+          
+
+          coscmd upload -e ${VAR_COS_ENDPOINT} -a ${TENCENT_COS_SECRETID} -s "${TENCENT_COS_SECRETKEY} ./a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
+          coscmd delete -e ${VAR_COS_ENDPOINT} -a ${TENCENT_COS_SECRETID} -s "${TENCENT_COS_SECRETKEY} "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
+
+          coscmd upload ./a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
           coscmd delete "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
 
       - name: Extract Tags name
