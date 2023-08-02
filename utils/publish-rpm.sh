@@ -75,14 +75,14 @@ func_repo_clone() {
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    coscmd cp -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
 }
 
 func_repo_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscmd cp -r --part-size 1000 "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
 }
 
 func_repo_backup_remove() {
@@ -112,7 +112,7 @@ func_repo_upload() {
     # ${2} - bucket name
     # ${3} - COS path
     coscmd delete -r -f "cos://${2}/packages/${3}" || true
-    coscmd cp -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
+    coscmd copy -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
 }
 
 func_repo_publish() {
@@ -120,7 +120,7 @@ func_repo_publish() {
     # ${2} - repo publish bucket
     # ${3} - COS path
     coscmd delete -r -f "cos://${2}/packages/${3}" || true
-    coscmd cp -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
 }
 
 # =======================================
@@ -150,11 +150,11 @@ repo_package_sync)
     for i in "${VAR_REPO_MAJOR_VER[@]}"; do
         find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
             -exec echo "repo sync for: {}" \; \
-            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
+            -exec copy -a {} /tmp/centos/"${i}"/${ARCH} \;
     done
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
-        -exec cp -a {} /tmp/redhat/8/${ARCH} \;
+        -exec copy -a {} /tmp/redhat/8/${ARCH} \;
     ;;
 repo_repodata_rebuild)
     func_repo_repodata_rebuild /tmp/redhat
