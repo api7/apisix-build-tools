@@ -18,7 +18,7 @@ jobs:
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
-      branch: refs/tags/apisix/2.99.0
+      CI_BRANCH: refs/tags/apisix/2.99.0
       VAR_COS_ENDPOINT: cos.accelerate.myqcloud.com 
       VAR_RPM_WORKBENCH_DIR: /tmp/output
 
@@ -33,24 +33,25 @@ jobs:
           # install publish env deps
           sudo apt-get update
           sudo apt install -y createrepo-c
+          sudo pip install coscmd
           mkdir -p "${VAR_RPM_WORKBENCH_DIR}"
           # init env var
           TAG_DATE=$(date +%Y%m%d)
           echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
 
       - name: Extract Tags name
-        if: ${{ startsWith(env.branch, 'refs/tags/') }}
+        if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
         id: tag_env
         shell: bash
         run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
+          echo "##[set-output name=version;]$(echo ${CI_BRANCH##*/})"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(env.branch, 'refs/tags/') }}
+        if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
         id: tag_type
         shell: bash
         run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+          echo "##[set-output name=version;]$(echo ${CI_BRANCH#refs/tags/})"
 
       - name: Build apisix RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
@@ -134,8 +135,6 @@ jobs:
           TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
-          sudo apt-get install python pip -y
-          sudo pip install coscmd
           sudo -E ./utils/publish-rpm.sh init_cos_utils
 
       - name: RPM repo init for centos and redhat
