@@ -46,6 +46,7 @@ jobs:
           echo "hello world"
           coscmd config -e "$VAR_COS_ENDPOINT" -a "$TENCENT_COS_SECRETID" -s "$TENCENT_COS_SECRETKEY" -b "$VAR_COS_BUCKET_REPO"
 
+          sudo -E ./utils/publish-deb.sh init_cos_utils
           coscmd upload ./a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
           coscmd delete "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
 
