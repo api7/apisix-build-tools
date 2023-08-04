@@ -1,9 +1,7 @@
 name: Build and Publish Package
 
 on:
-  pull_request:
-    branches:
-      - master
+  push:
   create:
 
 concurrency:
