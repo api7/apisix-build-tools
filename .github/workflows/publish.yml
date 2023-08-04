@@ -43,6 +43,7 @@ jobs:
 
           echo "${VAR_COS_BUCKET_CI}" > a.out
           echo "$VAR_COS_BUCKET_CI" > b.out
+          echo "hello world"
           coscmd config -e "$VAR_COS_ENDPOINT" -a "$TENCENT_COS_SECRETID" -s "$TENCENT_COS_SECRETKEY" -b "$VAR_COS_BUCKET_REPO"
 
           coscmd upload ./a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
