@@ -42,7 +42,7 @@ jobs:
           echo "TAG_DATE=${TAG_DATE}" >> "$GITHUB_ENV"
 
           echo hello world > a.out
-          coscmd config -e ${VAR_COS_ENDPOINT} -a "${TENCENT_COS_SECRETID[1]}" -s "${TENCENT_COS_SECRETKEY[1]}" -b "${VAR_COS_BUCKET_REPO[1]}"
+          coscmd config -e "$VAR_COS_ENDPOINT" -a "$TENCENT_COS_SECRETID" -s "$TENCENT_COS_SECRETKEY" -b "$VAR_COS_BUCKET_REPO"
 
           coscmd upload ./a.out "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
           coscmd delete "cos://${VAR_COS_BUCKET_REPO}/packages/backup/ci_test"
