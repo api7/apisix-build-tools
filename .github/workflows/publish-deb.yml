@@ -106,7 +106,7 @@ jobs:
 
       - name: DEB repo refresh for debian
         run: |
-          sudo -E ./utils/publish-deb.sh repo_repodata_rebuild
+          sudo -E ./utils/publish-deb.sh repo_rebuild
           sudo -E ./utils/publish-deb.sh repo_upload
 
       - name: Start SSH via Ngrok
