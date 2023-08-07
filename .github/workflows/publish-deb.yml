@@ -1,7 +1,8 @@
 name: Build and Publish Package
 
 on:
-  create
+  push:
+  create:
 
 jobs:
   publish_apisix:
@@ -13,6 +14,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
+      CI_BRANCH: refs/tags/apisix/2.99.0
 
     steps:
       - name: Check out code
@@ -26,18 +28,18 @@ jobs:
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
       - name: Extract Tags name
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
         id: tag_env
         shell: bash
         run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
+          echo "##[set-output name=version;]$(echo ${CI_BRANCH##*/})"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
         id: tag_type
         shell: bash
         run: |
-          echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+          echo "##[set-output name=version;]$(echo ${CI_BRANCH#refs/tags/})"
 
       - name: Build apisix deb Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix/') }}
@@ -72,4 +74,48 @@ jobs:
         with:
           name: "apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
           path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+
+      - name: DEB repo deps init
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          sudo pip install coscmd
+          sudo -E ./utils/publish-deb.sh init_cos_utils
+
+      - name: DEB repo init for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_clone
+
+      - name: DEB repo package update 
+        env:
+          GPG_NAME: ${{ secrets.GPG_NAME }}
+          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+        run: |
+          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          sudo -E ./utils/publish-deb.sh init_freight_utils
+          sudo -E ./utils/publish-deb.sh init_gpg
+
+      - name: DEB repo backup for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_backup
+
+      - name: DEB repo refresh for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_repodata_rebuild
+          sudo -E ./utils/publish-deb.sh repo_upload
+
+      - name: Start SSH via Ngrok
+        if: ${{ failure() }}
+        run: curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
+        env:
+        # After sign up on the https://ngrok.com/
+        # You can find this token here: https://dashboard.ngrok.com/get-started/setup
+        # NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+          NGROK_TOKEN: 29o5nnjjSO5A6JSX5noX2g6jKZK_544wwEpL8devuj8HpWACX
+
+        # This password you will use when authorizing via SSH 
+        # USER_PASS: ${{ secrets.USER_PASS }}
+          USER_PASS: rong
 

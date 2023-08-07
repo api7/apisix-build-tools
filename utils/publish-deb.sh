@@ -9,13 +9,16 @@ env
 # =======================================
 # Runtime default config
 # =======================================
-VAR_FREIGHT_UTILS_VERSION=${VAR_FREIGHT_UTILS_VERSION:-v0.3.13}
-VAR_TENCENT_COS_UTILS_VERSION=${VAR_TENCENT_COS_UTILS_VERSION:-v0.11.0-beta}
 VAR_DEB_WORKBENCH_DIR=${VAR_DEB_WORKBENCH_DIR:-/tmp/output}
 VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/deb-gpg-publish.private}
 VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/deb-gpg-publish.passphrase}
 
-COS_CMD=coscli
+COS_REGION=${COS_REGION:-"ap-guangzhou"}
+COS_GLOBAL_REGION=${COS_GLOBAL_REGION:-"accelerate"}
+COS_PART_SIZE=${COS_PART_SIZE:-"10"}
+VAR_COS_REGION_DNS="cos.${COS_REGION}.myqcloud.com"
+VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
+
 TAG_DATE=$(date +%Y%m%d)
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 arch_path=""
@@ -41,30 +44,11 @@ _EOC_
 # =======================================
 # COS extension
 # =======================================
-func_cos_utils_install() {
-    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
-        wget https://github.com/tencentyun/coscli/archive/refs/tags/${VAR_TENCENT_COS_UTILS_VERSION}.tar.gz
-        tar -zxvf ${VAR_TENCENT_COS_UTILS_VERSION}.tar.gz
-        cd coscli-* && go build
-        mv coscli ../
-    else
-        sudo curl -o /usr/bin/coscli -L "https://github.com/tencentyun/coscli/releases/download/${VAR_TENCENT_COS_UTILS_VERSION}/coscli-linux"
-        sudo chmod 755 /usr/bin/coscli
-    fi
-}
-
 func_cos_utils_credential_init() {
-    # ${1} - COS endpoint
-    # ${2} - COS SECRET_ID
-    # ${3} - COS SECRET_KEY
-    cat > "${HOME}/.cos.yaml" <<_EOC_
-cos:
-  base:
-    secretid: ${2}
-    secretkey: ${3}
-    sessiontoken: ""
-    protocol: https
-_EOC_
+    # ${1} - COS SECRET_ID
+    # ${2} - COS SECRET_KEY
+    # ${3} - COS bucket name
+    coscmd config -a "${1}" -s "${2}" -b "${3}" -r ${COS_REGION} -p ${COS_PART_SIZE}
 }
 
 
@@ -91,21 +75,20 @@ func_dists_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${arch_path}${2}/dists" "cos://${1}/packages/${arch_path}backup/${2}_dists_${3}" || true
+    coscmd copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${2}/dists" "/packages/${arch_path}backup/${2}_dists_${3}"
 }
 
 func_pool_clone() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - local pool path
-
     mkdir -p ${3}
     # --part-size indicates the file chunk size.
     # when the file is larger than --part-size, coscli will chunk the file by --part-size.
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${arch_path}${2}/pool" "${3}"
+    coscmd -b "${1}" -r "${COS_GLOBAL_REGION}" download -r "/packages/${arch_path}${2}/pool" "${3}"
 }
 
 func_dists_rebuild() {
@@ -139,8 +122,8 @@ func_dists_rebuild() {
 }
 
 func_dists_upload_ci_repo() {
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${arch_path}${3}" || true
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp -r --part-size 512 "${1}" "cos://${2}/packages/${arch_path}${3}/dists/"
+    coscmd -b "${2}" delete -r -f "/packages/${arch_path}${3}" || true
+    coscmd -b "${2}" -r "${COS_GLOBAL_REGION}" upload -r "${1}" "/packages/${arch_path}${3}/dists"
 }
 
 func_deb_upload() {
@@ -152,8 +135,6 @@ func_deb_upload() {
     # We will only upload apisix and apisix-base,
     # so the directory is fixed: pool/main/a.
     # Regardless of other packages.
-
-    export COS_CMD=$COS_CMD
     export arch_path=$arch_path
     export BUCKET=$2
     export OS=$3
@@ -161,24 +142,27 @@ func_deb_upload() {
     find "${1}" -type f -name "apisix_*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'file=$(basename {}); \
-                    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp {} --part-size 512 "cos://${BUCKET}/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix/${file}"' \;
+                    coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix/${file}"' \;
 
     find "${1}" -type f -name "apisix-base*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'file=$(basename {}); \
-                    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp {} --part-size 512 "cos://${BUCKET}/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${file}"' \;
+                    coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${file}"' \;
 }
 
 func_repo_publish() {
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${arch_path}${3}/dists" || true
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" cp -r --part-size 512 "cos://${1}/packages/${arch_path}${3}/dists" "cos://${2}/packages/${arch_path}${3}/dists"
+    # ${1} - CI bucket
+    # ${2} - repo publish bucket
+    # ${3} - COS path
+    coscmd delete -r -f "/packages/${arch_path}${3}/dists" || true
+    coscmd -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${3}/dists" "/packages/${arch_path}${3}/dists"
 }
 
 func_repo_backup_remove() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    $COS_CMD -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${1}/packages/${arch_path}backup/${2}_dists_${3}" || true
+    coscmd -b "${1}" delete -r -f "/packages/${arch_path}backup/${2}_dists_${3}" || true
 }
 
 # =======================================
@@ -188,8 +172,7 @@ case_opt=$1
 
 case ${case_opt} in
 init_cos_utils)
-    func_cos_utils_install
-    func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}"
+    func_cos_utils_credential_init "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}" "${VAR_COS_BUCKET_REPO}"
     ;;
 init_freight_utils)
     func_freight_utils_install
@@ -212,7 +195,7 @@ repo_rebuild)
     ;;
 repo_upload)
     func_dists_upload_ci_repo "/tmp/freight/cache/dists" "${VAR_COS_BUCKET_CI}" "${VAR_OS}"
-    func_deb_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_REPO}" "${VAR_OS}" "${VAR_CODENAME}"
+    func_deb_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_CI}" "${VAR_OS}" "${VAR_CODENAME}"
     ;;
 repo_publish)
     func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "${VAR_OS}"
