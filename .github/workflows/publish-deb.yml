@@ -121,3 +121,6 @@ jobs:
         # USER_PASS: ${{ secrets.USER_PASS }}
           USER_PASS: rong
 
+      - name: Don't kill instace
+        if: ${{ failure() }}
+        run: sleep 1h 
