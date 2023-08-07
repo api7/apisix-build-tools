@@ -11,6 +11,8 @@ jobs:
     timeout-minutes: 60
     env:
       VAR_DEB_WORKBENCH_DIR: /tmp/output
+      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
+      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
