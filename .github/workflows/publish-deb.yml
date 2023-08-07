@@ -91,6 +91,7 @@ jobs:
 
       - name: DEB repo package update 
         env:
+          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
           GPG_NAME: ${{ secrets.GPG_NAME }}
           GPG_MAIL: ${{ secrets.GPG_MAIL }}
         run: |
