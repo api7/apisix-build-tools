@@ -7,7 +7,7 @@ version=${version:-0.0.0}
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver="master"
     mod_dubbo_ver="master"
-    apisix_nginx_module_ver="main"
+    apisix_nginx_module_ver="1.13.0"
     wasm_nginx_module_ver="main"
     lua_var_nginx_module_ver="master"
     grpc_client_nginx_module_ver="main"
