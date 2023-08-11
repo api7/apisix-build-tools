@@ -1,7 +1,7 @@
 name: Build and Publish Package
 
 on:
-  create
+  create:
 
 jobs:
   publish_apisix:
@@ -10,6 +10,8 @@ jobs:
     timeout-minutes: 60
     env:
       VAR_DEB_WORKBENCH_DIR: /tmp/output
+      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
+      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
@@ -72,4 +74,41 @@ jobs:
         with:
           name: "apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
           path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/apisix-base_${{ steps.tag_env.outputs.version}}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+
+      - name: DEB repo deps init
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          sudo pip install coscmd
+          sudo -E ./utils/publish-deb.sh init_cos_utils
+
+      - name: DEB repo init for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_clone
+
+      - name: DEB repo package update
+        env:
+          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
+          GPG_NAME: ${{ secrets.GPG_NAME }}
+          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+        run: |
+          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          sudo -E ./utils/publish-deb.sh init_freight_utils
+          sudo -E ./utils/publish-deb.sh init_gpg
+
+      - name: DEB repo backup for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh dists_backup
+
+      - name: DEB repo refresh for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_rebuild
+          sudo -E ./utils/publish-deb.sh repo_ci_upload
+
+      - name: DEB repo publish for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_upload
+          sudo -E ./utils/publish-rpm.sh repo_publish
 
