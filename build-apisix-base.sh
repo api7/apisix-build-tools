@@ -17,7 +17,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="1.1.1"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.12.0"
+    apisix_nginx_module_ver="1.13.0"
     wasm_nginx_module_ver="0.6.4"
     lua_var_nginx_module_ver="v0.5.3"
     grpc_client_nginx_module_ver="v0.4.2"
@@ -55,7 +55,7 @@ if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
     git clone --depth=1 -b $apisix_nginx_module_ver \
-        https://github.com/api7/apisix-nginx-module.git \
+        https://github.com/AlinsRan/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
 
