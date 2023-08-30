@@ -41,7 +41,7 @@ jobs:
         id: tag_type
         shell: bash
         run: |
-          type=`echo ${env.CI_BRANCH} | awk -F '/' '{print $3}'`
+          type=`echo ${{ env.CI_BRANCH }} | awk -F '/' '{print $3}'`
           echo "##[set-output name=version;]$(echo ${type})"
 
       - name: Check Tags Type
