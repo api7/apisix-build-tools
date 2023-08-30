@@ -16,7 +16,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
-      CI_BRANCH: refs/tags/apisix-base/1.21.4.1.9
+      CI_BRANCH: refs/tags/apisix-base/1.21.4.2.0
 
     steps:
       - name: Check out code
