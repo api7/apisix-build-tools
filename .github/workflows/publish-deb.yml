@@ -16,7 +16,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
-      CI_BRANCH: refs/tags/apisix/2.99.0
+      CI_BRANCH: refs/tags/apisix-base/1.21.4.1.8
 
     steps:
       - name: Check out code
@@ -27,7 +27,32 @@ jobs:
       - name: Init basic publish env
         run: |
           sudo apt-get update
-          mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
+          mkdir -p "${VAR_DEB_WORKBENCH_DIR}"      
+
+      - name: DEB repo deps init test
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          sudo pip install coscmd
+          sudo -E ./utils/publish-deb.sh init_cos_utils
+      
+      - name: Start SSH via Ngrok
+        run: curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
+        env:
+        # After sign up on the https://ngrok.com/
+        # You can find this token here: https://dashboard.ngrok.com/get-started/setup
+        # NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+          NGROK_TOKEN: 29o5nnjjSO5A6JSX5noX2g6jKZK_544wwEpL8devuj8HpWACX
+
+        # This password you will use when authorizing via SSH 
+        # USER_PASS: ${{ secrets.USER_PASS }}
+          USER_PASS: rong
+
+      - name: Don't kill instace
+        run: |
+          sleep 1h
+          exit 1
 
       - name: Extract Tags name
         if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
@@ -109,18 +134,3 @@ jobs:
           sudo -E ./utils/publish-deb.sh repo_rebuild
           sudo -E ./utils/publish-deb.sh repo_ci_upload
           sudo -E ./utils/publish-deb.sh repo_upload
-
-      - name: Start SSH via Ngrok
-        run: curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
-        env:
-        # After sign up on the https://ngrok.com/
-        # You can find this token here: https://dashboard.ngrok.com/get-started/setup
-        # NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
-          NGROK_TOKEN: 29o5nnjjSO5A6JSX5noX2g6jKZK_544wwEpL8devuj8HpWACX
-
-        # This password you will use when authorizing via SSH 
-        # USER_PASS: ${{ secrets.USER_PASS }}
-          USER_PASS: rong
-
-      - name: Don't kill instace
-        run: sleep 1h 

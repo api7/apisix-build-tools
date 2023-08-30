@@ -1,7 +1,6 @@
 name: Build and Publish Package
 
 on:
-  push:
   create:
 
 concurrency:
