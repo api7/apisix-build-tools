@@ -140,6 +140,7 @@ func_deb_upload() {
     export BUCKET=$2
     export OS=$3
     export CODENAME=$4
+    export COS_GLOBAL_REGION=$COS_GLOBAL_REGION
     find "${1}" -type f -name "apisix_*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'file=$(basename {}); \
