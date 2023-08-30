@@ -120,8 +120,8 @@ jobs:
         run: |
           sudo -E ./utils/publish-deb.sh repo_rebuild
           sudo -E ./utils/publish-deb.sh repo_ci_upload
-          sudo -E ./utils/publish-deb.sh repo_upload
 
       - name: DEB repo publish for debian
         run: |
+          sudo -E ./utils/publish-deb.sh repo_upload
           sudo -E ./utils/publish-deb.sh repo_publish
