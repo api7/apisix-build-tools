@@ -29,16 +29,14 @@ jobs:
           sudo apt-get update
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
-      - name: Extract Tags name
+      - name: Extract Tags version
         if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
-        id: tag_env
         shell: bash
         run: |
           echo "TAG_VERSION=${CI_BRANCH##*/}" >> "$GITHUB_ENV"
 
-      - name: Extract Tags Type
+      - name: Extract Tags type
         if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
-        id: tag_type
         shell: bash
         run: |
           type=$(echo ${{ env.CI_BRANCH }} | awk -F '/' '{print $3}')
@@ -97,6 +95,8 @@ jobs:
           sudo -E ./utils/publish-deb.sh repo_ci_upload
 
       - name: DEB repo publish for debian
+        env:
+          UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_amd64.deb"
         run: |
           sudo -E ./utils/publish-deb.sh repo_upload
-          sudo -E ./utils/publish-deb.sh repo_publish
+          #sudo -E ./utils/publish-deb.sh repo_publish
