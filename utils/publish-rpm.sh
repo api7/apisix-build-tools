@@ -42,24 +42,12 @@ func_gpg_key_load() {
 # =======================================
 # COS extension
 # =======================================
-func_cos_utils_install() {
-    # ${1} - COS util version
-    curl -o /usr/bin/coscli -L "https://github.com/tencentyun/coscli/releases/download/${1}/coscli-linux"
-    chmod 755 /usr/bin/coscli
-}
-
 func_cos_utils_credential_init() {
     # ${1} - COS endpoint
     # ${2} - COS SECRET_ID
     # ${3} - COS SECRET_KEY
-    cat > "${HOME}/.cos.yaml" <<_EOC_
-cos:
-  base:
-    secretid: ${2}
-    secretkey: ${3}
-    sessiontoken: ""
-    protocol: https
-_EOC_
+    # ${4} - COS bucket name
+    coscmd config -e "${1}" -a "${2}" -s "${3}" -b "${4}"
 }
 
 # =======================================
@@ -77,25 +65,25 @@ func_repo_clone() {
     # ${3} - target path
 
     # --part-size indicates the file chunk size.
-    # when the file is larger than --part-size, coscli will chunk the file by --part-size.
+    # when the file is larger than --part-size, coscmd will chunk the file by --part-size.
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
 }
 
 func_repo_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
 }
 
 func_repo_backup_remove() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${1}/packages/backup/${2}_${3}"
+    coscmd delete -r -f "cos://${1}/packages/backup/${2}_${3}"
 }
 
 func_repo_repodata_rebuild() {
@@ -117,16 +105,16 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
+    coscmd delete -r -f "cos://${2}/packages/${3}" || true
+    coscmd copy -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
 }
 
 func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
-    coscli -e "${VAR_COS_ENDPOINT}" rm -r -f "cos://${2}/packages/${3}" || true
-    coscli -e "${VAR_COS_ENDPOINT}" cp -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
+    coscmd delete -r -f "cos://${2}/packages/${3}" || true
+    coscmd copy -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
 }
 
 # =======================================
@@ -135,8 +123,7 @@ func_repo_publish() {
 case_opt=$1
 case ${case_opt} in
 init_cos_utils)
-    func_cos_utils_install "${VAR_TENCENT_COS_UTILS_VERSION}"
-    func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}"
+    func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}" "${VAR_COS_BUCKET_REPO}"
     ;;
 repo_init)
     # create basic repo directory structure
@@ -156,11 +143,11 @@ repo_package_sync)
     for i in "${VAR_REPO_MAJOR_VER[@]}"; do
         find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
             -exec echo "repo sync for: {}" \; \
-            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
+            -exec copy -a {} /tmp/centos/"${i}"/${ARCH} \;
     done
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
-        -exec cp -a {} /tmp/redhat/8/${ARCH} \;
+        -exec copy -a {} /tmp/redhat/8/${ARCH} \;
     ;;
 repo_repodata_rebuild)
     func_repo_repodata_rebuild /tmp/redhat
