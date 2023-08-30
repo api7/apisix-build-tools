@@ -155,6 +155,8 @@ func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
+    coscmd -b "${2}" copy "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${file}" "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${file}"
+
     coscmd delete -r -f "/packages/${arch_path}${3}/dists" || true
     coscmd -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${3}/dists" "/packages/${arch_path}${3}/dists"
 }
@@ -198,7 +200,7 @@ repo_ci_upload)
     func_dists_upload_ci_repo "/tmp/freight/cache/dists" "${VAR_COS_BUCKET_CI}" "${VAR_OS}"
     ;;
 repo_upload)
-    func_deb_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_REPO}" "${VAR_OS}" "${VAR_CODENAME}"
+    func_deb_upload "${VAR_DEB_WORKBENCH_DIR}" "${VAR_COS_BUCKET_CI}" "${VAR_OS}" "${VAR_CODENAME}"
     ;;
 repo_publish)
     func_repo_publish "${VAR_COS_BUCKET_CI}" "${VAR_COS_BUCKET_REPO}" "${VAR_OS}"
