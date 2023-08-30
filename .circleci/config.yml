@@ -209,8 +209,8 @@ workflows:
           var_os: debian
           var_os_release: bullseye-slim
           filters:
-            branches:
-              only: chore/coscmd
+            tags:
+              only: /^apisix.*/
       - build-arm64-package:
           name: centos 7
           var_os: centos

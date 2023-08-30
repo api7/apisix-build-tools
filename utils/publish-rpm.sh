@@ -147,11 +147,11 @@ repo_package_sync)
     for i in "${VAR_REPO_MAJOR_VER[@]}"; do
         find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*el${i}.${ARCH}.rpm" \
             -exec echo "repo sync for: {}" \; \
-            -exec copy -a {} /tmp/centos/"${i}"/${ARCH} \;
+            -exec cp -a {} /tmp/centos/"${i}"/${ARCH} \;
     done
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi8.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
-        -exec copy -a {} /tmp/redhat/8/${ARCH} \;
+        -exec cp -a {} /tmp/redhat/8/${ARCH} \;
     ;;
 repo_repodata_rebuild)
     func_repo_repodata_rebuild /tmp/redhat
