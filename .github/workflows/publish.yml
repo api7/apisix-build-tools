@@ -145,6 +145,7 @@ jobs:
           TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
+          sudo pip install coscmd
           sudo -E ./utils/publish-rpm.sh init_cos_utils
 
       - name: RPM repo init for centos and redhat

@@ -9,11 +9,16 @@ env
 # =======================================
 # Runtime default config
 # =======================================
-VAR_TENCENT_COS_UTILS_VERSION=${VAR_TENCENT_COS_UTILS_VERSION:-v0.11.0-beta}
 VAR_RPM_WORKBENCH_DIR=${VAR_RPM_WORKBENCH_DIR:-/tmp/output}
 VAR_GPG_PRIV_KET=${VAR_GPG_PRIV_KET:-/tmp/rpm-gpg-publish.private}
 VAR_GPG_PASSPHRASE=${VAR_GPG_PASSPHRASE:-/tmp/rpm-gpg-publish.passphrase}
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+
+COS_REGION=${COS_REGION:-"ap-guangzhou"}
+COS_GLOBAL_REGION=${COS_GLOBAL_REGION:-"accelerate"}
+COS_PART_SIZE=${COS_PART_SIZE:-"10"}
+VAR_COS_REGION_DNS="cos.${COS_REGION}.myqcloud.com"
+VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
 
 # =======================================
 # GPG extension
@@ -43,11 +48,10 @@ func_gpg_key_load() {
 # COS extension
 # =======================================
 func_cos_utils_credential_init() {
-    # ${1} - COS endpoint
-    # ${2} - COS SECRET_ID
-    # ${3} - COS SECRET_KEY
-    # ${4} - COS bucket name
-    coscmd config -e "${1}" -a "${2}" -s "${3}" -b "${4}"
+    # ${1} - COS SECRET_ID
+    # ${2} - COS SECRET_KEY
+    # ${3} - COS bucket name
+    coscmd config -a "${1}" -s "${2}" -b "${3}" -r ${COS_REGION} -p ${COS_PART_SIZE}
 }
 
 # =======================================
@@ -69,21 +73,21 @@ func_repo_clone() {
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "${3}"
+    coscmd -b "${1}"  -r "${COS_GLOBAL_REGION}" download -r "/packages/${2}" "${3}"
 }
 
 func_repo_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscmd copy -r --part-size 1000 "cos://${1}/packages/${2}" "cos://${1}/packages/backup/${2}_${3}"
+    coscmd copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${2}" "/packages/backup/${2}_${3}"
 }
 
 func_repo_backup_remove() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscmd delete -r -f "cos://${1}/packages/backup/${2}_${3}"
+    coscmd -b "${1}" delete -r -f "/packages/backup/${2}_${3}"
 }
 
 func_repo_repodata_rebuild() {
@@ -105,16 +109,16 @@ func_repo_upload() {
     # ${1} - local path
     # ${2} - bucket name
     # ${3} - COS path
-    coscmd delete -r -f "cos://${2}/packages/${3}" || true
-    coscmd copy -r --part-size 1000 "${1}" "cos://${2}/packages/${3}"
+    coscmd -b "${2}"  delete -r -f "/packages/${3}" || true
+    coscmd -b "${2}" -r ${COS_GLOBAL_REGION} upload -r "${1}" "/packages/${3}"
 }
 
 func_repo_publish() {
     # ${1} - CI bucket
     # ${2} - repo publish bucket
     # ${3} - COS path
-    coscmd delete -r -f "cos://${2}/packages/${3}" || true
-    coscmd copy -r --part-size 1000 "cos://${1}/packages/${3}" "cos://${2}/packages/${3}"
+    coscmd delete -r -f "/packages/${3}" || true
+    coscmd -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${3}" "packages/${3}"
 }
 
 # =======================================
@@ -123,7 +127,7 @@ func_repo_publish() {
 case_opt=$1
 case ${case_opt} in
 init_cos_utils)
-    func_cos_utils_credential_init "${VAR_COS_ENDPOINT}" "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}" "${VAR_COS_BUCKET_REPO}"
+    func_cos_utils_credential_init "${TENCENT_COS_SECRETID}" "${TENCENT_COS_SECRETKEY}" "${VAR_COS_BUCKET_REPO}"
     ;;
 repo_init)
     # create basic repo directory structure
