@@ -140,15 +140,15 @@ func_deb_upload() {
     export BUCKET=$2
     export OS=$3
     export CODENAME=$4
+    export COS_GLOBAL_REGION=$COS_GLOBAL_REGION
+    export UPLOAD_TARGET_FILE=$UPLOAD_TARGET_FILE
     find "${1}" -type f -name "apisix_*.deb" \
         -exec echo "upload : {}" \; \
-        -exec sh -c 'file=$(basename {}); \
-                    coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix/${file}"' \;
+        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix/${UPLOAD_TARGET_FILE}"' \;
 
     find "${1}" -type f -name "apisix-base*.deb" \
         -exec echo "upload : {}" \; \
-        -exec sh -c 'file=$(basename {}); \
-                    coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${file}"' \;
+        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${UPLOAD_TARGET_FILE}"' \;
 }
 
 func_repo_publish() {
