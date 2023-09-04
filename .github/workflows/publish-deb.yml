@@ -35,11 +35,11 @@ jobs:
         run: |
           echo "TAG_VERSION=${CI_BRANCH##*/}" >> "$GITHUB_ENV"
 
-      - name: Extract Tags type
+      - name: Extract Tags Type
         if: ${{ startsWith(env.CI_BRANCH, 'refs/tags/') }}
         shell: bash
         run: |
-          type=$(echo ${{ env.CI_BRANCH }} | awk -F '/' '{print $3}')
+          type=$(echo ${CI_BRANCH} | awk -F '/' '{print $3}')
           echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
 
       - name: Check Tags Type
@@ -53,7 +53,7 @@ jobs:
           echo build ${TAG_TYPE} deb package
           echo version ${TAG_VERSION}
 
-          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE}
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-base Artifact
@@ -99,4 +99,4 @@ jobs:
           UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_amd64.deb"
         run: |
           sudo -E ./utils/publish-deb.sh repo_upload
-          #sudo -E ./utils/publish-deb.sh repo_publish
+          sudo -E ./utils/publish-deb.sh repo_publish
