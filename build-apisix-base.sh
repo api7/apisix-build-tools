@@ -4,6 +4,11 @@ set -x
 
 version=${version:-0.0.0}
 
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.21.4.2}
+if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
+    OPENRESTY_VERSION="1.21.4.2"
+fi
+
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver="master"
     mod_dubbo_ver="master"
@@ -16,10 +21,10 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="1.1.1"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.12.0"
-    wasm_nginx_module_ver="0.6.4"
+    apisix_nginx_module_ver="1.14.0"
+    wasm_nginx_module_ver="0.6.5"
     lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.4.2"
+    grpc_client_nginx_module_ver="v0.4.3"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
@@ -29,9 +34,8 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-or_ver="1.21.4.1"
-wget --no-check-certificate https://openresty.org/download/openresty-${or_ver}.tar.gz
-tar -zxvpf openresty-${or_ver}.tar.gz > /dev/null
+wget --no-check-certificate https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
+tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
@@ -82,11 +86,11 @@ else
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
-./patch.sh ../openresty-${or_ver}
+./patch.sh ../openresty-${OPENRESTY_VERSION}
 cd ..
 
 cd apisix-nginx-module-${apisix_nginx_module_ver}/patch || exit 1
-./patch.sh ../../openresty-${or_ver}
+./patch.sh ../../openresty-${OPENRESTY_VERSION}
 cd ../..
 
 cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
@@ -101,14 +105,16 @@ no_pool_patch=${no_pool_patch:-}
 # version of grpc-client-nginx-module
 grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
 
-cd openresty-${or_ver} || exit 1
+cd openresty-${OPENRESTY_VERSION} || exit 1
 
+if [[ "$OPENRESTY_VERSION" == 1.21.4.1 ]] || [[ "$OPENRESTY_VERSION" == 1.19.* ]]; then
 # FIXME: remove this once 1.21.4.2 is released
 rm -rf bundle/LuaJIT-2.1-20220411
 lj_ver=2.1-20230119
 wget "https://github.com/openresty/luajit2/archive/v$lj_ver.tar.gz" -O "LuaJIT-$lj_ver.tar.gz"
 tar -xzf LuaJIT-$lj_ver.tar.gz
 mv luajit2-* bundle/LuaJIT-2.1-20220411
+fi
 
 or_limit_ver=0.08
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then

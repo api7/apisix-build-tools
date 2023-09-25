@@ -20,6 +20,7 @@
 
 ## Table of Contents
 
+- [2.5.1](#251)
 - [2.5.0](#250)
 - [2.4.0](#240)
 - [2.3.0](#230)
@@ -27,6 +28,14 @@
 - [2.2.0](#220)
 - [2.1.0](#210)
 - [2.0.0](#200)
+
+## 2.5.1
+
+This release update wasm-nginx-module
+
+### New Feature
+
+- feat: update wasm-nginx-module to 0.6.5 [#328](https://github.com/api7/apisix-build-tools/issues/328)
 
 ## 2.5.0
 
