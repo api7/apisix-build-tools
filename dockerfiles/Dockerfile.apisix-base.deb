@@ -1,5 +1,5 @@
 ARG IMAGE_BASE="debian"
-ARG IMAGE_TAG="bullseye-slim"
+ARG IMAGE_TAG="bookworm-slim"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
