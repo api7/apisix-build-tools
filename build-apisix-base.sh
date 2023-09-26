@@ -185,18 +185,3 @@ cd ..
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
-
-# package etcdctl
-ETCD_ARCH="amd64"
-ETCD_VERSION=${ETCD_VERSION:-'3.5.4'}
-ARCH=${ARCH:-$(uname -m | tr '[:upper:]' '[:lower:]')}
-
-if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
-    ETCD_ARCH="arm64"
-fi
-
-wget -q https://github.com/etcd-io/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
-tar xf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
-# ship etcdctl under the same bin dir of openresty so we can package it easily
-sudo cp etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}/etcdctl "$OR_PREFIX"/bin/
-rm -rf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}
