@@ -21,7 +21,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="1.1.1"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.14.0"
+    apisix_nginx_module_ver="1.15.0"
     wasm_nginx_module_ver="0.6.5"
     lua_var_nginx_module_ver="v0.5.3"
     grpc_client_nginx_module_ver="v0.4.4"
