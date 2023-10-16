@@ -25,7 +25,7 @@ iteration=0
 local_code_path=0
 openresty="openresty"
 artifact="0"
-apisix_repo="https://github.com/apache/apisix"
+apisix_repo="https://github.com/Revolyssup/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
 ### set the default image for deb package
@@ -118,6 +118,7 @@ endef
 build-apisix-rpm:
 ifeq ($(local_code_path), 0)
 	git clone -b $(checkout) $(apisix_repo) ./apisix
+	sed -i 's/luasec = 0.9-1/luasec = 1.3.0-1/g' ./apisix/rockspec/apisix-master-0.rockspec
 	$(call build,apisix,apisix,rpm,"./apisix")
 	rm -fr ./apisix
 else
@@ -128,6 +129,7 @@ endif
 build-apisix-deb:
 ifeq ($(local_code_path), 0)
 	git clone -b $(checkout) $(apisix_repo) ./apisix
+	sed -i 's/luasec = 0.9-1/luasec = 1.3.0-1/g' ./apisix/rockspec/apisix-master-0.rockspec
 	$(call build,apisix,apisix,deb,"./apisix")
 	rm -fr ./apisix
 else

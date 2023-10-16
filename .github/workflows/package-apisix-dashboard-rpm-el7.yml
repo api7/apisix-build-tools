@@ -2,13 +2,13 @@ name: package apisix-dashabord rpm for el7
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master , openssl3]
     tags:
       - "v*"
     paths-ignore:
       - '*.md'
   pull_request:
-    branches: [ master ]
+    branches: [ master , openssl3]
     paths-ignore:
       - '*.md'
   schedule:
@@ -47,7 +47,7 @@ jobs:
 
       - name: run apisix-dashboard(-local) packaging test
         run: |
-          git clone -b ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
+          ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
           make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} \
             image_base=centos image_tag=7 local_code_path=./apisix-dashboard artifact=apisix-dashboard-local
 

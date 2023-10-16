@@ -19,12 +19,13 @@ RUN /install-common.sh install_openresty_deb
 # install etcd
 RUN /install-common.sh install_etcd
 
-# install apisix
+# install apisi
 RUN set -x \
     && apt install -y libldap2-dev \
     && dpkg -i /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_amd64.deb
 
 # start etcd and test
 CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
+
 
 EXPOSE 9180 9080 9443
