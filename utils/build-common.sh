@@ -5,6 +5,16 @@ set -x
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
 
+install_openssl_3(){
+    git clone https://github.com/openssl/openssl
+    cd openssl
+    ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
+    make install
+    bash -c "echo $OPENSSL3_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
+    ldconfig
+    cd ..
+}
+
 build_apisix_base_rpm() {
     if [[ $(rpm --eval '%{centos_ver}') == "7" ]]; then
         yum -y install centos-release-scl
@@ -27,8 +37,9 @@ build_apisix_base_rpm() {
     gcc --version
 
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
+    yum -y install openresty-pcre-devel openresty-zlib-devel
 
+    install_openssl_3
     export_openresty_variables
     ${BUILD_PATH}/build-apisix-base.sh
 }
@@ -52,8 +63,9 @@ build_apisix_base_deb() {
     fi
 
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev
 
+    install_openssl_3
     export_openresty_variables
     # fix OR_PREFIX
     if [[ $build_latest == "latest" ]]; then
@@ -68,13 +80,12 @@ build_apisix_base_apk() {
 }
 
 export_openresty_variables() {
-    export openssl_prefix=/usr/local/openresty/openssl111
     export zlib_prefix=/usr/local/openresty/zlib
     export pcre_prefix=/usr/local/openresty/pcre
     export OR_PREFIX=/usr/local/openresty
 
-    export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include"
-    export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
+    export cc_opt="-I$OPENSSL3_PREFIX/openssl-3.0/include"
+    export ld_opt="-L$OPENSSL3_PREFIX/openssl-3.0/lib64 -Wl,-rpath,$OPENSSL3_PREFIX/openssl-3.0/lib64"
 }
 
 case_opt=$1

@@ -16,6 +16,18 @@ install_apisix_dependencies_rpm() {
     install_luarocks
 }
 
+install_openssl_3(){
+    git clone https://github.com/openssl/openssl
+    cd openssl
+    ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
+    make install
+    bash -c "echo $OPENSSL3_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
+    ldconfig
+    export cc_opt="-I$OPENSSL3_PREFIX/openssl-3.0/include"
+    export ld_opt="-L$OPENSSL3_PREFIX/openssl-3.0/lib64 -Wl,-rpath,$OPENSSL3_PREFIX/openssl-3.0/lib64"
+    cd ..
+}
+
 install_dependencies_rpm() {
     # install basic dependencies
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
@@ -35,7 +47,7 @@ install_dependencies_deb() {
 }
 
 install_openresty_deb() {
-    # install openresty and openssl111
+    # install openresty and openssl3
     arch_path=""
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
@@ -52,13 +64,15 @@ install_openresty_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty
+    install_openssl_3
 }
 
 install_openresty_rpm() {
-    # install openresty and openssl111
+    # install openresty and openssl3
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y openresty pcre pcre-devel openldap-devel
+    install_openssl_3
 }
 
 install_luarocks() {
