@@ -4,7 +4,7 @@ set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
-
+OPENSSL3_PREFIX=${OPENSSL3_PREFIX-`echo $HOME`}
 install_openssl_3(){
     git clone https://github.com/openssl/openssl
     cd openssl

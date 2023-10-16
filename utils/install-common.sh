@@ -3,6 +3,7 @@ set -euo pipefail
 set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
+OPENSSL3_PREFIX=${OPENSSL3_PREFIX-`echo $HOME`}
 
 install_apisix_dependencies_deb() {
     install_dependencies_deb
