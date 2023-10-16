@@ -5,7 +5,10 @@ set -x
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
 OPENSSL3_PREFIX=${OPENSSL3_PREFIX-`echo $HOME`}
+
 install_openssl_3(){
+    # required for openssl 3.x config
+    cpanm IPC/Cmd.pm
     git clone https://github.com/openssl/openssl
     cd openssl
     ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0

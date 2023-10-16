@@ -18,6 +18,8 @@ install_apisix_dependencies_rpm() {
 }
 
 install_openssl_3(){
+    # required for openssl 3.x config
+    cpanm IPC/Cmd.pm
     git clone https://github.com/openssl/openssl
     cd openssl
     ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
