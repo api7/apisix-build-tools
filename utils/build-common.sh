@@ -87,8 +87,10 @@ export_openresty_variables() {
     export pcre_prefix=/usr/local/openresty/pcre
     export OR_PREFIX=/usr/local/openresty
 
-    export cc_opt="-I$OPENSSL3_PREFIX/openssl-3.0/include"
-    export ld_opt="-L$OPENSSL3_PREFIX/openssl-3.0/lib64 -Wl,-rpath,$OPENSSL3_PREFIX/openssl-3.0/lib64"
+
+    export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include -I$OPENSSL3_PREFIX/openssl-3.0/include"
+    export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -L$OPENSSL3_PREFIX/openssl-3.0/lib64 -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib:$OPENSSL3_PREFIX/openssl-3.0/lib64"
+
 }
 
 case_opt=$1
