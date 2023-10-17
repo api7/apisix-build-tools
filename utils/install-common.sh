@@ -67,14 +67,14 @@ install_openresty_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty cpanminus
     install_openssl_3
 }
 
 install_openresty_rpm() {
     # install openresty and openssl3
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty pcre pcre-devel openldap-devel
+    yum install -y openresty pcre pcre-devel openldap-devel cpanminus
     install_openssl_3
 }
 
