@@ -43,7 +43,7 @@ jobs:
           docker exec ubuntu20.04Instance bash -c "wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -"
           docker exec ubuntu20.04Instance bash -c 'echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list'
           docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
-          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install openresty-openssl111 openresty-pcre openresty-zlib"
+          docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install openresty-pcre openresty-zlib"
 
       - name: install deb in container
         run: |
