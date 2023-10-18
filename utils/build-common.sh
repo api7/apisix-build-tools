@@ -4,15 +4,16 @@ set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
+OPENSSL3_PREFIX=${OPENSSL3_PREFIX:-`pwd`}
 
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl
+    git clone https://github.com/openssl/openssl 
     cd openssl
-    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
-    make -j $(nproc)
+    ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
     make install
+    bash -c "echo $OPENSSL3_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
     ldconfig
     cd ..
 }
@@ -86,7 +87,6 @@ export_openresty_variables() {
     export pcre_prefix=/usr/local/openresty/pcre
     export OR_PREFIX=/usr/local/openresty
     export openssl_prefix=/usr/local/openssl
-
     export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include"
     export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
 }
