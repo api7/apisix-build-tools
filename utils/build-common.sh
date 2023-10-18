@@ -8,9 +8,8 @@ BUILD_PATH=${BUILD_PATH:-`pwd`}
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget https://www.openssl.org/source/openssl-3.0.11.tar.gz
-    tar xvf openssl-*.tar.gz
-    cd openssl-*/
+    git clone https://github.com/openssl/openssl
+    cd openssl
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
     make install
     ldconfig
