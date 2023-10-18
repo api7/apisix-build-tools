@@ -4,17 +4,18 @@ set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
-OPENSSL3_PREFIX=${OPENSSL3_PREFIX-`echo $HOME`}
 
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl
-    cd openssl
-    ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
+    wget https://www.openssl.org/source/openssl-3.0.11.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-*/
+    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
     make install
-    bash -c "echo $OPENSSL3_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
     ldconfig
+    export PATH=/usr/local/openssl/bin:\$PATH
+    export LD_LIBRARY_PATH=/usr/local/openssl/lib:/usr/local/openssl/lib64:\$LD_LIBRARY_PATH
     cd ..
 }
 

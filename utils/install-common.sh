@@ -3,7 +3,6 @@ set -euo pipefail
 set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
-OPENSSL3_PREFIX=${OPENSSL3_PREFIX-`echo $HOME`}
 
 install_apisix_dependencies_deb() {
     install_dependencies_deb
@@ -20,14 +19,14 @@ install_apisix_dependencies_rpm() {
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl
-    cd openssl
-    ./Configure --prefix=$OPENSSL3_PREFIX/openssl-3.0
+    wget https://www.openssl.org/source/openssl-3.0.11.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-*/
+    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
     make install
-    bash -c "echo $OPENSSL3_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
     ldconfig
-    export cc_opt="-I$OPENSSL3_PREFIX/openssl-3.0/include"
-    export ld_opt="-L$OPENSSL3_PREFIX/openssl-3.0/lib64 -Wl,-rpath,$OPENSSL3_PREFIX/openssl-3.0/lib64"
+    export PATH=/usr/local/openssl/bin:\$PATH
+    export LD_LIBRARY_PATH=/usr/local/openssl/lib:/usr/local/openssl/lib64:\$LD_LIBRARY_PATH
     cd ..
 }
 
@@ -74,7 +73,7 @@ install_openresty_deb() {
 install_openresty_rpm() {
     # install openresty and openssl3
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty pcre pcre-devel openldap-devel cpanminus
+    yum install -y openresty pcre pcre-devel openldap-devel cpanminus perl-IPC-Cmd
     install_openssl_3
 }
 
