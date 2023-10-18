@@ -22,10 +22,9 @@ install_openssl_3(){
     git clone https://github.com/openssl/openssl
     cd openssl
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+    make -j $(nproc)
     make install
     ldconfig
-    export PATH=/usr/local/openssl/bin:\$PATH
-    export LD_LIBRARY_PATH=/usr/local/openssl/lib:/usr/local/openssl/lib64:\$LD_LIBRARY_PATH
     cd ..
 }
 

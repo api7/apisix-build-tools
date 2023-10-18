@@ -117,7 +117,7 @@ endef
 .PHONY: build-apisix-rpm
 build-apisix-rpm:
 ifeq ($(local_code_path), 0)
-	$(checkout) $(apisix_repo) ./apisix
+	git clone -b $(checkout) $(apisix_repo) ./apisix
 	$(call build,apisix,apisix,rpm,"./apisix")
 	rm -fr ./apisix
 else
@@ -127,6 +127,7 @@ endif
 .PHONY: build-apisix-deb
 build-apisix-deb:
 ifeq ($(local_code_path), 0)
+	git clone -b $(checkout) $(apisix_repo) ./apisix
 	$(call build,apisix,apisix,deb,"./apisix")
 	rm -fr ./apisix
 else
@@ -146,7 +147,7 @@ package-apisix-deb:
 .PHONY: build-dashboard-rpm
 build-dashboard-rpm:
 ifeq ($(local_code_path), 0)
-	$(checkout) $(dashboard_repo) ./apisix-dashboard
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
 	$(call build,apisix-dashboard,dashboard,rpm,"./apisix-dashboard")
 	rm -fr ./apisix-dashboard
 else
@@ -156,7 +157,7 @@ endif
 .PHONY: build-dashboard-deb
 build-dashboard-deb:
 ifeq ($(local_code_path), 0)
-	$(checkout) $(dashboard_repo) ./apisix-dashboard
+	git clone -b $(checkout) $(dashboard_repo) ./apisix-dashboard
 	$(call build,apisix-dashboard,dashboard,deb,"./apisix-dashboard")
 	rm -fr ./apisix-dashboard
 else

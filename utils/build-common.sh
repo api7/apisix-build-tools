@@ -11,10 +11,9 @@ install_openssl_3(){
     git clone https://github.com/openssl/openssl
     cd openssl
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+    make -j $(nproc)
     make install
     ldconfig
-    export PATH=/usr/local/openssl/bin:\$PATH
-    export LD_LIBRARY_PATH=/usr/local/openssl/lib:/usr/local/openssl/lib64:\$LD_LIBRARY_PATH
     cd ..
 }
 
@@ -66,7 +65,7 @@ build_apisix_base_deb() {
     fi
 
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev cpanminus
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev cpanminus bash
 
     install_openssl_3
     export_openresty_variables
@@ -90,7 +89,6 @@ export_openresty_variables() {
 
     export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include"
     export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
-
 }
 
 case_opt=$1
