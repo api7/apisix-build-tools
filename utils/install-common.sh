@@ -16,18 +16,6 @@ install_apisix_dependencies_rpm() {
     install_luarocks
 }
 
-install_openssl_3(){
-    # required for openssl 3.x config
-    cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl
-    cd openssl
-    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
-    make -j $(nproc)
-    make install
-    ldconfig
-    cd ..
-}
-
 install_dependencies_rpm() {
     # install basic dependencies
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
@@ -47,7 +35,7 @@ install_dependencies_deb() {
 }
 
 install_openresty_deb() {
-    # install openresty and openssl3
+    # install openresty and openssl111
     arch_path=""
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
@@ -64,15 +52,13 @@ install_openresty_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty cpanminus
-    install_openssl_3
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
 }
 
 install_openresty_rpm() {
-    # install openresty and openssl3
+    # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty pcre pcre-devel openldap-devel cpanminus perl-IPC-Cmd
-    install_openssl_3
+    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {
