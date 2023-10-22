@@ -59,7 +59,6 @@ jobs:
         run: |
           docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-base-latest-0.el7.x86_64.rpm"
           docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "ldd $(which openresty)"
           docker exec centos7Instance bash -c "apisix start"
 
       - name: check and ensure APISIX is installed
