@@ -128,6 +128,7 @@ endif
 build-apisix-deb:
 ifeq ($(local_code_path), 0)
 	git clone -b $(checkout) $(apisix_repo) ./apisix
+	sed -i 's/luasec = 0.9-1/luasec = 1.3.0-1/g' ./apisix/rockspec/apisix-master-0.rockspec
 	$(call build,apisix,apisix,deb,"./apisix")
 	rm -fr ./apisix
 else
