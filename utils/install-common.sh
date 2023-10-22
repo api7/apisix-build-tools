@@ -15,6 +15,17 @@ install_apisix_dependencies_rpm() {
     install_openresty_rpm
     install_luarocks
 }
+install_openssl_3(){
+    # required for openssl 3.x config
+    cpanm IPC/Cmd.pm
+    git clone https://github.com/openssl/openssl 
+    cd openssl
+    ./config
+    make install
+    export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+    ldconfig
+    cd ..
+}
 
 install_dependencies_rpm() {
     # install basic dependencies
@@ -53,12 +64,14 @@ install_openresty_deb() {
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty
+    install_openssl_3
 }
 
 install_openresty_rpm() {
     # install openresty
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum install -y openresty pcre pcre-devel openldap-devel
+    install_openssl_3
 }
 
 install_luarocks() {
