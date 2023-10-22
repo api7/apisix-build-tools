@@ -35,7 +35,7 @@ install_dependencies_deb() {
 }
 
 install_openresty_deb() {
-    # install openresty and openssl111
+    # install openresty
     arch_path=""
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
@@ -52,13 +52,13 @@ install_openresty_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty
 }
 
 install_openresty_rpm() {
-    # install openresty and openssl111
+    # install openresty
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y openresty pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {
