@@ -13,6 +13,8 @@ install_openssl_3(){
     cd openssl
     ./config
     make install
+    bash -c "echo '/usr/local/lib64' >> /etc/ld.so.conf"
+    ldconfig
     cd ..
 }
 
