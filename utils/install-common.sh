@@ -20,7 +20,7 @@ install_openssl_3(){
     cpanm IPC/Cmd.pm
     git clone https://github.com/openssl/openssl 
     cd openssl
-    ./config
+    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
     make install
     export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
     ldconfig
@@ -120,6 +120,8 @@ install_apisix() {
     # install rust
     install_rust
 
+    # install openssl
+    install_openssl_3
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
