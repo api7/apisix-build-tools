@@ -1,4 +1,4 @@
-name: Build and Publish Package
+name: Build and Publish DEB Package
 
 on:
   create:
@@ -41,17 +41,27 @@ jobs:
           echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
 
       - name: Check Tags Type
-        if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' }}
+        if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' && env.TAG_TYPE != 'apisix-runtime' }}
         run: |
           echo "##[error]Tag type is not correct, please check it."
           exit 1
 
-      - name: Build apisix/apisix-base deb Package
+      - name: Build apisix or apisix-base deb Package
+        if: ${{ env.TAG_TYPE == 'apisix' || env.TAG_TYPE == 'apisix-base' }}
         run: |
           echo build ${TAG_TYPE} deb package
           echo version ${TAG_VERSION}
 
           make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Build apisix-runtime deb Package
+        if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
+        run: |
+          echo build ${TAG_TYPE} deb package
+          echo version ${TAG_VERSION}
+
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-base Artifact
