@@ -25,7 +25,7 @@ iteration=0
 local_code_path=0
 openresty="openresty"
 artifact="0"
-apisix_repo="https://github.com/apache/apisix"
+apisix_repo="https://github.com/Revolyssup/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
 ### set the default image for deb package
