@@ -40,7 +40,7 @@ jobs:
       - name: packaging APISIX
         run: |
           make package type=rpm app=apisix version=2.7 checkout=release/2.7 image_base=centos image_tag=7 openresty=apisix-base
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 openresty=apisix-base-latest
+          make package type=rpm app=apisix version=master checkout=openssl3 image_base=centos image_tag=7 openresty=apisix-base-latest
 
       - name: packaging apisix-base
         run: |
