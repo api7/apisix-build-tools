@@ -44,7 +44,7 @@ jobs:
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=openssl3 image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
 
       - name: run centos7 docker and mapping rpm into container
         run: |
