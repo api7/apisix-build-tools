@@ -25,7 +25,7 @@ jobs:
       - run:
           name: package apisx
           command: |
-            make package type=deb app=apisix version=${TEST_VERSION} checkout=revolyssup/upgrade-apisix-base-openssl3 image_base=ubuntu image_tag=20.04
+            make package type=deb app=apisix version=${TEST_VERSION} checkout=revolyssup/openssl3 image_base=ubuntu image_tag=20.04
       - run:
           name: install apisix deb into container
           command: |
