@@ -39,12 +39,12 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=openssl3 image_base=centos image_tag=8 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=revolyssup/upgrade-apisix-base-openssl3 image_base=centos image_tag=8 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=openssl3 image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=revolyssup/upgrade-apisix-base-openssl3 image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
 
       - name: run centos8 docker and mapping rpm into container
         run: |
