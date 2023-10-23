@@ -1,0 +1,48 @@
+name: Build and Push apisix-runtime image
+
+on:
+  create
+
+jobs:
+  publish_image:
+    name: Build and Push apisix-runtime image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.5
+        with:
+          submodules: recursive
+
+      - name: Extract Tags name
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: tag_env
+        shell: bash
+        run: |
+          echo "##[set-output name=version;]$(echo ${GITHUB_REF##*/})"
+
+      - name: Extract Tags Type
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: tag_type
+        shell: bash
+        run: |
+          echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-runtime/') }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-runtime/') }}
+        run: |
+          docker buildx build -t api7/apisix-runtime:${{ steps.tag_env.outputs.version }} --push \
+            --build-arg VERSION=${{ steps.tag_env.outputs.version }} --platform linux/amd64,linux/arm64 \
+            -f ./dockerfiles/Dockerfile.apisix-runtime.apk .

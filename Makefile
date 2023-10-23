@@ -174,6 +174,29 @@ package-dashboard-rpm:
 package-dashboard-deb:
 	$(call package,apisix-dashboard,deb)
 
+### build apisix-runtime:
+.PHONY: build-apisix-runtime-rpm
+build-apisix-runtime-rpm:
+	$(call build,apisix-runtime,apisix-runtime,rpm,$(local_code_path))
+
+.PHONY: build-apisix-runtime-deb
+build-apisix-runtime-deb:
+	$(call build,apisix-runtime,apisix-runtime,deb,$(local_code_path))
+
+.PHONY: build-apisix-runtime-apk
+build-apisix-runtime-apk:
+	$(call build,apisix-runtime,apisix-runtime,apk,$(local_code_path))
+
+### build rpm for apisix-runtime:
+.PHONY: package-apisix-runtime-rpm
+package-apisix-runtime-rpm:
+	$(call package,apisix-runtime,rpm)
+
+### build deb for apisix-runtime:
+.PHONY: package-apisix-runtime-deb
+package-apisix-runtime-deb:
+	$(call package,apisix-runtime,deb)
+
 ### build apisix-base:
 .PHONY: build-apisix-base-rpm
 build-apisix-base-rpm:
@@ -211,8 +234,8 @@ build-fpm:
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 
-ifeq ($(filter $(app),apisix dashboard apisix-base),)
-$(info  the app's value have to be apisix, dashboard or apisix-base!)
+ifeq ($(filter $(app),apisix dashboard apisix-base apisix-runtime),)
+$(info  the app's value have to be apisix, dashboard, apisix-base and apisix-runtime!)
 
 else ifeq ($(filter $(type),rpm deb apk),)
 $(info  the type's value have to be rpm, deb or apk!)
@@ -229,6 +252,19 @@ else ifeq ($(app)_$(type),apisix-base_deb)
 package: build-fpm
 package: build-apisix-base-deb
 package: package-apisix-base-deb
+
+else ifeq ($(app)_$(type),apisix-runtime_deb)
+package: build-fpm
+package: build-apisix-runtime-deb
+package: package-apisix-runtime-deb
+
+else ifeq ($(app)_$(type),apisix-runtime_rpm)
+package: build-fpm
+package: build-apisix-runtime-rpm
+package: package-apisix-runtime-rpm
+
+else ifeq ($(app)_$(type),apisix-runtime_apk)
+package: build-apisix-runtime-apk
 
 else ifeq ($(app)_$(type),apisix-base_apk)
 package: build-apisix-base-apk

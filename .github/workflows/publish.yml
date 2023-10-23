@@ -1,4 +1,4 @@
-name: Build and Publish Package
+name: Build and Publish RPM Package
 
 on:
   create:
@@ -73,6 +73,20 @@ jobs:
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
           mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
+
+      - name: Build apisix-runtime RPM Package
+        if: ${{ startsWith(steps.tag_type.outputs.version, 'apisix-runtime/') }}
+        env:
+          APISIX_RUNTIME_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
+        run: |
+          # build apisix-runtime
+          echo ${{ steps.tag_env.outputs.version}}
+          echo ${{ steps.tag_type.outputs.version}}
+          make package type=rpm app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=centos image_tag=8
+          make package type=rpm app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+          mv ./output/apisix-runtime-${APISIX_RUNTIME_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
+          echo "TARGET_APP=apisix-runtime" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
         if: ${{ startsWith(steps.tag_type.outputs.version, 'dashboard/') }}
