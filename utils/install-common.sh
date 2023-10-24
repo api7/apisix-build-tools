@@ -65,12 +65,16 @@ install_openresty_deb() {
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty cpanminus
+    # install openssl
+    install_openssl_3
 }
 
 install_openresty_rpm() {
     # install openresty
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum install -y openresty pcre pcre-devel openldap-devel cpanminus
+    # install openssl
+    install_openssl_3
 }
 
 install_luarocks() {
