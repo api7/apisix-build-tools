@@ -18,7 +18,7 @@ install_apisix_dependencies_rpm() {
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget https://www.openssl.org/source/openssl-3.1.3.tar.gz
+    wget --no-check-certificate  https://www.openssl.org/source/openssl-3.1.3.tar.gz
     tar xvf openssl-*.tar.gz
     cd openssl-*/
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
