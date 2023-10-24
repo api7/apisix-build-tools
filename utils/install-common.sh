@@ -125,7 +125,7 @@ install_apisix() {
 
     #configure luarocks
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
-    OPENSSL_PREFIX=/usr/bin/openssl
+    OPENSSL_PREFIX=/usr/local/openssl
     luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
     # build the lib and specify the storage path of the package installed
