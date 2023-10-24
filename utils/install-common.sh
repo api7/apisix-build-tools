@@ -65,14 +65,12 @@ install_openresty_deb() {
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty cpanminus
-    install_openssl_3
 }
 
 install_openresty_rpm() {
     # install openresty
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum install -y openresty pcre pcre-devel openldap-devel cpanminus
-    install_openssl_3
 }
 
 install_luarocks() {
@@ -127,8 +125,15 @@ install_apisix() {
     #configure luarocks
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
     OPENSSL_PREFIX=/usr/local/openssl
-    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib64
+    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
+    ls /usr/local/openssl/lib
+    if [ -e "/usr/local/openssl/lib/libssl.a" ]; then
+        echo "libssl.a exists."
+    else
+        echo "libssl.a doesn't exist"
+        exit 1
+    fi
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
