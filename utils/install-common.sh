@@ -18,8 +18,9 @@ install_apisix_dependencies_rpm() {
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl 
-    cd openssl
+    wget https://www.openssl.org/source/openssl-3.1.3.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-*/
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
     make install
     export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
@@ -125,8 +126,8 @@ install_apisix() {
 
     #configure luarocks
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
-    OPENSSL_PREFIX=$(pwd)/openssl
-    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
+    OPENSSL_PREFIX=/usr/local/openssl
+    config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
