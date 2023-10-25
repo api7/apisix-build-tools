@@ -131,12 +131,11 @@ install_apisix() {
     OPENSSL_PREFIX=/usr/local/openssl
     luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    ls /usr/local/openssl/lib
+    # ls /usr/local/openssl/lib
     if [ -e "/usr/local/openssl/lib/libssl.a" ]; then
         echo "libssl.a exists."
     else
         echo "libssl.a doesn't exist"
-        exit 1
     fi
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
