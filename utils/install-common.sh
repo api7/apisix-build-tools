@@ -26,7 +26,7 @@ install_openssl_3(){
     make install
     OPENSSL_PREFIX=$(pwd)
     export LD_LIBRARY_PATH=$OPENSSL_PREFIX${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    echo $LD_LIBRARY_PATH
+    echo "$LD_LIBRARY_PATH"
     cd ..
 }
 
@@ -132,11 +132,12 @@ install_apisix() {
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
     luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    if [ -e "${OPENSSL_PREFIX}/libssl.a" ]; then
-        echo "libssl.a exists."
+    if [ -e "${OPENSSL_PREFIX}/libssl.so.3" ]; then
+        echo "libssl.so.3 exists."
     else
-        echo "libssl.a doesn't exist"
+        echo "libssl.so.3 doesn't exist"
     fi
+    echo "$LD_LIBRARY_PATH"
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
