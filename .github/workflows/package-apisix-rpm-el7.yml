@@ -50,8 +50,25 @@ jobs:
         run: |
           docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
 
-      - name: enable apisix repository in container
+      - name: Install Openssl3.0 in container
         run: |
+          yum install -y cpanminus wget
+          cpanm IPC/Cmd.pm
+          wget --no-check-certificate https://www.openssl.org/source/openssl-3.1.3.tar.gz
+          tar xvf openssl-*.tar.gz
+          cd openssl-*/
+          ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+          make -j $(nproc)
+          make install
+          OPENSSL_PREFIX=$(pwd)
+          export LD_LIBRARY_PATH=$OPENSSL_PREFIX${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+          echo $OPENSSL_PREFIX
+          echo "content in $OPENSSL_PREFIX"
+          ls $OPENSSL_PREFIX
+          echo $OPENSSL_PREFIX > /etc/ld.so.conf.d/openssl3.conf
+          ldconfig
+      - name: enable apisix repository in container
+        run: 
           docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
           docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
