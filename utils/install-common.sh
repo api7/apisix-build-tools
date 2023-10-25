@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
