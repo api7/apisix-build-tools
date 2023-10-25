@@ -131,7 +131,10 @@ install_apisix() {
     OPENSSL_PREFIX=/usr/local/openssl
     luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    # ls /usr/local/openssl/lib
+    echo "in the openssl"
+    ls /usr/local/openssl
+    echo "in the openssl/lib"
+    ls /usr/local/openssl/lib
     if [ -e "/usr/local/openssl/lib/libssl.a" ]; then
         echo "libssl.a exists."
     else
