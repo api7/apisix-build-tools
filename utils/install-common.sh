@@ -136,11 +136,12 @@ install_apisix() {
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
     luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    if [ -e "${OPENSSL_PREFIX}/libssl.a" ]; then
-        echo "libssl.a exists."
+    if [ -e "${OPENSSL_PREFIX}/libssl.so.3" ]; then
+        echo "libssl.so.3 exists."
     else
-        echo "libssl.a doesn't exist"
+        echo "libssl.so.3 doesn't exist"
     fi
+    echo "$LD_LIBRARY_PATH"
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
@@ -148,6 +149,7 @@ install_apisix() {
     # copy the compiled files to the package install directory
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
+    cp $LD_LIBRARY_PATH/libssl.so.3 /usr/local/apisix/deps/lib/lua/5.1/
     # modify the apisix entry shell to be compatible with version 2.2 and 2.3
     if is_newer_version "${checkout_v}"; then
         echo 'use shell '
