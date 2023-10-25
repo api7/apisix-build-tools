@@ -52,7 +52,10 @@ jobs:
 
       - name: Install Openssl3.0 in container
         run: |
-          docker exec centos7Instance bash -c "yum install -y cpanminus wget &&
+          docker exec centos7Instance bash -c "
+          yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo bash cpanminus
+          yum install -y epel-release
+          yum install -y yum-utils readline-devel
           cpanm IPC/Cmd.pm &&
           wget --no-check-certificate https://www.openssl.org/source/openssl-3.1.3.tar.gz  &&
           tar xvf openssl-*.tar.gz  &&
