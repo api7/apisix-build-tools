@@ -26,6 +26,7 @@ install_openssl_3(){
     make install
     ldconfig
     OPENSSL_PREFIX=$(pwd)
+    export LD_LIBRARY_PATH=$OPENSSL_PREFIX:$LD_LIBRARY_PATH
     cd ..
 }
 
