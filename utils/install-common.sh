@@ -25,6 +25,7 @@ install_openssl_3(){
     make -j $(nproc)
     make install
     ldconfig
+    OPENSSL_PREFIX=$(pwd)
     cd ..
 }
 
@@ -128,14 +129,9 @@ install_apisix() {
 
     #configure luarocks
     # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
-    OPENSSL_PREFIX=/usr/local/openssl
-    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}/lib
+    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
     luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    echo "in the openssl"
-    ls /usr/local/openssl
-    echo "in the openssl/lib"
-    ls /usr/local/openssl/lib
-    if [ -e "/usr/local/openssl/lib/libssl.a" ]; then
+    if [ -e "${OPENSSL_PREFIX}/libssl.a" ]; then
         echo "libssl.a exists."
     else
         echo "libssl.a doesn't exist"
