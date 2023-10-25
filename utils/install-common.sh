@@ -25,8 +25,7 @@ install_openssl_3(){
     make -j $(nproc)
     make install
     OPENSSL_PREFIX=$(pwd)
-    echo "$OPENSSL3_PREFIX/lib > /etc/ld.so.conf.d/openssl3.conf"
-    ldconfig
+    export LD_LIBRARY_PATH=$OPENSSL_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     cd ..
 }
 
