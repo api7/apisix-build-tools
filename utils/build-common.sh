@@ -9,15 +9,12 @@ OPENSSL3_PREFIX=${OPENSSL3_PREFIX:-`pwd`}
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget --no-check-certificate  https://www.openssl.org/source/openssl-3.1.3.tar.gz
-    tar xvf openssl-*.tar.gz
-    cd openssl-*/
-    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
-    make -j $(nproc)
+    git clone https://github.com/openssl/openssl 
+    cd openssl
+    ./config
     make install
-    OPENSSL_PREFIX=$(pwd)
-    export LD_LIBRARY_PATH=$OPENSSL_PREFIX${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    echo "$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+    ldconfig
     cd ..
 }
 
