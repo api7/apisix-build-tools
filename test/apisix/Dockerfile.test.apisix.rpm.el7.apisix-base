@@ -10,16 +10,18 @@ ARG IMAGE_TAG
 
 ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
-
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
 COPY ./output/apisix-master-0.el7.x86_64.rpm /output/apisix-master-0.el7.x86_64.rpm
 COPY ./output/apisix-base-latest-0.el7.x86_64.rpm  /output/apisix-base-latest-0.el7.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
 RUN yum install -y wget
-# install openresty
-RUN /install-common.sh install_apisix_dependencies_rpm
 
+RUN /install-common.sh install_dependencies_rpm
+RUN /install-common.sh install_luarocks
 # install etcd
 RUN /install-common.sh install_etcd
 
