@@ -43,8 +43,11 @@ jobs:
 
       - name: packaging APISIX(-local) with local code
         run: |
-          git clone https://github.com/apache/apisix.git
+          git clone https://github.com/revolyssup/apisix.git
           make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
+
+      - name: check output
+        run: ls $PWD/output
 
       - name: install apisix rpm into container
         run: |
