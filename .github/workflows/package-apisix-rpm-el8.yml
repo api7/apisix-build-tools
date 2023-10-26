@@ -58,7 +58,7 @@ jobs:
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
-          fii
+          fi
           docker container stop  master-rpm-test-remote
           docker container rm  master-rpm-test-remote
 
@@ -74,5 +74,5 @@ jobs:
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
-          fii
+          fi
 
