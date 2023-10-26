@@ -17,7 +17,7 @@ COPY ./utils/install-common.sh /install-common.sh
 
 RUN yum install -y wget
 # install openresty
-RUN /install-common.sh install_openresty_rpm
+RUN /install-common.sh install_apisix_dependencies_rpm
 
 # install etcd
 RUN /install-common.sh install_etcd

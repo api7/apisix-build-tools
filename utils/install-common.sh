@@ -6,15 +6,14 @@ ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
 install_apisix_dependencies_deb() {
     install_dependencies_deb
-    install_luarocks
     install_openresty_deb
-
+    install_luarocks
 }
 
 install_apisix_dependencies_rpm() {
     install_dependencies_rpm
-    install_luarocks
     install_openresty_rpm
+    install_luarocks
 
 }
 install_openssl_3(){
@@ -33,14 +32,6 @@ install_openssl_3(){
     ls $OPENSSL_PREFIX
     echo $OPENSSL_PREFIX > /etc/ld.so.conf.d/openssl3.conf
     ldconfig
-    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
-    luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
-    if [ -e "${OPENSSL_PREFIX}/libssl.so.3" ]; then
-        echo "libssl.so.3 exists.[installssl]"
-    else
-        echo "libssl.so.3 doesn't exist[installssl]"
-    fi
-    echo "$LD_LIBRARY_PATH"
     cd ..
 }
 
