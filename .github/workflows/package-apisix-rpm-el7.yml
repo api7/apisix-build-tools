@@ -48,7 +48,7 @@ jobs:
 
       - name: install apisix rpm into container
         run: |
-          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-rpm-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.rpm.el7 .
+          docker build -t apache/apisix:master-rpm-test --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.el7 .
 
       # - name: enable apisix repository in container
       #   run: 
