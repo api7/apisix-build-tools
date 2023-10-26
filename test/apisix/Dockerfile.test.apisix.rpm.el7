@@ -22,10 +22,6 @@ RUN /install-common.sh install_openresty_rpm
 # install etcd
 RUN /install-common.sh install_etcd
 
-# install apisi
-RUN set -x \
-    && dpkg -i /output/apisix-local-master-0.el7.x86_64.rpm
-
 RUN rpm --import https://repos.apiseven.com/KEYS
 RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
 
