@@ -27,6 +27,8 @@ RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo
 
 
 RUN yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm
+
+RUN which apisix
 # start
-CMD ["apisix start"]
+CMD ["apisix","start"]
 EXPOSE 9180 9080 9443
