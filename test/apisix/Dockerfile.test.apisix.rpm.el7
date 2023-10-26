@@ -27,6 +27,6 @@ RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo
 
 
 RUN yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm
-# start etcd and test
-CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
+# start
+CMD ["apisix start"]
 EXPOSE 9180 9080 9443
