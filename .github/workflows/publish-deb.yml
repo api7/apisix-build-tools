@@ -55,6 +55,12 @@ jobs:
           make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
+      - name: Upload apisix/apisix-base Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+
       - name: Build apisix-runtime deb Package
         if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
         run: |
@@ -64,7 +70,7 @@ jobs:
           make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
-      - name: Upload apisix/apisix-base Artifact
+      - name: Upload apisix/apisix-runtime Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
           name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
