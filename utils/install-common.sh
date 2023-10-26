@@ -6,14 +6,16 @@ ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
 install_apisix_dependencies_deb() {
     install_dependencies_deb
-    install_openresty_deb
     install_luarocks
+    install_openresty_deb
+
 }
 
 install_apisix_dependencies_rpm() {
     install_dependencies_rpm
-    install_openresty_rpm
     install_luarocks
+    install_openresty_rpm
+
 }
 install_openssl_3(){
     # required for openssl 3.x config
