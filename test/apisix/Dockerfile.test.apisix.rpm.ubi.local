@@ -1,5 +1,5 @@
-ARG IMAGE_BASE="centos"
-ARG IMAGE_TAG="8"
+ARG IMAGE_BASE="registry.access.redhat.com/ubi8/ubi"
+ARG IMAGE_TAG="8.6"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
@@ -12,7 +12,7 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 
 
-COPY ./output/apisix-local-master-0.el8.x86_64.rpm /output/apisix-local-master-0.el8.x86_64.rpm
+COPY ./output/apisix-local-master-0.ubi8.6.x86_64.rpm /output/apisix-local-master-0.ubi8.6.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
 # install openresty
@@ -25,7 +25,7 @@ RUN rpm --import https://repos.apiseven.com/KEYS
 RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
 
 
-RUN yum -y localinstall /output/apisix-local-master-0.el8.x86_64.rpm
+RUN yum -y localinstall /output/apisix-local-master-0.ubi8.6.x86_64.rpm
 
 RUN which apisix
 # start etcd and test

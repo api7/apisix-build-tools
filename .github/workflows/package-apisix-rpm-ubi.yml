@@ -11,6 +11,8 @@ on:
     branches: [ master , openssl3]
     paths-ignore:
       - '*.md'
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   build:
@@ -37,49 +39,40 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=8 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
-          git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 local_code_path=./apisix artifact=apisix-local
+          git clone https://github.com/revolyssup/apisix.git
+          make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
 
-      - name: run ubi8 docker and mapping rpm into container
+      - name: install apisix rpm into container for remote
         run: |
-          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+          docker build -t apache/apisix:master-rpm-test-remote --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi8.6.remote .
 
-      - name: enable apisix repository in container
+      - name: check and ensure APISIX(-remote) is installed
         run: |
-          docker exec ubiInstance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec ubiInstance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
-
-      - name: install APISIX(-remote) master by rpm in container
-        run: |
-          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.ubi8.6.x86_64.rpm"
-          docker exec ubiInstance bash -c "apisix start"
-
-      - name: check and ensure APISIX(-remote) master is installed
-        run: |
+          docker run -d --name master-rpm-test-remote -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:master-rpm-test-remote
+          sleep 30
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+          docker container stop  master-rpm-test-remote
+          docker container rm  master-rpm-test-remote
 
-      - name: stop and uninstall APISIX(-remote) master
+      - name: install apisix rpm into container for local
         run: |
-          docker exec ubiInstance bash -c 'PIDS=$(pgrep -f nginx); for PID in $PIDS; do kill -TERM $PID; done'
-          docker exec ubiInstance bash -c "yum -y erase apisix-remote-master"
-
-      - name: install APISIX(-local) by rpm in container
-        run: |
-          docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-local-master-0.ubi8.6.x86_64.rpm"
-          docker exec ubiInstance bash -c "apisix start"
+          docker build -t apache/apisix:master-rpm-test-local --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi8.6.local .
 
       - name: check and ensure APISIX(-local) is installed
         run: |
+          docker run -d --name master-rpm-test-local -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:master-rpm-test-local
+          sleep 30
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+
