@@ -37,23 +37,23 @@ jobs:
           sudo gem install --no-document fpm
           sudo apt-get install -y rpm
 
-      - name: packaging APISIX(-remote) with remote code
-        run: |
-          make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=7 artifact=apisix-remote
+      # - name: packaging APISIX(-remote) with remote code
+      #   run: |
+      #     make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=7 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
           make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
 
-      - name: run centos7 docker and mapping rpm into container
+      - name: install apisix rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-rpm-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.rpm.el7 .
 
-      - name: enable apisix repository in container
-        run: 
-          docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
+      # - name: enable apisix repository in container
+      #   run: 
+      #     docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
+      #     docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
 
       # - name: install APISIX(-remote) master by rpm in container
       #   run: |
@@ -73,13 +73,15 @@ jobs:
       #     docker exec centos7Instance bash -c "pkill -f nginx"
       #     docker exec centos7Instance bash -c "yum -y erase apisix-remote-master"
 
-      - name: install APISIX(-local) by rpm in container
-        run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
+      # - name: install APISIX(-local) by rpm in container
+      #   run: |
+      #     docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm"
+      #     docker exec centos7Instance bash -c "apisix start"
 
       - name: check and ensure APISIX(-local) is installed
         run: |
+          docker run -d --rm --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-rpm-test
+          sleep 20
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
