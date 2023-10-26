@@ -15,6 +15,7 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 COPY ./output/apisix-local-master-0.el7.x86_64.rpm /output/apisix-local-master-0.el7.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
+RUN yum install -y wget
 # install openresty
 RUN /install-common.sh install_openresty_rpm
 
@@ -23,7 +24,7 @@ RUN /install-common.sh install_etcd
 
 # install apisi
 RUN set -x \
-    && apt install -y libldap2-dev \
+    && yum -y install -y libldap2-dev \
     && dpkg -i /output/apisix-local-master-0.el7.x86_64.rpm
 
 RUN rpm --import https://repos.apiseven.com/KEYS
