@@ -46,8 +46,6 @@ jobs:
           git clone https://github.com/apache/apisix.git
           make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=centos image_tag=7 local_code_path=./apisix artifact=apisix-local
 
-      - name: build info
-        run: ls /output
       - name: install apisix rpm into container
         run: |
           docker build -t apache/apisix:master-rpm-test --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.el7 .

@@ -10,7 +10,9 @@ ARG IMAGE_TAG
 
 ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
-COPY ./output/apisix-remote-master-0.el7.x86_64.rpm /apisix-remote-master-0.el7.x86_64.rpm
+RUN ls ./output
+
+COPY ./output/apisix-local-master-0.el7.x86_64.rpm /output/apisix-local-master-0.el7.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
 # install openresty
@@ -22,12 +24,12 @@ RUN /install-common.sh install_etcd
 # install apisi
 RUN set -x \
     && apt install -y libldap2-dev \
-    && dpkg -i /apisix-remote-master-0.el7.x86_64.rpm
+    && dpkg -i /output/apisix-local-master-0.el7.x86_64.rpm
 
 RUN rpm --import https://repos.apiseven.com/KEYS
 RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
 
-RUN ls /output
+
 RUN yum -y localinstall /output/apisix-local-master-0.el7.x86_64.rpm
 # start etcd and test
 CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
