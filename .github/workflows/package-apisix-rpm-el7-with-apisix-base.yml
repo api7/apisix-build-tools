@@ -45,28 +45,21 @@ jobs:
         run: |
           make package type=rpm app=apisix-base version=latest image_base=centos image_tag=7
 
-      - name: run centos7 docker and mapping rpm into container
+      - name: install apisix rpm into container for remote
         run: |
-          docker run -itd -v $PWD/output:/output --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
-
-      - name: install all dependencies of apisix in container
+          docker build -t apache/apisix:master-rpm-test --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.el7.apisix-base .
+  
+      - name: check and ensure APISIX(-remote) is installed
         run: |
-          docker exec centos7Instance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec centos7Instance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
-
-      - name: install APISIX which depens on apisix-base by rpm in container
-        run: |
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-base-latest-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "yum -y localinstall /output/apisix-master-0.el7.x86_64.rpm"
-          docker exec centos7Instance bash -c "apisix start"
-
-      - name: check and ensure APISIX is installed
-        run: |
+          docker run -d --name master-rpm-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:master-rpm-test
+          sleep 30
           code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
           if [ ! $code -eq 200 ]; then
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+          docker container stop  master-rpm-test
+          docker container rm  master-rpm-test
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v2.2.4

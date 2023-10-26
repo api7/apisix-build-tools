@@ -28,7 +28,8 @@ RUN set -x \
 
 # install apisix
 RUN set -x \
-    && /install-common.sh install_etcd \
+    && /install-common.sh install_etcd \ 
+    && /install-common.sh install_openresty_deb \
     && apt install -y libldap2-dev \
     && dpkg -i --ignore-depends=openresty /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_arm64.deb
 
