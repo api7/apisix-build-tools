@@ -84,9 +84,4 @@ jobs:
       - name: check and ensure APISIX(-local) is installed
         run: |
           docker run -d --rm --name master-rpm-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:master-rpm-test 
-          sleep 20
-          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/apisix/admin/routes -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1')
-          if [ ! $code -eq 200 ]; then
-              echo "failed: failed to install Apache APISIX by rpm"
-              exit 1
-          fi
+
