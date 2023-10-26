@@ -31,6 +31,14 @@ install_openssl_3(){
     ls $OPENSSL_PREFIX
     echo $OPENSSL_PREFIX > /etc/ld.so.conf.d/openssl3.conf
     ldconfig
+    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
+    luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
+    if [ -e "${OPENSSL_PREFIX}/libssl.so.3" ]; then
+        echo "libssl.so.3 exists.[installssl]"
+    else
+        echo "libssl.so.3 doesn't exist[installssl]"
+    fi
+    echo "$LD_LIBRARY_PATH"
     cd ..
 }
 
