@@ -25,6 +25,6 @@ RUN set -x \
     && dpkg -i /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_amd64.deb
 
 # start etcd and test
-CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
+CMD ["apisix start"]
 
 EXPOSE 9180 9080 9443
