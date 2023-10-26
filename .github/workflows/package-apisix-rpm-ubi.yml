@@ -48,7 +48,7 @@ jobs:
 
       - name: install apisix rpm into container for remote
         run: |
-          docker build -t apache/apisix:master-rpm-test-remote --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi8.6.remote .
+          docker build -t apache/apisix:master-rpm-test-remote --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi.remote .
 
       - name: check and ensure APISIX(-remote) is installed
         run: |
@@ -64,7 +64,7 @@ jobs:
 
       - name: install apisix rpm into container for local
         run: |
-          docker build -t apache/apisix:master-rpm-test-local --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi8.6.local .
+          docker build -t apache/apisix:master-rpm-test-local --build-arg APISIX_VERSION=master -f test/apisix/Dockerfile.test.apisix.rpm.ubi.local .
 
       - name: check and ensure APISIX(-local) is installed
         run: |
