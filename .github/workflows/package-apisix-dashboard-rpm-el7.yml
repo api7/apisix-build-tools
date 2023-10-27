@@ -47,7 +47,7 @@ jobs:
 
       - name: run apisix-dashboard(-local) packaging test
         run: |
-          ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
+          git clone -b ${DASHBOARD_BRANCH} https://github.com/apache/apisix-dashboard.git
           make package type=rpm app=dashboard version=${DASHBOARD_VERSION} checkout=${DASHBOARD_BRANCH} \
             image_base=centos image_tag=7 local_code_path=./apisix-dashboard artifact=apisix-dashboard-local
 
