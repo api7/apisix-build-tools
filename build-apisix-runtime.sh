@@ -4,29 +4,18 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.21.4.2}
-if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
-    OPENRESTY_VERSION="1.21.4.2"
-fi
+OPENRESTY_VERSION="1.21.4.2"
+ngx_multi_upstream_module_ver="1.1.1"
+mod_dubbo_ver="1.0.2"
+apisix_nginx_module_ver="1.15.0"
+wasm_nginx_module_ver="0.6.5"
+lua_var_nginx_module_ver="v0.5.3"
+grpc_client_nginx_module_ver="v0.4.4"
+OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
+debug_args=${debug_args:-}
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
-    ngx_multi_upstream_module_ver="master"
-    mod_dubbo_ver="master"
-    apisix_nginx_module_ver="main"
-    wasm_nginx_module_ver="main"
-    lua_var_nginx_module_ver="master"
-    grpc_client_nginx_module_ver="main"
     debug_args="--with-debug"
-    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
-else
-    ngx_multi_upstream_module_ver="1.1.1"
-    mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.15.0"
-    wasm_nginx_module_ver="0.6.5"
-    lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.4.4"
-    debug_args=${debug_args:-}
-    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
 prev_workdir="$PWD"
