@@ -12,7 +12,7 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 
 
-COPY ./output/apisix-local-master-0.ubi8.6.x86_64.rpm /output/apisix-local-master-0.ubi8.6.x86_64.rpm
+COPY ./output/apisix-local-master-0.ubi.x86_64.rpm /output/apisix-local-master-0.ubi.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 RUN cd /etc/yum.repos.d/
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
@@ -27,7 +27,7 @@ RUN rpm --import https://repos.apiseven.com/KEYS
 RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
 
 
-RUN yum -y localinstall /output/apisix-local-master-0.ubi8.6.x86_64.rpm
+RUN yum -y localinstall /output/apisix-local-master-0.ubi.x86_64.rpm
 
 RUN which apisix
 # start etcd and test
