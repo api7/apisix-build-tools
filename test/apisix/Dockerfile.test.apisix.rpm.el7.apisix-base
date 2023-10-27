@@ -11,12 +11,7 @@ ARG IMAGE_TAG
 ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 RUN cd /etc/yum.repos.d/
-RUN     sed -RE "S/^#?\S*(MIRRORLIST)/#\1/G" \
-             -E "S|^#?\S*BASEURL=HTTP://MIRROR.CENTOS.ORG|BASEURL=HTTP://VAULT.CENTOS.ORG|G" \
-             -i /etc/yum.repos.d/CentOS-Linux-*; \
-        dnf install -y centos-release-stream; \
-        dnf swap -y centos-{linux,stream}-repos; \
-        dnf distro-sync -y; 
+RUN   yum -y install centos-release-scl 
 
 COPY ./output/apisix-master-0.el7.x86_64.rpm /output/apisix-master-0.el7.x86_64.rpm
 COPY ./output/apisix-base-latest-0.el7.x86_64.rpm  /output/apisix-base-latest-0.el7.x86_64.rpm
