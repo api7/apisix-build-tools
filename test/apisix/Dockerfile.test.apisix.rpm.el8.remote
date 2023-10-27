@@ -14,9 +14,16 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 COPY ./output/apisix-remote-master-0.el8.x86_64.rpm /output/apisix-remote-master-0.el8.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+# Note: The duplication around the rpm series dockerfile here
+#       is used for reuse the container layer cache
+RUN if [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then \
+        sed -re "s/^#?\s*(mirrorlist)/#\1/g" \
+             -e "s|^#?\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" \
+             -i /etc/yum.repos.d/CentOS-Linux-*; \
+        dnf install -y centos-release-stream; \
+        dnf swap -y centos-{linux,stream}-repos; \
+        dnf distro-sync -y; \
+    fi
 # install openresty
 RUN /install-common.sh install_apisix_dependencies_rpm
 
