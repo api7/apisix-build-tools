@@ -14,7 +14,8 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 COPY ./output/apisix-remote-master-0.el7.x86_64.rpm /output/apisix-remote-master-0.el7.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
-RUN   yum -y install centos-release-scl 
+RUN yum update \
+	yum install epel-release
 
 # install openresty
 RUN /install-common.sh install_apisix_dependencies_rpm
