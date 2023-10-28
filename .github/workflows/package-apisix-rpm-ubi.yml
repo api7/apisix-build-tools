@@ -45,7 +45,6 @@ jobs:
         run: |
           git clone https://github.com/revolyssup/apisix.git
           make package type=rpm app=apisix version=master checkout=revolyssup/openssl3 image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 local_code_path=./apisix artifact=apisix-local
-          ls ./output
       
       - name: install apisix rpm into container for remote
         run: |
