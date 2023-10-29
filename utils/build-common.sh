@@ -9,9 +9,11 @@ OPENSSL3_PREFIX=${OPENSSL3_PREFIX:-`pwd`}
 install_openssl_3(){
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    git clone https://github.com/openssl/openssl 
-    cd openssl
-    ./config
+    wget --no-check-certificate https://www.openssl.org/source/openssl-3.1.3.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-3.1.3
+    ./config 
+    make -j $(nproc)
     make install
     export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
     ldconfig
@@ -86,7 +88,7 @@ export_openresty_variables() {
     export zlib_prefix=/usr/local/openresty/zlib
     export pcre_prefix=/usr/local/openresty/pcre
     export OR_PREFIX=/usr/local/openresty
-    export openssl_prefix="$OPENSSL3_PREFIX/openssl"
+    export openssl_prefix="$OPENSSL3_PREFIX/openssl-3.1.3"
     export cc_opt="-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${openssl_prefix}/include"
     export ld_opt="-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${openssl_prefix}/lib -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${openssl_prefix}/lib"
 }
