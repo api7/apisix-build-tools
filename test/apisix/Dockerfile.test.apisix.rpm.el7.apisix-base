@@ -16,6 +16,7 @@ COPY ./output/apisix-base-latest-0.el7.x86_64.rpm  /output/apisix-base-latest-0.
 COPY ./utils/install-common.sh /install-common.sh
 
 RUN /install-common.sh install_dependencies_rpm
+RUN locate lua.h
 RUN /install-common.sh install_luarocks
 # install etcd
 RUN /install-common.sh install_etcd
