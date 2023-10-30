@@ -45,6 +45,7 @@ install_dependencies_rpm() {
         yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y epel-release
         yum install -y yum-utils readline-devel
+        yum install -y liblua5.1-0-dev
     fi
 }
 
