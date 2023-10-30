@@ -15,6 +15,8 @@ COPY ./output/apisix-master-0.el7.x86_64.rpm /output/apisix-master-0.el7.x86_64.
 COPY ./output/apisix-base-latest-0.el7.x86_64.rpm  /output/apisix-base-latest-0.el7.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
+RUN /install-common.sh install_dependencies_rpm
+
 # install etcd
 RUN /install-common.sh install_etcd
 
