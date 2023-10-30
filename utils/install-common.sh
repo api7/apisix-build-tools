@@ -255,4 +255,7 @@ install_dashboard)
 install_luarocks)
     install_luarocks
     ;;
+install_dependencies_rpm)
+    install_dependencies_rpm
+    ;;
 esac

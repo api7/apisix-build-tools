@@ -15,6 +15,10 @@ ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 COPY ./output/apisix-local-master-0.ubi8.6.x86_64.rpm /output/apisix-local-master-0.ubi8.6.x86_64.rpm
 COPY ./utils/install-common.sh /install-common.sh
 
+RUN dnf install -y yum-utils 
+RUN yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+RUN yum -y install openresty-pcre openresty-zlib
+
 # install openresty
 RUN /install-common.sh install_apisix_dependencies_rpm
 
