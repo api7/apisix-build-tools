@@ -44,7 +44,6 @@ install_dependencies_rpm() {
         yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y epel-release
         yum install -y yum-utils readline-devel
-        yum install -y lua51-devel
     fi
 }
 
