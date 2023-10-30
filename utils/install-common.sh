@@ -40,6 +40,7 @@ install_dependencies_rpm() {
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms yum-utils
+        yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms liblua5.1-0-dev
     else
         yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y epel-release
