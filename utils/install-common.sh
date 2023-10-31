@@ -258,4 +258,7 @@ install_luarocks)
 install_dependencies_rpm)
     install_dependencies_rpm
     ;;
+install_openssl_3)
+    install_openssl_3
+    ;;
 esac

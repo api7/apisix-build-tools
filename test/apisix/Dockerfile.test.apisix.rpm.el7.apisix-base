@@ -18,6 +18,8 @@ RUN yum update \
 	yum install epel-release
 
 RUN /install-common.sh install_dependencies_rpm
+RUN yum install -y pcre pcre-devel openldap-devel cpanminus
+RUN /install-common.sh install_openssl_3
 RUN /install-common.sh install_luarocks
 
 # install etcd
