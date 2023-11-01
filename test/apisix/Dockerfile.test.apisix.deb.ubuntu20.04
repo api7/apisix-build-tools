@@ -19,7 +19,7 @@ RUN /install-common.sh install_openresty_deb
 # install etcd
 RUN /install-common.sh install_etcd
 
-# install apisi
+# install apisix
 RUN set -x \
     && apt install -y libldap2-dev \
     && dpkg -i /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_amd64.deb

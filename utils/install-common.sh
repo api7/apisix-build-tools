@@ -150,7 +150,6 @@ install_apisix() {
     # copy the compiled files to the package install directory
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
     cp /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/bin/apisix /tmp/build/output/apisix/usr/bin/ || true
-    cp $LD_LIBRARY_PATH/libssl.so.3 /usr/local/apisix/deps/lib/lua/5.1/
     # modify the apisix entry shell to be compatible with version 2.2 and 2.3
     if is_newer_version "${checkout_v}"; then
         echo 'use shell '
