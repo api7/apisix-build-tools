@@ -133,7 +133,7 @@ build_apisix_runtime_deb() {
 
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev cpanminus
-
+    install_openssl_3
     export_openresty_variables
     # fix OR_PREFIX
     if [[ $build_latest == "latest" ]]; then
