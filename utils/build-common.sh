@@ -68,7 +68,7 @@ build_apisix_base_deb() {
     fi
 
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev cpanminus bash
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev cpanminus
 
     install_openssl_3
     export_openresty_variables
@@ -106,7 +106,7 @@ build_apisix_runtime_rpm() {
     gcc --version
 
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install openresty-pcre-devel openresty-zlib-devel
+    yum -y install openresty-pcre-devel openresty-zlib-devel cpanminus
 
     install_openssl_3
     export_openresty_variables
@@ -132,7 +132,7 @@ build_apisix_runtime_deb() {
     fi
 
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev cpanminus
 
     export_openresty_variables
     # fix OR_PREFIX
