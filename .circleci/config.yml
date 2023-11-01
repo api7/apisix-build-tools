@@ -23,6 +23,10 @@ jobs:
           command: |
             make package type=deb app=apisix-base version=${TEST_VERSION}
       - run:
+          name: package apisix-runtime
+          command: |
+            make package type=deb app=apisix-runtime version=${TEST_VERSION}
+      - run:
           name: package apisx
           command: |
             make package type=deb app=apisix version=${TEST_VERSION} checkout=revolyssup/openssl3 image_base=ubuntu image_tag=20.04
@@ -73,6 +77,27 @@ jobs:
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
+  build-and-push-apisix-runtime-dev-arm:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t api7/apisix-runtime:dev-arm64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-runtime.deb .
+
   build-and-push-apisix-base-dev-x86:
     machine:
       image: ubuntu-2004:202101-01
@@ -94,13 +119,34 @@ jobs:
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
-  upload-manifest:
+  build-and-push-apisix-runtime-dev-x86:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: medium
+
+    steps:
+      - checkout
+      - run:
+          name: submodule
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build -t api7/apisix-runtime:dev-x86_64 --push \
+            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
+            -f ./dockerfiles/Dockerfile.apisix-runtime.deb .
+
+  upload-manifest-apisix-base-dev:
     docker:
       - image: cimg/python:3.8.2
     steps:
       - checkout
       - deploy:
-          name: "Upload manifest to registry"
+          name: "Upload apisix-base manifest to registry"
           command: |
             set -eu
             export DOCKER_CLI_EXPERIMENTAL=enabled
@@ -109,6 +155,22 @@ jobs:
                                    api7/apisix-base:dev-arm64 \
                                    api7/apisix-base:dev-x86_64
             docker manifest push api7/apisix-base:dev
+
+  upload-manifest-apisix-runtime-dev:
+    docker:
+      - image: cimg/python:3.8.2
+    steps:
+      - checkout
+      - deploy:
+          name: "Upload apisix-runtime manifest to registry"
+          command: |
+            set -eu
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker manifest create api7/apisix-runtime:dev \
+                                   api7/apisix-runtime:dev-arm64 \
+                                   api7/apisix-runtime:dev-x86_64
+            docker manifest push api7/apisix-runtime:dev
 
   build-arm64-package:
     parameters:
@@ -178,6 +240,21 @@ jobs:
             - store_artifacts:
                 path: /tmp/output
 
+      - when:
+          condition:
+            matches: { pattern: "^apisix-runtime/(.*)\\d+$", value: << pipeline.git.tag >> }
+          steps:
+            - run:
+                name: build apisix-runtime package
+                command: |
+                  APISIX_RUNTIME_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  echo "apisix-runtime version: $APISIX_RUNTIME_TAG_VERSION"
+                  make package type=${PACK_TYPE} app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
+                  mv ./output/apisix-runtime*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
+
+            - store_artifacts:
+                path: /tmp/output
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -198,10 +275,25 @@ workflows:
     jobs:
       - build-and-push-apisix-base-dev-arm
       - build-and-push-apisix-base-dev-x86
-      - upload-manifest:
+      - upload-manifest-apisix-base-dev:
           requires:
             - build-and-push-apisix-base-dev-arm
             - build-and-push-apisix-base-dev-x86
+  build-and-push-apisix-runtime-dev:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build-and-push-apisix-runtime-dev-arm
+      - build-and-push-apisix-runtime-dev-x86
+      - upload-manifest-apisix-runtime-dev:
+          requires:
+            - build-and-push-apisix-runtime-dev-arm
+            - build-and-push-apisix-runtime-dev-x86
   build-mutil-platform-arm64-apckage:
     jobs:
       - build-arm64-package:

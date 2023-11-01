@@ -149,6 +149,11 @@ func_deb_upload() {
     find "${1}" -type f -name "apisix-base*.deb" \
         -exec echo "upload : {}" \; \
         -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${UPLOAD_TARGET_FILE}"' \;
+
+    find "${1}" -type f -name "apisix-runtime*.deb" \
+        -exec echo "upload : {}" \; \
+        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-runtime/${UPLOAD_TARGET_FILE}"' \;
+
 }
 
 func_repo_publish() {
