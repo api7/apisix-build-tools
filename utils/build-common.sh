@@ -106,8 +106,9 @@ build_apisix_runtime_rpm() {
     gcc --version
 
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
+    yum -y install openresty-pcre-devel openresty-zlib-devel
 
+    install_openssl_3
     export_openresty_variables
     ${BUILD_PATH}/build-apisix-runtime.sh
 }
