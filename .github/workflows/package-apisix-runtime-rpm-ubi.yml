@@ -2,13 +2,13 @@ name: package apisix-runtime rpm for ubi
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master , openssl3]
     tags:
       - "v*"
     paths-ignore:
       - '*.md'
   pull_request:
-    branches: [ master ]
+    branches: [ master , openssl3]
     paths-ignore:
       - '*.md'
 
@@ -37,7 +37,7 @@ jobs:
         run: |
           docker exec ubiInstance bash -c "dnf install -y yum-utils"
           docker exec ubiInstance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-          docker exec ubiInstance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"
+          docker exec ubiInstance bash -c "yum -y install openresty-pcre openresty-zlib"
 
       - name: install rpm in container
         run: |

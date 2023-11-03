@@ -131,6 +131,7 @@ fi
     --add-module=../grpc-client-nginx-module-${grpc_client_nginx_module_ver} \
     --with-poll_module \
     --with-pcre-jit \
+    --with-openssl="$openssl_prefix" \
     --without-http_rds_json_module \
     --without-http_rds_csv_module \
     --without-lua_rds_parser \

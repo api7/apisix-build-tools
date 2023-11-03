@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 set -x
 
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
@@ -14,15 +14,34 @@ install_apisix_dependencies_rpm() {
     install_dependencies_rpm
     install_openresty_rpm
     install_luarocks
+
+}
+install_openssl_3(){
+    # required for openssl 3.x config
+    cpanm IPC/Cmd.pm
+    wget --no-check-certificate https://www.openssl.org/source/openssl-3.1.3.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-*/
+    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
+    make -j $(nproc)
+    make install
+    OPENSSL_PREFIX=$(pwd)
+    export LD_LIBRARY_PATH=$OPENSSL_PREFIX${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    echo $OPENSSL_PREFIX
+    echo "content in $OPENSSL_PREFIX"
+    ls $OPENSSL_PREFIX
+    echo $OPENSSL_PREFIX > /etc/ld.so.conf.d/openssl3.conf
+    ldconfig
+    cd ..
 }
 
 install_dependencies_rpm() {
     # install basic dependencies
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi8/ubi" ]]; then
-        yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms wget tar gcc automake autoconf libtool make curl git which unzip sudo
+        yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms yum-utils
     else
-        yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo
+        yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo bash
         yum install -y epel-release
         yum install -y yum-utils readline-devel
     fi
@@ -31,11 +50,11 @@ install_dependencies_rpm() {
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip sudo libreadline-dev lsb-release gawk
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip sudo libreadline-dev lsb-release gawk bash
 }
 
 install_openresty_deb() {
-    # install openresty and openssl111
+    # install openresty
     arch_path=""
     if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
         arch_path="arm64/"
@@ -52,13 +71,17 @@ install_openresty_deb() {
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty cpanminus
+    # install openssl
+    install_openssl_3
 }
 
 install_openresty_rpm() {
-    # install openresty and openssl111
+    # install openresty
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y openresty pcre pcre-devel openldap-devel cpanminus
+    # install openssl
+    install_openssl_3
 }
 
 install_luarocks() {
@@ -107,6 +130,19 @@ install_apisix() {
     # install rust
     install_rust
 
+    # install openssl
+    install_openssl_3
+
+    #configure luarocks
+    # OpenResty 1.17.8 or higher version uses openssl111 as the openssl dirname.
+    luarocks config variables.OPENSSL_LIBDIR ${OPENSSL_PREFIX}
+    luarocks config variables.OPENSSL_INCDIR ${OPENSSL_PREFIX}/include
+    if [ -e "${OPENSSL_PREFIX}/libssl.so.3" ]; then
+        echo "libssl.so.3 exists."
+    else
+        echo "libssl.so.3 doesn't exist"
+    fi
+    echo "$LD_LIBRARY_PATH"
     # build the lib and specify the storage path of the package installed
     luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
@@ -217,5 +253,11 @@ install_dashboard)
     ;;
 install_luarocks)
     install_luarocks
+    ;;
+install_dependencies_rpm)
+    install_dependencies_rpm
+    ;;
+install_openssl_3)
+    install_openssl_3
     ;;
 esac

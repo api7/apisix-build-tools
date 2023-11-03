@@ -1,0 +1,42 @@
+ARG IMAGE_BASE="centos"
+ARG IMAGE_TAG="8"
+
+FROM ${IMAGE_BASE}:${IMAGE_TAG}
+
+ARG ETCD_VERSION="v3.4.14"
+ARG APISIX_VERSION
+ARG IMAGE_BASE
+ARG IMAGE_TAG
+
+ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
+
+
+
+COPY ./output/apisix-local-master-0.el8.x86_64.rpm /output/apisix-local-master-0.el8.x86_64.rpm
+COPY ./utils/install-common.sh /install-common.sh
+# Note: The duplication around the rpm series dockerfile here
+#       is used for reuse the container layer cache
+RUN if [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then \
+        sed -re "s/^#?\s*(mirrorlist)/#\1/g" \
+             -e "s|^#?\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" \
+             -i /etc/yum.repos.d/CentOS-Linux-*; \
+        dnf install -y centos-release-stream; \
+        dnf swap -y centos-{linux,stream}-repos; \
+        dnf distro-sync -y; \
+    fi
+# install openresty
+RUN /install-common.sh install_apisix_dependencies_rpm
+
+# install etcd
+RUN /install-common.sh install_etcd
+
+RUN rpm --import https://repos.apiseven.com/KEYS
+RUN yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
+
+
+RUN yum -y localinstall /output/apisix-local-master-0.el8.x86_64.rpm
+
+RUN which apisix
+# start etcd and test
+CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
+EXPOSE 9180 9080 9443

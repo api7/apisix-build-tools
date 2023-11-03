@@ -27,4 +27,5 @@ RUN set -x \
 # start etcd and test
 CMD ["sh", "-c", "(nohup etcd-$RUNNING_ETCD_VERSION-linux-amd64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]
 
+
 EXPOSE 9180 9080 9443
