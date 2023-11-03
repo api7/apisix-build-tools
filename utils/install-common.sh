@@ -102,13 +102,13 @@ install_apisix() {
     # patch rockspec file to install with local repo
     sed -re '/^\s*source\s*=\s*\{$/{:src;n;s/^(\s*url\s*=).*$/\1".\/apisix",/;/\}/!bsrc}' \
          -e '/^\s*source\s*=\s*\{$/{:src;n;/^(\s*branch\s*=).*$/d;/\}/!bsrc}' \
-         -i rockspec/apisix-master-${iteration}.rockspec
+         -i apisix-master-${iteration}.rockspec
 
     # install rust
     install_rust
 
     # build the lib and specify the storage path of the package installed
-    luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
+    luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
     # copy the compiled files to the package install directory
