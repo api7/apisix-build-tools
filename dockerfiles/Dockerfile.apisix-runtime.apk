@@ -10,8 +10,8 @@ COPY ./utils/build-common.sh \
      /tmp/
 
 
-ARG RESTY_OPENSSL_VERSION="1.1.1g"
-ARG RESTY_OPENSSL_PATCH_VERSION="1.1.1f"
+ARG RESTY_OPENSSL_VERSION="3.0.8"
+ARG RESTY_OPENSSL_PATCH_VERSION="3.0.8"
 ARG RESTY_OPENSSL_URL_BASE="https://www.openssl.org/source"
 ARG RESTY_PCRE_VERSION="8.44"
 ARG RESTY_J="1"
@@ -65,9 +65,9 @@ RUN cd /tmp \
     && ./config \
       no-threads shared zlib -g \
       enable-ssl3 enable-ssl3-method \
-      --prefix=/usr/local/openresty/openssl111 \
-      --libdir=lib \
-      -Wl,-rpath,/usr/local/openresty/openssl111/lib \
+      --prefix=/usr/local/openssl \
+      --openssldir=/usr/local/openssl \
+      -Wl,-rpath,/usr/local/openssl/lib \
     && make -j${RESTY_J} \
     && make -j${RESTY_J} install_sw
 

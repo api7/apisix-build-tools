@@ -4,9 +4,8 @@ set -x
 
 yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
 yum -y install gcc gcc-c++ patch wget git make sudo
-yum -y install openresty-openssl111-devel openresty-pcre-devel openresty-zlib-devel
+yum -y install openresty-pcre-devel openresty-zlib-devel
 
-export openssl_prefix=/usr/local/openresty/openssl111
 export zlib_prefix=/usr/local/openresty/zlib
 export pcre_prefix=/usr/local/openresty/pcre
 
