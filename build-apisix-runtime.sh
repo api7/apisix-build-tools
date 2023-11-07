@@ -173,6 +173,13 @@ make -j`nproc`
 sudo make install
 cd ..
 
+cd lua-resty-events-${lua_resty_events_ver} || exit 1
+sudo install -d "$OR_PREFIX"/lualib/resty/events/
+sudo install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
+sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
+sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
+cd ..
+
 cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
