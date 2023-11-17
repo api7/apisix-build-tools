@@ -11,6 +11,7 @@ apisix_nginx_module_ver="1.15.0"
 wasm_nginx_module_ver="0.6.5"
 lua_var_nginx_module_ver="v0.5.3"
 grpc_client_nginx_module_ver="v0.4.4"
+lua_resty_events_ver="0.2.0"
 OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 debug_args=${debug_args:-}
 
@@ -25,6 +26,14 @@ cd "$workdir" || exit 1
 
 wget --no-check-certificate https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
 tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
+
+if [ "$repo" == lua-resty-events ]; then
+    cp -r "$prev_workdir" ./lua-resty-events-${lua_resty_events_ver}
+else
+    git clone --depth=1 -b $lua_resty_events_ver \
+        https://github.com/Kong/lua-resty-events.git \
+        lua-resty-events-${lua_resty_events_ver}
+fi
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
@@ -129,6 +138,7 @@ fi
     --add-module=../wasm-nginx-module-${wasm_nginx_module_ver} \
     --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
     --add-module=../grpc-client-nginx-module-${grpc_client_nginx_module_ver} \
+    --add-module=../lua-resty-events-${lua_resty_events_ver} \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
@@ -161,6 +171,13 @@ fi
 
 make -j`nproc`
 sudo make install
+cd ..
+
+cd lua-resty-events-${lua_resty_events_ver} || exit 1
+sudo install -d "$OR_PREFIX"/lualib/resty/events/
+sudo install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
+sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
+sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
 cd ..
 
 cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
