@@ -56,7 +56,7 @@ then
         -a "$(uname -i)" \
         -v "$PACKAGE_VERSION" \
         --iteration "$ITERATION" \
-        -d "$OPENRESTY == $VERSION" \
+        -d "$OPENRESTY = $RUNTIME_VERSION" \
         -d "$dep_ldap" \
         -d "$dep_pcre" \
         -d "$dep_which" \

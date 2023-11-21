@@ -53,10 +53,13 @@ jobs:
         env:
           APISIX_TAG_VERSION: ${{ steps.tag_env.outputs.version}}
         run: |
+          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_TAG_VERSION}/.requirements
+          source .requirements
+
           # build apisix
-          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
-          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=8
-          make package type=rpm app=apisix openresty=apisix-base checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=7
+          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=centos image_tag=8
+          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
           mv ./output/apisix-${APISIX_TAG_VERSION}-0.{el7,el8,ubi8.6}.x86_64.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
