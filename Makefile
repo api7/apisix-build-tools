@@ -25,6 +25,7 @@ iteration=0
 local_code_path=0
 openresty="openresty"
 artifact="0"
+runtime_version="0"
 apisix_repo="https://github.com/apache/apisix"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
@@ -103,6 +104,7 @@ define package
 		--build-arg VERSION=$(version) \
 		--build-arg ITERATION=$(iteration) \
 		--build-arg PACKAGE_VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
 		--build-arg ARTIFACT=$(artifact) \
