@@ -1,7 +1,7 @@
 name: Build and Publish DEB Package
 
 on:
-  create:
+  push:
 
 jobs:
   publish_apisix:
@@ -15,6 +15,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
+      BRANCH: refs/tags/apisix/3.7.0
 
     steps:
       - name: Check out code
@@ -28,13 +29,13 @@ jobs:
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
       - name: Extract Tags version
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(BRANCH, 'refs/tags/') }}
         shell: bash
         run: |
           echo "TAG_VERSION=${GITHUB_REF##*/}" >> "$GITHUB_ENV"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(BRANCH, 'refs/tags/') }}
         shell: bash
         run: |
           type=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}')
@@ -57,7 +58,7 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/apache/apisix/${TAG_VERSION}/.requirements && source .requirements
 
-          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}-0
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-base Artifact
