@@ -58,7 +58,7 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/apache/apisix/${TAG_VERSION}/.requirements && source .requirements
 
-          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}-0
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-base Artifact
