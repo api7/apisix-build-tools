@@ -32,13 +32,13 @@ jobs:
         if: ${{ startsWith(env.BRANCH, 'refs/tags/') }}
         shell: bash
         run: |
-          echo "TAG_VERSION=${GITHUB_REF##*/}" >> "$GITHUB_ENV"
+          echo "TAG_VERSION=${BRANCH##*/}" >> "$GITHUB_ENV"
 
       - name: Extract Tags Type
         if: ${{ startsWith(env.BRANCH, 'refs/tags/') }}
         shell: bash
         run: |
-          type=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}')
+          type=$(echo ${BRANCH} | awk -F '/' '{print $3}')
           echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
 
       - name: Check Tags Type
