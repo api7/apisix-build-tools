@@ -217,8 +217,8 @@ jobs:
             - run:
                 name: build apisix package
                 command: |
-                  wget https://raw.githubusercontent.com/apache/apisix/${TAG_VERSION}/.requirements && source .requirements
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
+                  wget https://raw.githubusercontent.com/apache/apisix/${APISIX_TAG_VERSION}/.requirements && source .requirements
                   
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
