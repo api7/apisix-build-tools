@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.0
+      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
     steps:
       - uses: actions/checkout@v2
 
@@ -29,7 +29,7 @@ jobs:
 
       - name: build apisix-runtime rpm
         run: |
-          make package type=rpm app=apisix-runtime version=${BUILD_APISIX_RUNTIME_VERSION} image_base=centos image_tag=8
+          make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=centos image_tag=8
 
       - name: run centos8 docker and mapping apisix-runtime rpm into container
         run: |

@@ -18,6 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      PACKAGE_APISIX_VERSION: 3.7.0
+      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -39,12 +42,12 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=8 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=master runtime_version=${BUILD_APISIX_RUNTIME_VERSION}  image_base=centos image_tag=8 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=master runtime_version=${BUILD_APISIX_RUNTIME_VERSION}  image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
 
       - name: run centos8 docker and mapping rpm into container
         run: |

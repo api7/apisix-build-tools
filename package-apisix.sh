@@ -56,16 +56,17 @@ then
         -a "$(uname -i)" \
         -v "$PACKAGE_VERSION" \
         --iteration "$ITERATION" \
-        -d "$OPENRESTY = $RUNTIME_VERSION" \
         -d "$dep_ldap" \
         -d "$dep_pcre" \
         -d "$dep_which" \
+        --post-install post-install-apisix-runtime.sh \
         --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
         --license "ASL 2.0" \
         -C /tmp/build/output/apisix \
         -p /output \
         --url 'http://apisix.apache.org/' \
         --config-files usr/lib/systemd/system/apisix.service \
+        --config-files usr/lib/systemd/system/openresty.service \
         --config-files usr/local/apisix/conf/config.yaml \
         --config-files usr/local/apisix/conf/config-default.yaml
 else

@@ -28,7 +28,7 @@ fpm -f -s dir -t "$PACKAGE_TYPE" \
     --"$PACKAGE_TYPE"-dist "$dist" \
     -n "$artifact" \
     -a "$(uname -i)" \
-    -v "$PACKAGE_VERSION" \
+    -v "$RUNTIME_VERSION" \
     --iteration "$ITERATION" \
     -x openresty/zlib \
     -x openresty/openssl111 \
@@ -53,5 +53,5 @@ fi
 
 if [ "$PACKAGE_TYPE" == "deb" ]; then
     # Rename deb file with adding $DIST section
-    mv /output/apisix-runtime_"${PACKAGE_VERSION}"-"${ITERATION}"_"${PACKAGE_ARCH}".deb /output/apisix-runtime_"${PACKAGE_VERSION}"-"${ITERATION}"~"${dist}"_"${PACKAGE_ARCH}".deb
+    mv /output/apisix-runtime_"${RUNTIME_VERSION}"-"${ITERATION}"_"${PACKAGE_ARCH}".deb /output/apisix-runtime_"${RUNTIME_VERSION}"-"${ITERATION}"~"${dist}"_"${PACKAGE_ARCH}".deb
 fi

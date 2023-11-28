@@ -10,6 +10,7 @@ COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
 WORKDIR /tmp
 
 ARG VERSION
+ARG RUNTIME_VERSION
 ARG IMAGE_BASE
 ARG IMAGE_TAG
 ARG BUILD_LATEST
@@ -17,6 +18,7 @@ ARG BUILD_LATEST
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
+ENV runtime_version=${RUNTIME_VERSION}
 ENV build_latest=${BUILD_LATEST:-}
 
 RUN ./build-common.sh build_apisix_runtime_deb ${build_latest} \
