@@ -28,6 +28,10 @@ install_dependencies_rpm() {
     fi
 }
 
+install lua_resty_ldap() {
+    luarocks install lua-resty-ldap
+}
+
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
@@ -58,7 +62,7 @@ install_openresty_deb() {
 install_openresty_rpm() {
     # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y openresty openresty-openssl111-devel pcre pcre-devel
 }
 
 install_luarocks() {
