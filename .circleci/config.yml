@@ -11,7 +11,8 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - TEST_VERSION: 0-latest
+      - PACKAGE_APISIX_VERSION: 0-latest
+      - BUILD_APISIX_RUNTIME_VERSION: 1.0.1
     steps:
       - checkout
       - run:
@@ -19,25 +20,21 @@ jobs:
           command: |
             sudo apt-get install -y make
       - run:
-          name: package apisix-base
-          command: |
-            make package type=deb app=apisix-base version=${TEST_VERSION}
-      - run:
           name: package apisix-runtime
           command: |
-            make package type=deb app=apisix-runtime version=${TEST_VERSION}
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION}
       - run:
           name: package apisx
           command: |
-            make package type=deb app=apisix version=${TEST_VERSION} checkout=master image_base=ubuntu image_tag=20.04
+            make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${BUILD_APISIX_RUNTIME_VERSION} checkout=master image_base=ubuntu image_tag=20.04
       - run:
           name: install apisix deb into container
           command: |
-            docker build -t apache/apisix:${TEST_VERSION}-deb-test --build-arg APISIX_VERSION=${TEST_VERSION} -f test/apisix/Dockerfile.test.apisix.arm64.ubuntu20.04 .
+            docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.arm64.ubuntu20.04 .
       - run:
           name: start apisix and test
           command: |
-            docker run -d --rm --name apisix-${TEST_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${TEST_VERSION}-deb-test
+            docker run -d --rm --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
             sleep 20
             curl http://127.0.0.1:9180/apisix/admin/routes/1 \
             -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
@@ -55,27 +52,6 @@ jobs:
                 printf "result_code: %s\n" "$result_code"
                 exit 125
             fi
-
-  build-and-push-apisix-base-dev-arm:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-
-    steps:
-      - checkout
-      - run:
-          name: submodule
-          command: |
-            git submodule sync
-            git submodule update --init
-
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-arm64 --push \
-            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
-            -f ./dockerfiles/Dockerfile.apisix-base.deb .
 
   build-and-push-apisix-runtime-dev-arm:
     machine:
@@ -98,27 +74,6 @@ jobs:
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-runtime.deb .
 
-  build-and-push-apisix-base-dev-x86:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: medium
-
-    steps:
-      - checkout
-      - run:
-          name: submodule
-          command: |
-            git submodule sync
-            git submodule update --init
-
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build -t api7/apisix-base:dev-x86_64 --push \
-            --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
-            -f ./dockerfiles/Dockerfile.apisix-base.deb .
-
   build-and-push-apisix-runtime-dev-x86:
     machine:
       image: ubuntu-2004:202101-01
@@ -139,22 +94,6 @@ jobs:
             docker buildx build -t api7/apisix-runtime:dev-x86_64 --push \
             --build-arg VERSION=dev --build-arg BUILD_LATEST=latest \
             -f ./dockerfiles/Dockerfile.apisix-runtime.deb .
-
-  upload-manifest-apisix-base-dev:
-    docker:
-      - image: cimg/python:3.8.2
-    steps:
-      - checkout
-      - deploy:
-          name: "Upload apisix-base manifest to registry"
-          command: |
-            set -eu
-            export DOCKER_CLI_EXPERIMENTAL=enabled
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker manifest create api7/apisix-base:dev \
-                                   api7/apisix-base:dev-arm64 \
-                                   api7/apisix-base:dev-x86_64
-            docker manifest push api7/apisix-base:dev
 
   upload-manifest-apisix-runtime-dev:
     docker:
@@ -186,7 +125,6 @@ jobs:
     resource_class: arm.medium
     environment:
       - VAR_WORKBENCH_DIR: /tmp/output
-    
     steps:
       - checkout
       - run:
@@ -219,25 +157,10 @@ jobs:
                 command: |
                   APISIX_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
                   wget https://raw.githubusercontent.com/apache/apisix/${APISIX_TAG_VERSION}/.requirements && source .requirements
-                  
+
                   echo "apisix version: $APISIX_TAG_VERSION"
                   make package type=${PACK_TYPE} app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
                   mv ./output/apisix*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
-
-            - store_artifacts:
-                path: /tmp/output
-
-      - when:
-          condition:
-            matches: { pattern: "^apisix-base/(.*)\\d+$", value: << pipeline.git.tag >> }
-          steps:
-            - run:
-                name: build apisix-base package
-                command: |
-                  APISIX_BASE_TAG_VERSION=$(echo ${CIRCLE_TAG##*/})
-                  echo "apisix-base version: $APISIX_BASE_TAG_VERSION"
-                  make package type=${PACK_TYPE} app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=<< parameters.var_os >> image_tag=<< parameters.var_os_release >>
-                  mv ./output/apisix-base*.${PACK_TYPE} ${VAR_WORKBENCH_DIR}
 
             - store_artifacts:
                 path: /tmp/output
@@ -260,27 +183,6 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-apisix-base:
-    jobs:
-      - build:
-        filters:
-          branches:
-            only: master
-  build-and-push-apisix-base-dev:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build-and-push-apisix-base-dev-arm
-      - build-and-push-apisix-base-dev-x86
-      - upload-manifest-apisix-base-dev:
-          requires:
-            - build-and-push-apisix-base-dev-arm
-            - build-and-push-apisix-base-dev-x86
   build-and-push-apisix-runtime-dev:
     triggers:
       - schedule:
