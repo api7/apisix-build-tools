@@ -44,21 +44,29 @@ install_openresty_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libldap2-dev libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
     wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
+    wget -O - http://repos.apiseven.com/pubkey.gpg | apt-key add -
+
     if [[ $IMAGE_BASE == "ubuntu" ]]; then
         echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
     fi
-
     if [[ $IMAGE_BASE == "debian" ]]; then
         echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
     fi
+
+    if [[ $arch_path == "arm64/" ]]; then
+        echo "deb http://repos.apiseven.com/packages/arm64/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list
+    else
+        echo "deb http://repos.apiseven.com/packages/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list
+    fi
+
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev openresty
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev apisix-runtime
 }
 
 install_openresty_rpm() {
-    # install openresty and openssl111
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum install -y openresty openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum-config-manager --add-repo https://repos.apiseven.com/packages/centos/apache-apisix.repo
+    yum install -y apisix-runtime openresty-openssl111-devel pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {

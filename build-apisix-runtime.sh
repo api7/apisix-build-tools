@@ -2,7 +2,7 @@
 set -euo pipefail
 set -x
 
-version=${version:-0.0.0}
+runtime_version=${runtime_version:-0.0.0}
 
 OPENRESTY_VERSION="1.21.4.2"
 ngx_multi_upstream_module_ver="1.1.1"
@@ -127,7 +127,7 @@ else
 fi
 
 ./configure --prefix="$OR_PREFIX" \
-    --with-cc-opt="-DAPISIX_RUNTIME_VER=$version $grpc_engine_path $cc_opt" \
+    --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $grpc_engine_path $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
