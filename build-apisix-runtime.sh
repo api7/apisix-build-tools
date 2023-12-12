@@ -4,12 +4,18 @@ set -x
 
 runtime_version=${runtime_version:-0.0.0}
 
-cc_opt=${cc_opt:-}
-ld_opt=${ld_opt:-}
+
+debug_args=${debug_args:-}
+ENABLE_FIPS=${ENABLE_FIPS:-"false"}
+
+
 OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 OPENSSL_PREFIX=${OPENSSL_PREFIX:=$OR_PREFIX/openssl3}
-ENABLE_FIPS=${ENABLE_FIPS:-"false"}
-debug_args=${debug_args:-}
+zlib_prefix=${OR_PREFIX}/zlib
+pcre_prefix=${OR_PREFIX}/pcre
+
+cc_opt=${cc_opt:-"-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${OPENSSL_PREFIX}/include"}
+ld_opt=${ld_opt:-"-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${OPENSSL_PREFIX}/lib64 -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${OPENSSL_PREFIX}/lib64"}
 
 
 # dependencies for building openresty
@@ -24,8 +30,6 @@ lua_resty_events_ver="0.2.0"
 
 
 install_openssl_3(){
-    cc_opt="$cc_opt -I$OPENSSL_PREFIX/include"
-    ld_opt="$ld_opt -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$OPENSSL_PREFIX/lib64"
     local fips=""
     if [ "$ENABLE_FIPS" == "true" ]; then
         fips="enable-fips"
