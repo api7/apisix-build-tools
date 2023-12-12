@@ -13,10 +13,30 @@ lua_var_nginx_module_ver="v0.5.3"
 grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
 OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
+OPENSSL_PREFIX=${OPENSSL_PREFIX:=$OR_PREFIX/openssl3}
+ENABLE_FIPS=${ENABLE_FIPS:-"false"}
+fips=""
 debug_args=${debug_args:-}
+
+
+install_openssl_3(){
+    # required for openssl 3.x config
+    cpanm IPC/Cmd.pm
+    wget --no-check-certificate  https://www.openssl.org/source/openssl-3.1.3.tar.gz
+    tar xvf openssl-*.tar.gz
+    cd openssl-*/
+    ./config --prefix=$OPENSSL_PREFIX $fips
+    make -j $(nproc)
+    make install
+    cd ..
+}
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
+fi
+
+if [ "$ENABLE_FIPS" == "true" ]; then
+    fips="enable-fips"
 fi
 
 prev_workdir="$PWD"
@@ -126,6 +146,12 @@ else
     mv lua-resty-limit-traffic-$limit_ver bundle/lua-resty-limit-traffic-$or_limit_ver
 fi
 
+
+install_openssl_3
+
+cc_opt="$cc_opt -I$OPENSSL_PREFIX/include"
+ld_opt="$ld_opt -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$OPENSSL_PREFIX/lib64"
+
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $grpc_engine_path $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
@@ -170,26 +196,26 @@ fi
     -j`nproc`
 
 make -j`nproc`
-sudo make install
+make install
 cd ..
 
 cd lua-resty-events-${lua_resty_events_ver} || exit 1
-sudo install -d "$OR_PREFIX"/lualib/resty/events/
-sudo install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
-sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
-sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
+install -d "$OR_PREFIX"/lualib/resty/events/
+install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
+install -d "$OR_PREFIX"/lualib/resty/events/compat/
+install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
 cd ..
 
 cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 # package etcdctl
@@ -204,5 +230,5 @@ fi
 wget -q https://github.com/etcd-io/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
 tar xf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
 # ship etcdctl under the same bin dir of openresty so we can package it easily
-sudo cp etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}/etcdctl "$OR_PREFIX"/bin/
+cp etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}/etcdctl "$OR_PREFIX"/bin/
 rm -rf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}
