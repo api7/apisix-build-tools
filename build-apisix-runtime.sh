@@ -4,6 +4,15 @@ set -x
 
 runtime_version=${runtime_version:-0.0.0}
 
+cc_opt=${cc_opt:-}
+ld_opt=${ld_opt:-}
+OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
+OPENSSL_PREFIX=${OPENSSL_PREFIX:=$OR_PREFIX/openssl3}
+ENABLE_FIPS=${ENABLE_FIPS:-"false"}
+debug_args=${debug_args:-}
+
+
+# dependencies for building openresty
 OPENRESTY_VERSION="1.21.4.2"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
@@ -12,15 +21,15 @@ wasm_nginx_module_ver="0.6.5"
 lua_var_nginx_module_ver="v0.5.3"
 grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
-OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
-OPENSSL_PREFIX=${OPENSSL_PREFIX:=$OR_PREFIX/openssl3}
-ENABLE_FIPS=${ENABLE_FIPS:-"false"}
-debug_args=${debug_args:-}
 
 
 install_openssl_3(){
+    cc_opt="$cc_opt -I$OPENSSL_PREFIX/include"
+    ld_opt="$ld_opt -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$OPENSSL_PREFIX/lib64"
+    local fips=""
     if [ "$ENABLE_FIPS" == "true" ]; then
         fips="enable-fips"
+        apt install -y build-essential
     fi
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
@@ -30,7 +39,7 @@ install_openssl_3(){
     ./config --prefix=$OPENSSL_PREFIX $fips
     make -j $(nproc)
     make install
-    bash -c "echo $OPENSSL_PREFIX/openssl-3.0/lib64 > /etc/ld.so.conf.d/openssl3.conf"
+    bash -c "echo $OPENSSL_PREFIX/lib64 > /etc/ld.so.conf.d/openssl3.conf"
     ldconfig
     if [ "$ENABLE_FIPS" == "true" ]; then
         $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib64/ossl-modules/fips.so
@@ -119,8 +128,7 @@ cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 ./install-wasmtime.sh
 cd ..
 
-cc_opt=${cc_opt:-}
-ld_opt=${ld_opt:-}
+
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
 no_pool_patch=${no_pool_patch:-}
 # TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
@@ -153,8 +161,6 @@ fi
 
 install_openssl_3
 
-cc_opt="$cc_opt -I$OPENSSL_PREFIX/include"
-ld_opt="$ld_opt -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$OPENSSL_PREFIX/lib64"
 
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $grpc_engine_path $cc_opt" \
