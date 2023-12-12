@@ -14,8 +14,8 @@ OPENSSL_PREFIX=${OPENSSL_PREFIX:=$OR_PREFIX/openssl3}
 zlib_prefix=${OR_PREFIX}/zlib
 pcre_prefix=${OR_PREFIX}/pcre
 
-cc_opt=${cc_opt:-"-DNGX_LUA_ABORT_AT_PANIC -I${zlib_prefix}/include -I${pcre_prefix}/include -I${OPENSSL_PREFIX}/include"}
-ld_opt=${ld_opt:-"-L${zlib_prefix}/lib -L${pcre_prefix}/lib -L${OPENSSL_PREFIX}/lib64 -Wl,-rpath,${zlib_prefix}/lib:${pcre_prefix}/lib:${OPENSSL_PREFIX}/lib64"}
+cc_opt=${cc_opt:-"-DNGX_LUA_ABORT_AT_PANIC -I$zlib_prefix/include -I$pcre_prefix/include -I$OPENSSL_PREFIX/include"}
+ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$zlib_prefix/lib:$pcre_prefix/lib:$OPENSSL_PREFIX/lib64"}
 
 
 # dependencies for building openresty
