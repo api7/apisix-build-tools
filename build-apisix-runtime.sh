@@ -15,7 +15,7 @@ zlib_prefix=${OR_PREFIX}/zlib
 pcre_prefix=${OR_PREFIX}/pcre
 
 cc_opt=${cc_opt:-"-DNGX_LUA_ABORT_AT_PANIC -I$zlib_prefix/include -I$pcre_prefix/include -I$OPENSSL_PREFIX/include"}
-ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib64 -Wl,-rpath,$zlib_prefix/lib:$pcre_prefix/lib:$OPENSSL_PREFIX/lib64"}
+ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -Wl,-rpath,$zlib_prefix/lib:$pcre_prefix/lib:$OPENSSL_PREFIX/lib"}
 
 
 # dependencies for building openresty
@@ -29,28 +29,40 @@ grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
 
 
+OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
+
+
 install_openssl_3(){
     local fips=""
     if [ "$ENABLE_FIPS" == "true" ]; then
         fips="enable-fips"
-        apt install -y build-essential
     fi
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget --no-check-certificate  https://www.openssl.org/source/openssl-3.1.3.tar.gz
-    tar xvf openssl-*.tar.gz
-    cd openssl-*/
-    ./config --prefix=$OPENSSL_PREFIX $fips
-    make -j $(nproc)
+    wget --no-check-certificate  https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+    tar xvf openssl-${OPENSSL_VERSION}.tar.gz
+    cd openssl-${OPENSSL_VERSION}/
+    export LDFLAGS="-Wl,-rpath,$zlib_prefix/lib:$OPENSSL_PREFIX/lib"
+    ./config $fips \
+      shared \
+      zlib \
+	  enable-camellia enable-seed enable-rfc3779 \
+	  enable-cms enable-md2 enable-rc5 \
+	  enable-weak-ssl-ciphers \
+      --prefix=$OPENSSL_PREFIX \
+      --libdir=lib               \
+      --with-zlib-lib=$zlib_prefix/lib \
+      --with-zlib-include=$zlib_prefix/include
+    make -j $(nproc) LD_LIBRARY_PATH= CC="ccache gcc"
     make install
-    bash -c "echo $OPENSSL_PREFIX/lib64 > /etc/ld.so.conf.d/openssl3.conf"
-    ldconfig
     if [ "$ENABLE_FIPS" == "true" ]; then
-        $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib64/ossl-modules/fips.so
+        $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
         sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
     fi
     cd ..
 }
+
+install_openssl_3
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
@@ -161,9 +173,6 @@ else
     tar -xzf lua-resty-limit-traffic-$limit_ver.tar.gz
     mv lua-resty-limit-traffic-$limit_ver bundle/lua-resty-limit-traffic-$or_limit_ver
 fi
-
-
-install_openssl_3
 
 
 ./configure --prefix="$OR_PREFIX" \
