@@ -54,7 +54,7 @@ install_openssl_3(){
       --libdir=lib               \
       --with-zlib-lib=$zlib_prefix/lib \
       --with-zlib-include=$zlib_prefix/include
-    make -j $(nproc) LD_LIBRARY_PATH= CC="ccache gcc"
+    make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
     make install
     if [ "$ENABLE_FIPS" == "true" ]; then
         $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
