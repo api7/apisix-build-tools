@@ -17,6 +17,7 @@ RUN if [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then \
 COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-runtime.sh /tmp/build-apisix-runtime.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
+COPY ./conf /tmp/conf
 
 WORKDIR /tmp
 

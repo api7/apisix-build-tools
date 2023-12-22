@@ -7,6 +7,7 @@ runtime_version=${runtime_version:-0.0.0}
 
 debug_args=${debug_args:-}
 ENABLE_FIPS=${ENABLE_FIPS:-"false"}
+OPENSSL_CONF_PATH=${OPENSSL_CONF_PATH:-$PWD/conf/openssl3/openssl.cnf}
 
 
 OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
@@ -19,6 +20,7 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 
 # dependencies for building openresty
+OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
 OPENRESTY_VERSION="1.21.4.2"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
@@ -29,11 +31,7 @@ grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
 
 
-OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
-
-
 install_openssl_3(){
-    local openssl_conf_path=$PWD/openssl.cnf
     local fips=""
     if [ "$ENABLE_FIPS" == "true" ]; then
         fips="enable-fips"
@@ -60,11 +58,12 @@ install_openssl_3(){
         $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
         sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
     fi
-    cp $openssl_conf_path $OPENSSL_PREFIX/ssl/openssl.cnf
+    if [ -f "$OPENSSL_CONF_PATH" ]; then
+        cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
+    fi
     cd ..
 }
 
-install_openssl_3
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
@@ -74,6 +73,9 @@ prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
+
+
+install_openssl_3
 
 wget --no-check-certificate https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
 tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null

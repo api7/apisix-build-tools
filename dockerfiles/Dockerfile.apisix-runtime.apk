@@ -7,6 +7,7 @@ COPY ./utils/build-common.sh \
      ./utils/install-common.sh \
      build-apisix-runtime.sh \
      ./utils/determine-dist.sh \
+     ./conf \
      /tmp/
 
 

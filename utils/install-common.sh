@@ -60,13 +60,13 @@ install_openresty_deb() {
     fi
 
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev apisix-runtime
+    DEBIAN_FRONTEND=noninteractive apt-get install -y apisix-runtime
 }
 
 install_openresty_rpm() {
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum-config-manager --add-repo https://repos.apiseven.com/packages/centos/apache-apisix.repo
-    yum install -y apisix-runtime openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y apisix-runtime pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {
