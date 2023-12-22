@@ -326,13 +326,11 @@ $(info  you have to input a checkout value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-fpm
-package: build-apisix-runtime-rpm
 package: build-apisix-rpm
 package: package-apisix-rpm
 
 else ifeq ($(app)_$(type),apisix_deb)
 package: build-fpm
-package: build-apisix-runtime-deb
 package: build-apisix-deb
 package: package-apisix-deb
 
