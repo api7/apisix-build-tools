@@ -19,18 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      PACKAGE_APISIX_VERSION: 3.7.0
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      PACKAGE_APISIX_VERSION: 0.0.0
     steps:
       - uses: actions/checkout@v2
 
       - name: install dependencies
         run: |
           sudo apt-get install -y make
-
+      
       - name: run apisix packaging
         run: |
-          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${BUILD_APISIX_RUNTIME_VERSION} checkout=master image_base=ubuntu image_tag=20.04
+          wget https://raw.githubusercontent.com/apache/apisix/master/.requirements && source .requirements
+          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=master image_base=ubuntu image_tag=20.04
 
       - name: install apisix deb into container
         run: |

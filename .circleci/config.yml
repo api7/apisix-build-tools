@@ -4,15 +4,52 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build:
+  build-apisix-runtime:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - PACKAGE_APISIX_VERSION: 0-latest
-      - BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      BUILD_APISIX_RUNTIME_VERSION: 0-latest
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+      - run:
+          name: build apisix-runtime rpm
+          command: |
+            make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+      - run:
+          name: run ubi8 docker and mapping apisix-runtime rpm into container
+          command: |
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+      - run:
+          name: install dependencies in container
+          command: |
+            docker exec ubiInstance bash -c "dnf install -y yum-utils"
+            docker exec ubiInstance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
+            docker exec ubiInstance bash -c "yum -y install openresty-openssl111 openresty-pcre openresty-zlib"
+      - run:
+          name: install rpm in container
+          command: |
+            docker exec ubiInstance bash -c "ls -la /output"
+            docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-runtime-${BUILD_APISIX_RUNTIME_VERSION}-0.ubi8.6.x86_64.rpm"
+      - run:
+          name: check and ensure apisix-runtime is installed
+          command: |
+            export APISIX_RUNTIME_VER=$(docker exec ubiInstance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+
+  build-apisix:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    environment:
+      PACKAGE_APISIX_VERSION: 0-latest
     steps:
       - checkout
       - run:
@@ -20,13 +57,10 @@ jobs:
           command: |
             sudo apt-get install -y make
       - run:
-          name: package apisix-runtime
-          command: |
-            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION}
-      - run:
           name: package apisx
           command: |
-            make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${BUILD_APISIX_RUNTIME_VERSION} checkout=master image_base=ubuntu image_tag=20.04
+            wget https://raw.githubusercontent.com/apache/apisix/master/.requirements && source .requirements
+            make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=master image_base=ubuntu image_tag=20.04
       - run:
           name: install apisix deb into container
           command: |
@@ -124,7 +158,7 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - VAR_WORKBENCH_DIR: /tmp/output
+      VAR_WORKBENCH_DIR: /tmp/output
     steps:
       - checkout
       - run:
@@ -183,6 +217,16 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
+  builds:
+    jobs:
+      - build-apisix-runtime:
+          filters:
+            branches:
+              only: master
+      - build-apisix:
+          filters:
+            branches:
+              only: master
   build-and-push-apisix-runtime-dev:
     triggers:
       - schedule:
