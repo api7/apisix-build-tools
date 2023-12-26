@@ -250,7 +250,7 @@ ifeq ($(app),apisix)
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
 	rm -fr ./apisix-runtime
 else
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,$(local_code_path))
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
 endif
 
 ### build rpm for apisix-runtime:
