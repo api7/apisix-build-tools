@@ -1,6 +1,5 @@
 ARG IMAGE_BASE="ubuntu"
 ARG IMAGE_TAG="20.04"
-ARG VERSION
 ARG PACKAGE_TYPE
 ARG RUNTIME_VERSION
 
@@ -13,7 +12,7 @@ COPY ./utils/install-common.sh /install-common.sh
 COPY ./utils/determine-dist.sh /determine-dist.sh
 COPY --from=APISIX-RUNTIME /usr/local/openresty /usr/local/openresty
 
-RUN ln -sf /usr/local/openresty/bin/resty /usr/bin/resty && ln -sf /usr/local/openresty/bin/openresty /usr/bin/openresty
+ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
 ARG iteration="0"
 ARG apisix_repo="https://github.com/apache/apisix"
