@@ -43,30 +43,12 @@ install_openresty_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libldap2-dev libssl-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
-    wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-    wget -O - http://repos.apiseven.com/pubkey.gpg | apt-key add -
-
-    if [[ $IMAGE_BASE == "ubuntu" ]]; then
-        echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
-    fi
-    if [[ $IMAGE_BASE == "debian" ]]; then
-        echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
-    fi
-
-    if [[ $arch_path == "arm64/" ]]; then
-        echo "deb http://repos.apiseven.com/packages/arm64/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list
-    else
-        echo "deb http://repos.apiseven.com/packages/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list
-    fi
-
-    DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-openssl111-dev apisix-runtime
 }
 
 install_openresty_rpm() {
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     yum-config-manager --add-repo https://repos.apiseven.com/packages/centos/apache-apisix.repo
-    yum install -y apisix-runtime openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y openresty-openssl111-devel pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {
@@ -110,13 +92,13 @@ install_apisix() {
     # patch rockspec file to install with local repo
     sed -re '/^\s*source\s*=\s*\{$/{:src;n;s/^(\s*url\s*=).*$/\1".\/apisix",/;/\}/!bsrc}' \
          -e '/^\s*source\s*=\s*\{$/{:src;n;/^(\s*branch\s*=).*$/d;/\}/!bsrc}' \
-         -i apisix-master-${iteration}.rockspec
+         -i rockspec/apisix-master-${iteration}.rockspec
 
     # install rust
     install_rust
 
     # build the lib and specify the storage path of the package installed
-    luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
+    luarocks make ./rockspec/apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
     # copy the compiled files to the package install directory

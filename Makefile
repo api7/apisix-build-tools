@@ -27,6 +27,7 @@ openresty="apisix-runtime"
 artifact="0"
 runtime_version="0"
 apisix_repo="https://github.com/apache/apisix"
+apisix_runtime_repo="https://github.com/api7/apisix-build-tools.git"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
 ### set the default image for deb package
@@ -47,6 +48,7 @@ ifneq ($(buildx), True)
 define build
 	docker build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
+		--build-arg PACKAGE_TYPE=$(3) \
 		--build-arg VERSION=$(version) \
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
@@ -58,6 +60,7 @@ else
 define build
 	docker buildx build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
+		--build-arg PACKAGE_TYPE=$(3) \
 		--build-arg VERSION=$(version) \
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
@@ -232,15 +235,23 @@ package-dashboard-deb:
 ### build apisix-runtime:
 .PHONY: build-apisix-runtime-rpm
 build-apisix-runtime-rpm:
-	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,$(local_code_path))
+ifeq ($(app),apisix)
+	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./apisix-runtime")
+	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
+endif
 
 .PHONY: build-apisix-runtime-deb
 build-apisix-runtime-deb:
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,$(local_code_path))
-
-.PHONY: build-apisix-runtime-apk
-build-apisix-runtime-apk:
-	$(call build_runtime,apisix-runtime,apisix-runtime,apk,$(local_code_path))
+ifeq ($(app),apisix)
+	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
+	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+endif
 
 ### build rpm for apisix-runtime:
 .PHONY: package-apisix-runtime-rpm
@@ -314,9 +325,6 @@ else ifeq ($(app)_$(type),apisix-runtime_rpm)
 package: build-fpm
 package: build-apisix-runtime-rpm
 package: package-apisix-runtime-rpm
-
-else ifeq ($(app)_$(type),apisix-runtime_apk)
-package: build-apisix-runtime-apk
 
 else ifeq ($(app)_$(type),apisix-base_apk)
 package: build-apisix-base-apk
