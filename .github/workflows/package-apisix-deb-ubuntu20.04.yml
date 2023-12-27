@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 60
     env:
       PACKAGE_APISIX_VERSION: 0.0.0
-      APISIX_VERSION: 3.7.0
+      APISIX_VERSION: master
     steps:
       - uses: actions/checkout@v2
 
