@@ -53,13 +53,13 @@ install_openssl_3(){
       --with-zlib-lib=$zlib_prefix/lib \
       --with-zlib-include=$zlib_prefix/include
     make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
-    make install
+    sudo make install
+    if [ -f "$OPENSSL_CONF_PATH" ]; then
+        cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
+    fi
     if [ "$ENABLE_FIPS" == "true" ]; then
         $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
         sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
-    fi
-    if [ -f "$OPENSSL_CONF_PATH" ]; then
-        cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
     fi
     cd ..
 }
@@ -223,26 +223,26 @@ fi
     -j`nproc`
 
 make -j`nproc`
-make install
+sudo make install
 cd ..
 
 cd lua-resty-events-${lua_resty_events_ver} || exit 1
-install -d "$OR_PREFIX"/lualib/resty/events/
-install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
-install -d "$OR_PREFIX"/lualib/resty/events/compat/
-install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
+sudo install -d "$OR_PREFIX"/lualib/resty/events/
+sudo install -m 664 lualib/resty/events/*.lua "$OR_PREFIX"/lualib/resty/events/
+sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
+sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
 cd ..
 
 cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
-OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
-OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-OPENRESTY_PREFIX="$OR_PREFIX" make install
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
 # package etcdctl
@@ -257,5 +257,5 @@ fi
 wget -q https://github.com/etcd-io/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
 tar xf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}.tar.gz
 # ship etcdctl under the same bin dir of openresty so we can package it easily
-cp etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}/etcdctl "$OR_PREFIX"/bin/
+sudo cp etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}/etcdctl "$OR_PREFIX"/bin/
 rm -rf etcd-v${ETCD_VERSION}-linux-${ETCD_ARCH}
