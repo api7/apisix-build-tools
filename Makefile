@@ -149,6 +149,7 @@ define package
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
 	docker cp output:/output ${PWD}
 	docker stop output
+	docker system prune -a -f
 endef
 
 ### function for packing
@@ -167,6 +168,7 @@ define package_runtime
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(runtime_version)
 	docker cp output:/output ${PWD}
 	docker stop output
+	docker system prune -a -f
 endef
 
 ### build apisix:
