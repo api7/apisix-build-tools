@@ -38,7 +38,7 @@ install_openssl_3(){
     fi
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget --no-check-certificate  https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+    wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
     tar xvf openssl-${OPENSSL_VERSION}.tar.gz
     cd openssl-${OPENSSL_VERSION}/
     export LDFLAGS="-Wl,-rpath,$zlib_prefix/lib:$OPENSSL_PREFIX/lib"
@@ -53,19 +53,19 @@ install_openssl_3(){
       --with-zlib-lib=$zlib_prefix/lib \
       --with-zlib-include=$zlib_prefix/include
     make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
-    make install
+    sudo make install
     if [ -f "$OPENSSL_CONF_PATH" ]; then
-        cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
+        sudo cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
     fi
     if [ "$ENABLE_FIPS" == "true" ]; then
         $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
-        sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
+        sudo sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
     fi
     cd ..
 }
 
 
-if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
+if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$runtime_version" == "0.0.0" ]; then
     debug_args="--with-debug"
 fi
 
@@ -156,15 +156,6 @@ no_pool_patch=${no_pool_patch:-}
 grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
 
 cd openresty-${OPENRESTY_VERSION} || exit 1
-
-if [[ "$OPENRESTY_VERSION" == 1.21.4.1 ]] || [[ "$OPENRESTY_VERSION" == 1.19.* ]]; then
-# FIXME: remove this once 1.21.4.2 is released
-rm -rf bundle/LuaJIT-2.1-20220411
-lj_ver=2.1-20230119
-wget "https://github.com/openresty/luajit2/archive/v$lj_ver.tar.gz" -O "LuaJIT-$lj_ver.tar.gz"
-tar -xzf LuaJIT-$lj_ver.tar.gz
-mv luajit2-* bundle/LuaJIT-2.1-20220411
-fi
 
 or_limit_ver=0.08
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
