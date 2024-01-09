@@ -35,20 +35,13 @@ install_dependencies_deb() {
 }
 
 install_openresty_deb() {
-    # install openresty and openssl111
-    arch_path=""
-    if [[ $ARCH == "arm64" ]] || [[ $ARCH == "aarch64" ]]; then
-        arch_path="arm64/"
-    fi
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libldap2-dev libssl-dev perl build-essential
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libldap2-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
 }
 
 install_openresty_rpm() {
-    yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum-config-manager --add-repo https://repos.apiseven.com/packages/centos/apache-apisix.repo
-    yum install -y openresty-openssl111-devel pcre pcre-devel openldap-devel
+    yum install -y pcre pcre-devel openldap-devel
 }
 
 install_luarocks() {

@@ -35,18 +35,6 @@ jobs:
         run: |
           docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name centos8Instance --net="host" docker.io/centos:8 /bin/bash
 
-      - name: install dependencies in container
-        run: |
-          docker exec centos8Instance bash -c "sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*"
-          docker exec centos8Instance bash -c "sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*"
-          docker exec centos8Instance bash -c "dnf install -y centos-release-stream"
-          docker exec centos8Instance bash -c "dnf swap -y centos-{linux,stream}-repos"
-          docker exec centos8Instance bash -c "dnf distro-sync -y"
-
-          docker exec centos8Instance bash -c "dnf install -y yum-utils"
-          docker exec centos8Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-          docker exec centos8Instance bash -c "yum -y install openresty-pcre openresty-zlib"
-
       - name: install rpm in container
         run: |
           docker exec centos8Instance bash -c "yum -y localinstall /output/apisix-runtime-${BUILD_APISIX_RUNTIME_VERSION}-0.el8.x86_64.rpm"
