@@ -42,10 +42,7 @@ jobs:
           docker exec centos8Instance bash -c "dnf install -y centos-release-stream"
           docker exec centos8Instance bash -c "dnf swap -y centos-{linux,stream}-repos"
           docker exec centos8Instance bash -c "dnf distro-sync -y"
-
           docker exec centos8Instance bash -c "dnf install -y yum-utils"
-          docker exec centos8Instance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-          docker exec centos8Instance bash -c "yum -y install openresty-pcre openresty-zlib"
 
       - name: install rpm in container
         run: |

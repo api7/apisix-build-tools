@@ -33,12 +33,6 @@ jobs:
         run: |
           docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
 
-      - name: install dependencies in container
-        run: |
-          docker exec ubiInstance bash -c "dnf install -y yum-utils"
-          docker exec ubiInstance bash -c "yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo"
-          docker exec ubiInstance bash -c "yum -y install openresty-pcre openresty-zlib"
-
       - name: install rpm in container
         run: |
           docker exec ubiInstance bash -c "ls -la /output"
