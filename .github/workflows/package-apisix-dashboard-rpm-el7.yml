@@ -120,7 +120,7 @@ jobs:
           sudo apt -y install podman
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.0.0
         with:
           name: apisix-dashboard-${{ env.DASHBOARD_VERSION }}-0.el7.x86_64.rpm
 
