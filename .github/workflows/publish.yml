@@ -112,7 +112,7 @@ jobs:
 
       - name: Upload apisix Artifact for Redhat
         if: ${{ env.TAG_TYPE == 'apisix' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.ubi8.6.x86_64.rpm
         with:
@@ -121,7 +121,7 @@ jobs:
 
       - name: Upload apisix Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.el7.x86_64.rpm
         with:
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload apisix-base Artifact for Redhat
         if: ${{ env.TAG_TYPE == 'apisix-base' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-base-${{ env.TAG_VERSION }}-0.ubi8.6.x86_64.rpm
         with:
@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload apisix-base Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix-base' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-base-${{ env.TAG_VERSION }}-0.el7.x86_64.rpm
         with:
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload apisix-runtime Artifact for Redhat
         if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-runtime-${{ env.TAG_VERSION }}-0.ubi8.6.x86_64.rpm
         with:
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload apisix-runtime Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-runtime-${{ env.TAG_VERSION }}-0.el7.x86_64.rpm
         with:
@@ -166,7 +166,7 @@ jobs:
 
       - name: Upload apisix-dashboard Artifact
         if: ${{ env.TAG_TYPE == 'dashboard' }}
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         env:
           PACKAGE_NAME: apisix-dashboard-${{ env.TAG_VERSION }}-0.el7.x86_64.rpm
         with:

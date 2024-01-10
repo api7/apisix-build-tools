@@ -45,7 +45,7 @@ jobs:
           if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: apisix-runtime-${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0.ubi8.6.x86_64.rpm
           path: output/apisix-runtime-${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0.ubi8.6.x86_64.rpm
