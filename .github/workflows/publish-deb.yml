@@ -61,7 +61,7 @@ jobs:
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-base Artifact
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
           path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
@@ -76,7 +76,7 @@ jobs:
           mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
 
       - name: Upload apisix/apisix-runtime Artifact
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
           path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"

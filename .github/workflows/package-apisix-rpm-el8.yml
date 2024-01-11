@@ -94,3 +94,11 @@ jobs:
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+      
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-master-0.el8.x86_64.rpm
+          path: output/apisix-remote-master-0.el8.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error
