@@ -1,4 +1,4 @@
-name: Build and Publish DEB Package
+name: Build and Publish DEB Package for x86
 
 on:
   create:

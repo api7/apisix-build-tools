@@ -1,4 +1,4 @@
-name: Build and Publish RPM Package
+name: Build and Publish RPM Package for X86
 
 on:
   create:
@@ -186,7 +186,7 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_init
           sudo -E ./utils/publish-rpm.sh repo_clone
 
-      - name: RPM repo package update 
+      - name: RPM repo package update
         env:
           GPG_NAME: ${{ secrets.GPG_NAME }}
           GPG_MAIL: ${{ secrets.GPG_MAIL }}
@@ -199,12 +199,12 @@ jobs:
 
       - name: RPM repo backup for centos and redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup 
+          sudo -E ./utils/publish-rpm.sh repo_backup
 
       - name: RPM repo refresh for centos and redhat
         run: |
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
-          sudo -E ./utils/publish-rpm.sh repo_upload       
+          sudo -E ./utils/publish-rpm.sh repo_upload
 
       - name: RPM repo publish for centos and redhat
         run: |
