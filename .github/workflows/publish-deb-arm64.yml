@@ -1,0 +1,124 @@
+name: Build and Publish DEB Package for arm64
+
+on:
+  create:
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
+
+jobs:
+  publish_apisix:
+    name: Build and Publish deb Package
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    timeout-minutes: 60
+    env:
+      VAR_DEB_WORKBENCH_DIR: /tmp/output
+      VAR_COS_BUCKET_REPO: ${{ secrets.VAR_COS_BUCKET_REPO }}
+      VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
+      VAR_OS: debian
+      VAR_CODENAME: bullseye
+      VAR_OS_RELEASE: bullseye-slim
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.5
+        with:
+          submodules: recursive
+
+      - name: Init basic publish env
+        run: |
+          sudo apt-get update
+          mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
+
+      - name: Extract Tags version
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
+        run: |
+          echo "TAG_VERSION=${GITHUB_REF##*/}" >> "$GITHUB_ENV"
+
+      - name: Extract Tags Type
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
+        run: |
+          type=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}')
+          echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
+
+      - name: Check Tags Type
+        if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' }}
+        run: |
+          echo "##[error]Tag type is not correct, or not support, please check it."
+          exit 1
+
+      - name: Build apisix-base deb Package
+        if: ${{ env.TAG_TYPE == 'apisix-base' }}
+        run: |
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Build apisix deb Package
+        if: ${{ env.TAG_TYPE == 'apisix' }}
+        run: |
+          wget https://raw.githubusercontent.com/apache/apisix/${TAG_VERSION}/.requirements && source .requirements
+
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Upload apisix/apisix-base Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+
+      - name: Build apisix-runtime deb Package
+        if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
+        run: |
+          echo build ${TAG_TYPE} deb package
+          echo version ${TAG_VERSION}
+
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Upload apisix/apisix-runtime Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+
+      - name: DEB repo deps init
+        env:
+          TENCENT_COS_SECRETID: ${{ secrets.TENCENT_COS_SECRETID }}
+          TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
+        run: |
+          sudo pip install coscmd
+          sudo -E ./utils/publish-deb.sh init_cos_utils
+
+      - name: DEB repo init for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_clone
+
+      - name: DEB repo package update
+        env:
+          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
+          GPG_NAME: ${{ secrets.GPG_NAME }}
+          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+        run: |
+          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          sudo -E ./utils/publish-deb.sh init_freight_utils
+          sudo -E ./utils/publish-deb.sh init_gpg
+
+      - name: DEB repo backup for debian
+        run: |
+          echo 1
+
+      - name: DEB repo refresh for debian
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_rebuild
+          echo 1
+
+      - name: DEB repo publish for debian
+        env:
+          UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_amd64.deb"
+        run: |
+          echo 1
