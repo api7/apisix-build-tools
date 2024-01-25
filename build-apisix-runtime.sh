@@ -21,7 +21,7 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
-OPENRESTY_VERSION="1.21.4.2"
+OPENRESTY_VERSION="1.25.3.1"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="1.15.0"
@@ -91,7 +91,7 @@ fi
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
-    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
+    git clone --depth=1 -b \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
@@ -107,7 +107,7 @@ fi
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
-    git clone --depth=1 -b $apisix_nginx_module_ver \
+    git clone --depth=1 \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
@@ -192,6 +192,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
+    --with-http_v3_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
