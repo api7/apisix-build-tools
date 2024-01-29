@@ -42,7 +42,7 @@ tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
-    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
+    git clone --depth=1 -b upgrade_openresty-1.25.3 \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
