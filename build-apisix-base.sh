@@ -4,15 +4,15 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.21.4.2}
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.1}
 if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
-    OPENRESTY_VERSION="1.21.4.2"
+    OPENRESTY_VERSION="1.25.3.1"
 fi
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver="master"
     mod_dubbo_ver="master"
-    apisix_nginx_module_ver="main"
+    apisix_nginx_module_ver="upgrade_openresty-1.25.3.1"
     wasm_nginx_module_ver="main"
     lua_var_nginx_module_ver="master"
     grpc_client_nginx_module_ver="main"
@@ -59,7 +59,7 @@ if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
     git clone --depth=1 -b $apisix_nginx_module_ver \
-        https://github.com/api7/apisix-nginx-module.git \
+        https://github.com/zll600/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
 
@@ -126,7 +126,7 @@ tar -xzf LuaJIT-$lj_ver.tar.gz
 mv luajit2-* bundle/LuaJIT-2.1-20220411
 fi
 
-or_limit_ver=0.08
+or_limit_ver=0.09
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
     exit 1
@@ -160,6 +160,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
+    --with-http_v3_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
