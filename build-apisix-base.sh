@@ -128,7 +128,7 @@ fi
 or_limit_ver=0.08
 enable_http3=${enable_http3:-}
 if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
-    or_limit_ver=0.09or_limit_ver
+    or_limit_ver=0.09
     enable_http3="--with-http_v3_module"
 fi
 
