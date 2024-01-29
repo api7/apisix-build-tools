@@ -158,7 +158,7 @@ grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
 or_limit_ver=0.08
-if [ OPENRESTY_VERSION == "1.25.3.1" ]; then
+if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
     or_limit_ver = 0.09
 fi
 

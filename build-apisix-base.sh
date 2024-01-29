@@ -128,7 +128,7 @@ fi
 
 or_limit_ver=0.08
 
-if [ OPENRESTY_VERSION == "1.25.3.1" ]; then
+if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
     or_limit_ver = 0.09
 fi
 
