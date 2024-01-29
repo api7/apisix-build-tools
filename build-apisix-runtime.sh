@@ -158,8 +158,10 @@ grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
 or_limit_ver=0.08
+enable_http3=${enable_http3:-}
 if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
-    or_limit_ver = 0.09
+    or_limit_ver=0.09
+    enable_http3="--with-http_v3_module"
 fi
 
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
@@ -196,7 +198,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
-    --with-http_v3_module \
+    $enable_http3 \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \

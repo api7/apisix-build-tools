@@ -114,7 +114,7 @@ no_pool_patch=${no_pool_patch:-}
 # TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
 # version of grpc-client-nginx-module
 grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
-
+or_limit_ver
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
 if [[ "$OPENRESTY_VERSION" == 1.21.4.1 ]] || [[ "$OPENRESTY_VERSION" == 1.19.* ]]; then
@@ -127,9 +127,10 @@ mv luajit2-* bundle/LuaJIT-2.1-20220411
 fi
 
 or_limit_ver=0.08
-
+enable_http3=${enable_http3:-}
 if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
-    or_limit_ver = 0.09
+    or_limit_ver=0.09or_limit_ver
+    enable_http3="--with-http_v3_module"
 fi
 
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
@@ -165,7 +166,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
-    --with-http_v3_module \
+    $enable_http3 \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
