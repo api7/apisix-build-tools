@@ -107,8 +107,8 @@ fi
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
-    git clone --depth=1 \
-        https://github.com/api7/apisix-nginx-module.git \
+    git clone --depth=1 -b upgrade_openresty_1.25.3.1 \
+        https://github.com/zll600/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
 
