@@ -114,7 +114,6 @@ no_pool_patch=${no_pool_patch:-}
 # TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
 # version of grpc-client-nginx-module
 grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_HTTP_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so"
-or_limit_ver
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
 if [[ "$OPENRESTY_VERSION" == 1.21.4.1 ]] || [[ "$OPENRESTY_VERSION" == 1.19.* ]]; then
