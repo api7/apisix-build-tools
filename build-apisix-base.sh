@@ -82,7 +82,7 @@ fi
 if [ "$repo" == grpc-client-nginx-module ]; then
     cp -r "$prev_workdir" ./grpc-client-nginx-module-${grpc_client_nginx_module_ver}
 else
-    git clone --depth=1 -b $grpc_client_nginx_module_ver \
+    git clone --depth=1 -b fix_header_files \
         https://github.com/api7/grpc-client-nginx-module \
         grpc-client-nginx-module-${grpc_client_nginx_module_ver}
 fi
