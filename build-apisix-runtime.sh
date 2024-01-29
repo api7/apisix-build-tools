@@ -115,8 +115,8 @@ fi
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" ./wasm-nginx-module-${wasm_nginx_module_ver}
 else
-    git clone --depth=1 -b $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git \
+    git clone --depth=1 -b fix_header_files \
+        https://github.com/zll600/wasm-nginx-module.git \
         wasm-nginx-module-${wasm_nginx_module_ver}
 fi
 
