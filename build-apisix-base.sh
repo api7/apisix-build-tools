@@ -126,7 +126,12 @@ tar -xzf LuaJIT-$lj_ver.tar.gz
 mv luajit2-* bundle/LuaJIT-2.1-20220411
 fi
 
-or_limit_ver=0.09
+or_limit_ver=0.08
+
+if [ OPENRESTY_VERSION == "1.25.3.1" ]; then
+    or_limit_ver = 0.09
+fi
+
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
     exit 1
