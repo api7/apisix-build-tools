@@ -1,7 +1,7 @@
 name: Build and Publish DEB Package ARM
 
 on:
-  push:
+  create:
 
 jobs:
   publish_apisix:
