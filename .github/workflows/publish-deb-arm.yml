@@ -105,3 +105,8 @@ jobs:
           sudo -E ./utils/publish-deb.sh repo_rebuild
           sudo -E ./utils/publish-deb.sh repo_ci_upload
 
+      - name: DEB repo publish for debian
+        env:
+          UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_${{ env.ARCH }}.deb"
+        run: |
+          sudo -E ./utils/publish-deb.sh repo_upload
