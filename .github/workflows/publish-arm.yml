@@ -1,4 +1,4 @@
-name: Build and Publish RPM Package
+name: Build and Publish RPM Package ARM
 
 on:
   push:
@@ -204,3 +204,28 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
           sudo -E ./utils/publish-rpm.sh repo_upload
 
+      - name: Start SSH via Ngrok
+        if: ${{ failure() }}
+        run: |
+          echo "### Install ngrok ###"
+          wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm64.tgz
+          sudo tar -xvzf ./ngrok-v3-stable-linux-arm64.tgz -C /usr/local/bin
+
+          echo "### Update user: $USER password ###"
+          echo -e "$USER_PASS\n$USER_PASS" | sudo passwd "$USER"
+
+          echo "### Start ngrok proxy for 22 port ###"
+          rm -f .ngrok.log
+          ngrok config add-authtoken 2bgGRKo9L8TwLcetZVr1q3vvk3a_7phTqpitr8EQsLiLXT81p
+          sudo ngrok config add-authtoken 2bgGRKo9L8TwLcetZVr1q3vvk3a_7phTqpitr8EQsLiLXT81p
+          sudo ngrok tcp 22 --log ".ngrok.log" > /dev/null &
+
+          sleep 10
+          
+          cat .ngrok.log
+        env:
+          USER_PASS: rong
+
+      - name: Don't kill instace
+        if: ${{ failure() }}
+        run: sleep 1h 
