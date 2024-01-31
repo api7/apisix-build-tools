@@ -25,7 +25,7 @@ OPENRESTY_VERSION="1.21.4.2"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="1.15.0"
-wasm_nginx_module_ver="0.6.5"
+wasm_nginx_module_ver="0.6.6"
 lua_var_nginx_module_ver="v0.5.3"
 grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
@@ -116,7 +116,7 @@ if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" ./wasm-nginx-module-${wasm_nginx_module_ver}
 else
     git clone --depth=1 -b $wasm_nginx_module_ver \
-        https://github.com/api7/wasm-nginx-module.git \
+        https://github.com/AlinsRan/wasm-nginx-module.git \
         wasm-nginx-module-${wasm_nginx_module_ver}
 fi
 

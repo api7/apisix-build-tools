@@ -75,10 +75,6 @@ build_apisix_runtime_rpm() {
         set +eu
         source scl_source enable devtoolset-9
         set -eu
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        source "$HOME/.cargo/env"
-        rustup install 1.69
-        rustup default 1.69
     elif [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then
         dnf install -y gcc-toolset-9-toolchain patch wget git make sudo cpanminus
         dnf install -y yum-utils
