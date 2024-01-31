@@ -1,12 +1,24 @@
 name: Build and Publish DEB Package ARM
 
 on:
-  create:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish_apisix:
     name: Build and Publish deb Package
-    runs-on: buildjet-2vcpu-ubuntu-2204-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - runner: ubuntu-22.04
+          arch: amd64
+        - runner: buildjet-2vcpu-ubuntu-2204-arm
+          arch: arm64
+    runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 60
     env:
       VAR_DEB_WORKBENCH_DIR: /tmp/output
@@ -15,7 +27,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
-      ARCH: arm64
+      ARCH: ${{ matrix.platform.arch }}
 
     steps:
       - name: Check out code
@@ -110,3 +122,4 @@ jobs:
           UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_${{ env.ARCH }}.deb"
         run: |
           sudo -E ./utils/publish-deb.sh repo_upload
+          sudo -E ./utils/publish-deb.sh repo_publish

@@ -2,6 +2,8 @@ name: Build and Publish RPM Package ARM
 
 on:
   push:
+    tags:
+      - "**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
@@ -10,7 +12,7 @@ concurrency:
 jobs:
   publish_apisix:
     name: Build and Publish RPM Package
-    runs-on: buildjet-2vcpu-ubuntu-2204-arm
+    runs-on: buildjet-4vcpu-ubuntu-2204-arm
     timeout-minutes: 180
     env:
       VAR_COS_BUCKET_CI: ${{ secrets.VAR_COS_BUCKET_CI }}
@@ -114,8 +116,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.ubi8.6.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix' }}
@@ -123,8 +125,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.el7.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix-base Artifact for Redhat
         if: ${{ env.TAG_TYPE == 'apisix-base' }}
@@ -132,8 +134,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-base-${{ env.TAG_VERSION }}-0.ubi8.6.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix-base Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix-base' }}
@@ -141,8 +143,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-base-${{ env.TAG_VERSION }}-0.el7.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix-runtime Artifact for Redhat
         if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
@@ -150,8 +152,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-runtime-${{ env.TAG_VERSION }}-0.ubi8.6.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix-runtime Artifact for Centos
         if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
@@ -159,8 +161,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-runtime-${{ env.TAG_VERSION }}-0.el7.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: Upload apisix-dashboard Artifact
         if: ${{ env.TAG_TYPE == 'dashboard' }}
@@ -168,8 +170,8 @@ jobs:
         env:
           PACKAGE_NAME: apisix-dashboard-${{ env.TAG_VERSION }}-0.el7.${{ env.ARCH }}.rpm
         with:
-          name: "${PACKAGE_NAME}"
-          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${PACKAGE_NAME}"
+          name: "${{ env.PACKAGE_NAME }}"
+          path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
 
       - name: RPM repo deps init
         env:
@@ -204,28 +206,6 @@ jobs:
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
           sudo -E ./utils/publish-rpm.sh repo_upload
 
-      - name: Start SSH via Ngrok
-        if: ${{ failure() }}
+      - name: RPM repo publish for centos and redhat
         run: |
-          echo "### Install ngrok ###"
-          wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-arm64.tgz
-          sudo tar -xvzf ./ngrok-v3-stable-linux-arm64.tgz -C /usr/local/bin
-
-          echo "### Update user: $USER password ###"
-          echo -e "$USER_PASS\n$USER_PASS" | sudo passwd "$USER"
-
-          echo "### Start ngrok proxy for 22 port ###"
-          rm -f .ngrok.log
-          ngrok config add-authtoken 2bgGRKo9L8TwLcetZVr1q3vvk3a_7phTqpitr8EQsLiLXT81p
-          sudo ngrok config add-authtoken 2bgGRKo9L8TwLcetZVr1q3vvk3a_7phTqpitr8EQsLiLXT81p
-          sudo ngrok tcp 22 --log ".ngrok.log" > /dev/null &
-
-          sleep 10
-          
-          cat .ngrok.log
-        env:
-          USER_PASS: rong
-
-      - name: Don't kill instace
-        if: ${{ failure() }}
-        run: sleep 1h 
+          sudo -E ./utils/publish-rpm.sh repo_publish
