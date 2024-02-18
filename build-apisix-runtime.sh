@@ -142,7 +142,6 @@ cd ..
 
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
 no_pool_patch=${no_pool_patch:-}
-# TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
 
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
