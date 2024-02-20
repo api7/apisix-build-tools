@@ -158,7 +158,8 @@ install_dashboard() {
     go env -w GOPROXY="${goproxy}"
     cd /tmp/
     cd /apisix-dashboard
-    npm config set strict-ssl false
+    # FIXME: when the certificate is valid
+    yarn config set "strict-ssl" false -g
     make build
     # copy the compiled files to the specified directory for packaging
     cp -r output/* /tmp/build/output/apisix/dashboard/usr/local/apisix/dashboard
