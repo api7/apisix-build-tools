@@ -56,7 +56,7 @@ jobs:
           echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
 
       - name: Check Tags Type
-        if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' }}
+        if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' && env.TAG_TYPE != 'apisix-runtime' }}
         run: |
           echo "##[error]Tag type is not correct, or not support, please check it."
           exit 1
