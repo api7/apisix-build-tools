@@ -12,7 +12,7 @@ fi
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     ngx_multi_upstream_module_ver="master"
     mod_dubbo_ver="master"
-    apisix_nginx_module_ver="upgrade_openresty-1.25.3.1"
+    apisix_nginx_module_ver="main"
     wasm_nginx_module_ver="main"
     lua_var_nginx_module_ver="master"
     grpc_client_nginx_module_ver="main"
@@ -20,12 +20,12 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
-    ngx_multi_upstream_module_ver="1.1.1"
+    ngx_multi_upstream_module_ver="1.2.0"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.15.0"
-    wasm_nginx_module_ver="0.6.5"
+    apisix_nginx_module_ver="1.16.0"
+    wasm_nginx_module_ver="0.7.0"
     lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.4.4"
+    grpc_client_nginx_module_ver="v0.5.0"
     lua_resty_events_ver="0.2.0"
     debug_args=${debug_args:-}
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
@@ -42,8 +42,8 @@ tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
 if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
-    git clone --depth=1 -b upgrade_openresty-1.25.3 \
-        https://github.com/zll600/ngx_multi_upstream_module.git \
+    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
+        https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 
@@ -58,16 +58,16 @@ fi
 if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
-    git clone --depth=1 -b upgrade_openresty_1.25.3.1 \
-        https://github.com/zll600/apisix-nginx-module.git \
+    git clone --depth=1 -b $apisix_nginx_module_ver \
+        https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
     cp -r "$prev_workdir" ./wasm-nginx-module-${wasm_nginx_module_ver}
 else
-    git clone --depth=1 -b fix_header_files \
-        https://github.com/zll600/wasm-nginx-module.git \
+    git clone --depth=1 -b $wasm_nginx_module_ver \
+        https://github.com/api7/wasm-nginx-module.git \
         wasm-nginx-module-${wasm_nginx_module_ver}
 fi
 
@@ -82,8 +82,8 @@ fi
 if [ "$repo" == grpc-client-nginx-module ]; then
     cp -r "$prev_workdir" ./grpc-client-nginx-module-${grpc_client_nginx_module_ver}
 else
-    git clone --depth=1 -b fix_header_files \
-        https://github.com/zll600/grpc-client-nginx-module \
+    git clone --depth=1 -b $grpc_client_nginx_module_ver \
+        https://github.com/api7/grpc-client-nginx-module \
         grpc-client-nginx-module-${grpc_client_nginx_module_ver}
 fi
 
