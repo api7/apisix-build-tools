@@ -145,12 +145,7 @@ no_pool_patch=${no_pool_patch:-}
 
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
-or_limit_ver=0.08
-enable_http3=${enable_http3:-}
-if [ "$OPENRESTY_VERSION" == "1.25.3.1" ]; then
-    or_limit_ver=0.09
-    enable_http3="--with-http_v3_module"
-fi
+or_limit_ver=0.09
 
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
@@ -185,7 +180,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
-    $enable_http3 \
+    --with-http_v3_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
