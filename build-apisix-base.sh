@@ -4,32 +4,17 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.1}
-if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
-    OPENRESTY_VERSION="1.25.3.1"
-fi
+OPENRESTY_VERSION=1.21.4.2
 
-if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
-    ngx_multi_upstream_module_ver="master"
-    mod_dubbo_ver="master"
-    apisix_nginx_module_ver="main"
-    wasm_nginx_module_ver="main"
-    lua_var_nginx_module_ver="master"
-    grpc_client_nginx_module_ver="main"
-    lua_resty_events_ver="main"
-    debug_args="--with-debug"
-    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
-else
-    ngx_multi_upstream_module_ver="1.2.0"
-    mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.16.0"
-    wasm_nginx_module_ver="0.7.0"
-    lua_var_nginx_module_ver="v0.5.3"
-    grpc_client_nginx_module_ver="v0.5.0"
-    lua_resty_events_ver="0.2.0"
-    debug_args=${debug_args:-}
-    OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
-fi
+ngx_multi_upstream_module_ver="1.1.1"
+mod_dubbo_ver="1.0.2"
+apisix_nginx_module_ver="1.15.0"
+wasm_nginx_module_ver="0.6.5"
+lua_var_nginx_module_ver="v0.5.3"
+grpc_client_nginx_module_ver="v0.5.0"
+lua_resty_events_ver="0.2.0"
+debug_args="--with-debug"
+OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
@@ -126,7 +111,7 @@ tar -xzf LuaJIT-$lj_ver.tar.gz
 mv luajit2-* bundle/LuaJIT-2.1-20220411
 fi
 
-or_limit_ver=0.09
+or_limit_ver=0.08
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
     exit 1
@@ -160,7 +145,6 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
-    --with-http_v3_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
