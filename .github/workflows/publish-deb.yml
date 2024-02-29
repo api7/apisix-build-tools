@@ -3,7 +3,7 @@ name: Build and Publish DEB Package
 on:
   push:
     tags-ignore:
-      - "apisix-runtime/*"
+      - "apisix/*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_number || github.ref }}

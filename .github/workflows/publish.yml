@@ -2,8 +2,8 @@ name: Build and Publish RPM Package
 
 on:
   push:
-    tags-ignore:
-      - "apisix-runtime/*"
+    tags:
+      - "apisix/*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
