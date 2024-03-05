@@ -2,7 +2,7 @@ name: Build and Publish DEB Package
 
 on:
   push:
-    tags-ignore:
+    tags:
       - "apisix/*"
 
 concurrency:
