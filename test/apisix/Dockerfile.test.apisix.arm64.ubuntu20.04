@@ -11,7 +11,6 @@ ARG IMAGE_TAG
 ENV RUNNING_ETCD_VERSION=${ETCD_VERSION}
 
 COPY ./output/apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_arm64.deb /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_arm64.deb
-COPY ./output/apisix-base_"${APISIX_VERSION}"-0~"${IMAGE_BASE}${IMAGE_TAG}"_arm64.deb /apisix-base_"${APISIX_VERSION}"-0~"${IMAGE_BASE}${IMAGE_TAG}"_arm64.deb
 COPY ./utils/install-common.sh /install-common.sh
 
 
@@ -21,16 +20,13 @@ RUN set -x \
     && apt-get -y install --no-install-recommends wget gnupg ca-certificates \
     && wget -O - https://openresty.org/package/pubkey.gpg | apt-key add - \
     && echo "deb http://openresty.org/package/arm64/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list \
-    && apt-get update \
-    && apt-get install -y openresty-openssl111-dev openresty-pcre-dev openresty-zlib-dev \
-    && dpkg -i /apisix-base_"${APISIX_VERSION}"-0~"${IMAGE_BASE}${IMAGE_TAG}"_arm64.deb
-
+    && apt-get update
 
 # install apisix
 RUN set -x \
     && /install-common.sh install_etcd \
     && apt install -y libldap2-dev \
-    && dpkg -i --ignore-depends=openresty /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_arm64.deb
+    && dpkg -i /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_arm64.deb
 
 # start etcd and test
 CMD ["sh", "-c", "(ETCD_UNSUPPORTED_ARCH=arm64 nohup etcd-$RUNNING_ETCD_VERSION-linux-arm64/etcd >/tmp/etcd.log 2>&1 &) && sleep 10 && apisix start && sleep 3600"]

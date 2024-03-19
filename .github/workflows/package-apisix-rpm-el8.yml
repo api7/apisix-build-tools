@@ -18,6 +18,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      APISIX_VERSION: master
     services:
       etcd:
         image: bitnami/etcd:3.4.0
@@ -39,12 +41,14 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=8 artifact=apisix-remote
+          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME}  image_base=centos image_tag=8 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
-          git clone https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=master image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
+          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
+          git clone -b ${APISIX_VERSION} https://github.com/apache/apisix.git
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME}  image_base=centos image_tag=8 local_code_path=./apisix artifact=apisix-local
 
       - name: run centos8 docker and mapping rpm into container
         run: |
@@ -90,3 +94,11 @@ jobs:
               echo "failed: failed to install Apache APISIX by rpm"
               exit 1
           fi
+      
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-master-0.el8.x86_64.rpm
+          path: output/apisix-remote-master-0.el8.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error

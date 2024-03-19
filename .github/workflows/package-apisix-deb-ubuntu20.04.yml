@@ -20,18 +20,18 @@ jobs:
     timeout-minutes: 60
     env:
       PACKAGE_APISIX_VERSION: 0.0.0
-
+      APISIX_VERSION: master
     steps:
       - uses: actions/checkout@v2
 
       - name: install dependencies
         run: |
           sudo apt-get install -y make
-
+      
       - name: run apisix packaging
         run: |
-          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} checkout=master \
-            image_base=ubuntu image_tag=20.04
+          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
+          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=${APISIX_VERSION} image_base=ubuntu image_tag=20.04
 
       - name: install apisix deb into container
         run: |
@@ -59,7 +59,7 @@ jobs:
           fi
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
           path: output/apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb

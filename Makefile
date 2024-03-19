@@ -23,9 +23,11 @@ image_base="centos"
 image_tag="7"
 iteration=0
 local_code_path=0
-openresty="openresty"
+openresty="apisix-runtime"
 artifact="0"
+runtime_version="0"
 apisix_repo="https://github.com/apache/apisix"
+apisix_runtime_repo="https://github.com/api7/apisix-build-tools.git"
 dashboard_repo="https://github.com/apache/apisix-dashboard"
 
 ### set the default image for deb package
@@ -46,7 +48,9 @@ ifneq ($(buildx), True)
 define build
 	docker build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
+		--build-arg PACKAGE_TYPE=$(3) \
 		--build-arg VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
@@ -56,7 +60,41 @@ else
 define build
 	docker buildx build -t apache/$(1)-$(3):$(version) \
 		--build-arg checkout_v=$(checkout) \
+		--build-arg PACKAGE_TYPE=$(3) \
 		--build-arg VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
+		--build-arg IMAGE_BASE=$(image_base) \
+		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg CODE_PATH=$(4) \
+		--load \
+		--cache-from=$(cache_from) \
+		--cache-to=$(cache_to) \
+		-f ./dockerfiles/Dockerfile.$(2).$(3) .
+endef
+endif
+
+### function for building apisix-runtime
+### $(1) is name
+### $(2) is dockerfile filename
+### $(3) is package type
+### $(4) is code path
+ifneq ($(buildx), True)
+define build_runtime
+	docker build -t apache/$(1)-$(3):$(runtime_version) \
+		--build-arg checkout_v=$(checkout) \
+		--build-arg VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
+		--build-arg IMAGE_BASE=$(image_base) \
+		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg CODE_PATH=$(4) \
+		-f ./dockerfiles/Dockerfile.$(2).$(3) .
+endef
+else
+define build_runtime
+	docker buildx build -t apache/$(1)-$(3):$(runtime_version) \
+		--build-arg checkout_v=$(checkout) \
+		--build-arg VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
@@ -103,11 +141,31 @@ define package
 		--build-arg VERSION=$(version) \
 		--build-arg ITERATION=$(iteration) \
 		--build-arg PACKAGE_VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
 		--build-arg ARTIFACT=$(artifact) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
+	docker cp output:/output ${PWD}
+	docker stop output
+	docker system prune -a -f
+endef
+
+### function for packing
+### $(1) is name
+### $(2) is package type
+define package_runtime
+	docker build -t apache/$(1)-packaged-$(2):$(runtime_version) \
+		--build-arg VERSION=$(version) \
+		--build-arg ITERATION=$(iteration) \
+		--build-arg PACKAGE_VERSION=$(version) \
+		--build-arg RUNTIME_VERSION=$(runtime_version) \
+		--build-arg PACKAGE_TYPE=$(2) \
+		--build-arg OPENRESTY=$(openresty) \
+		--build-arg ARTIFACT=$(artifact) \
+		-f ./dockerfiles/Dockerfile.package.$(1) .
+	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(runtime_version)
 	docker cp output:/output ${PWD}
 	docker stop output
 	docker system prune -a -f
@@ -174,6 +232,37 @@ package-dashboard-rpm:
 package-dashboard-deb:
 	$(call package,apisix-dashboard,deb)
 
+### build apisix-runtime:
+.PHONY: build-apisix-runtime-rpm
+build-apisix-runtime-rpm:
+ifeq ($(app),apisix)
+	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./apisix-runtime")
+	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
+endif
+
+.PHONY: build-apisix-runtime-deb
+build-apisix-runtime-deb:
+ifeq ($(app),apisix)
+	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
+	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+endif
+
+### build rpm for apisix-runtime:
+.PHONY: package-apisix-runtime-rpm
+package-apisix-runtime-rpm:
+	$(call package_runtime,apisix-runtime,rpm)
+
+### build deb for apisix-runtime:
+.PHONY: package-apisix-runtime-deb
+package-apisix-runtime-deb:
+	$(call package_runtime,apisix-runtime,deb)
+
 ### build apisix-base:
 .PHONY: build-apisix-base-rpm
 build-apisix-base-rpm:
@@ -211,14 +300,11 @@ build-fpm:
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 
-ifeq ($(filter $(app),apisix dashboard apisix-base),)
-$(info  the app's value have to be apisix, dashboard or apisix-base!)
+ifeq ($(filter $(app),apisix dashboard apisix-base apisix-runtime),)
+$(info  the app's value have to be apisix, dashboard, apisix-base and apisix-runtime!)
 
 else ifeq ($(filter $(type),rpm deb apk),)
 $(info  the type's value have to be rpm, deb or apk!)
-
-else ifeq ($(version), 0)
-$(info  you have to input a version value!)
 
 else ifeq ($(app)_$(type),apisix-base_rpm)
 package: build-fpm
@@ -230,6 +316,16 @@ package: build-fpm
 package: build-apisix-base-deb
 package: package-apisix-base-deb
 
+else ifeq ($(app)_$(type),apisix-runtime_deb)
+package: build-fpm
+package: build-apisix-runtime-deb
+package: package-apisix-runtime-deb
+
+else ifeq ($(app)_$(type),apisix-runtime_rpm)
+package: build-fpm
+package: build-apisix-runtime-rpm
+package: package-apisix-runtime-rpm
+
 else ifeq ($(app)_$(type),apisix-base_apk)
 package: build-apisix-base-apk
 
@@ -238,11 +334,13 @@ $(info  you have to input a checkout value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-fpm
+package: build-apisix-runtime-rpm
 package: build-apisix-rpm
 package: package-apisix-rpm
 
 else ifeq ($(app)_$(type),apisix_deb)
 package: build-fpm
+package: build-apisix-runtime-deb
 package: build-apisix-deb
 package: package-apisix-deb
 

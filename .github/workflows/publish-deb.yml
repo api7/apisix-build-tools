@@ -1,12 +1,26 @@
-name: Build and Publish Package
+name: Build and Publish DEB Package
 
 on:
-  create:
+  push:
+    tags:
+      - "apisix/*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish_apisix:
     name: Build and Publish deb Package
-    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - runner: ubuntu-22.04
+          arch: amd64
+        - runner: buildjet-2vcpu-ubuntu-2204-arm
+          arch: arm64
+    runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 60
     env:
       VAR_DEB_WORKBENCH_DIR: /tmp/output
@@ -15,6 +29,7 @@ jobs:
       VAR_OS: debian
       VAR_CODENAME: bullseye
       VAR_OS_RELEASE: bullseye-slim
+      ARCH: ${{ matrix.platform.arch }}
 
     steps:
       - name: Check out code
@@ -43,22 +58,37 @@ jobs:
       - name: Check Tags Type
         if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' }}
         run: |
-          echo "##[error]Tag type is not correct, please check it."
+          echo "##[error]Tag type is not correct, or not support, please check it."
           exit 1
 
-      - name: Build apisix/apisix-base deb Package
+      - name: Build apisix-base deb Package
+        if: ${{ env.TAG_TYPE == 'apisix-base' }}
+        run: |
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_${ARCH}.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Build apisix deb Package
+        if: ${{ env.TAG_TYPE == 'apisix' }}
+        run: |
+          wget https://raw.githubusercontent.com/apache/apisix/${TAG_VERSION}/.requirements && source .requirements
+
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime runtime_version=${APISIX_RUNTIME}
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_${ARCH}.deb ${VAR_DEB_WORKBENCH_DIR}
+
+      - name: Build apisix-runtime deb Package
+        if: ${{ env.TAG_TYPE == 'apisix-runtime' }}
         run: |
           echo build ${TAG_TYPE} deb package
           echo version ${TAG_VERSION}
 
-          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-base
-          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_amd64.deb ${VAR_DEB_WORKBENCH_DIR}
+          make package type=deb app=${TAG_TYPE} checkout=${TAG_VERSION} version=${TAG_VERSION} image_base=${VAR_OS} image_tag=${VAR_OS_RELEASE} openresty=apisix-runtime
+          mv ./output/${TAG_TYPE}_${TAG_VERSION}-0~${VAR_OS}${VAR_OS_RELEASE}_${ARCH}.deb ${VAR_DEB_WORKBENCH_DIR}
 
-      - name: Upload apisix/apisix-base Artifact
-        uses: actions/upload-artifact@v2.2.3
+      - name: Upload apisix/apisix-runtime/apisix-base Artifact
+        uses: actions/upload-artifact@v4.0.0
         with:
-          name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
-          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_amd64.deb"
+          name: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_${{ env.ARCH }}.deb"
+          path: "${{ env.VAR_DEB_WORKBENCH_DIR }}/${{ env.TAG_TYPE}}_${{ env.TAG_VERSION }}-0~${{ env.VAR_OS }}${{ env.VAR_OS_RELEASE }}_${{ env.ARCH }}.deb"
 
       - name: DEB repo deps init
         env:
@@ -94,7 +124,7 @@ jobs:
 
       - name: DEB repo publish for debian
         env:
-          UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_amd64.deb"
+          UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_${{ env.ARCH }}.deb"
         run: |
           sudo -E ./utils/publish-deb.sh repo_upload
           sudo -E ./utils/publish-deb.sh repo_publish

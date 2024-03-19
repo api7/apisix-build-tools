@@ -1,0 +1,26 @@
+ARG PACKAGE_TYPE
+ARG RUNTIME_VERSION
+
+FROM apache/apisix-runtime-${PACKAGE_TYPE}:${RUNTIME_VERSION} AS APISIX-RUNTIME
+FROM api7/fpm
+
+ARG ITERATION
+ARG PACKAGE_VERSION
+ARG RUNTIME_VERSION
+ARG PACKAGE_TYPE
+ARG ARTIFACT
+
+ENV ITERATION=${ITERATION}
+ENV PACKAGE_VERSION=${PACKAGE_VERSION}
+ENV RUNTIME_VERSION=${RUNTIME_VERSION}
+ENV PACKAGE_TYPE=${PACKAGE_TYPE}
+ENV ARTIFACT=${ARTIFACT}
+
+COPY --from=APISIX-RUNTIME /usr/local/openresty /tmp/build/output/openresty
+COPY --from=APISIX-RUNTIME /tmp/dist /tmp/dist
+COPY --from=APISIX-RUNTIME /tmp/codename /tmp/codename
+COPY package-apisix-runtime.sh /package-apisix-runtime.sh
+COPY post-install-apisix-runtime.sh /post-install-apisix-runtime.sh
+COPY usr /usr
+
+RUN /package-apisix-runtime.sh
