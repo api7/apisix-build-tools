@@ -7,7 +7,6 @@ dist=$(cat /tmp/dist)
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
 # Determine the dependencies
-dep_ldap="openldap-devel"
 if [ "$PACKAGE_TYPE" == "deb" ]
 then
     # the pkg contains the so library could be libldap-2.5 or libldap-2.4-2

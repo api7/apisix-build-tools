@@ -41,7 +41,7 @@ install_openresty_deb() {
 }
 
 install_openresty_rpm() {
-    yum install -y pcre pcre-devel openldap-devel
+    yum install -y pcre pcre-devel
 }
 
 install_luarocks() {
