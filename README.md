@@ -106,14 +106,6 @@ ls output/
 apisix-runtime_1.0.0-0~ubuntu20.04_amd64.deb
 ```
 
-Packaging an Alpine docker image of Apache APISIX's OpenResty distribution
-```sh
-make package type=apk app=apisix-runtime version=1.0.0 image_base=golang image_tag=1.19-alpine
-docker images
-REPOSITORY                  TAG       IMAGE ID       CREATED         SIZE
-apache/apisix-runtime-apk   1.0.0     cd456bf03d1c   9 seconds ago   504MB
-```
-
 ## Details
 
 - `Makefile` the entrance of the packager
