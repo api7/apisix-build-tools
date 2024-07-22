@@ -4,9 +4,9 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.1}
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.2}
 if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
-    OPENRESTY_VERSION="1.25.3.1"
+    OPENRESTY_VERSION="1.25.3.2"
 fi
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
