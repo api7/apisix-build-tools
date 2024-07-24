@@ -23,8 +23,7 @@ install_dependencies_rpm() {
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms yum-utils
     else
         yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo
-        yum install -y epel-release
-        yum install -y yum-utils readline-devel
+        yum install -y yum-utils
     fi
 }
 
