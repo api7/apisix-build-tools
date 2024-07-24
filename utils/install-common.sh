@@ -89,7 +89,7 @@ install_apisix() {
     # install rust
     install_rust
 
-    apt-get install -y libyaml-dev
+    yum install -y libyaml-devel
     # build the lib and specify the storage path of the package installed
     luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
