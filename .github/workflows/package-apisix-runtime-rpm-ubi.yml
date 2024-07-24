@@ -27,11 +27,11 @@ jobs:
 
       - name: build apisix-runtime rpm
         run: |
-          make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+          make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=redhat/ubi8 image_tag=8.6
 
       - name: run ubi8 docker and mapping apisix-runtime rpm into container
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" redhat/ubi8:8.6 /bin/bash
 
       - name: install rpm in container
         run: |

@@ -40,17 +40,17 @@ jobs:
       - name: packaging APISIX(-remote) with remote code
         run: |
           wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
-          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=redhat/ubi8 image_tag=8.6 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
           git clone -b ${APISIX_VERSION} https://github.com/apache/apisix.git
-          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=redhat/ubi8 image_tag=8.6 local_code_path=./apisix artifact=apisix-local
 
       - name: run ubi8 docker and mapping rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" redhat/ubi8:8.6 /bin/bash
 
       - name: enable apisix repository in container
         run: |
