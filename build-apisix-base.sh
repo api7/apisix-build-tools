@@ -29,6 +29,7 @@ else
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty"}
 fi
 
+
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)

@@ -70,6 +70,7 @@ then
         --config-files usr/local/apisix/conf/config.yaml \
         --config-files usr/local/apisix/conf/config-default.yaml
 else
+
     fpm -f -s dir -t "$PACKAGE_TYPE" \
         --"$PACKAGE_TYPE"-dist "$dist" \
         -n "$artifact" \
