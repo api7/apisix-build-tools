@@ -67,8 +67,7 @@ then
         --url 'http://apisix.apache.org/' \
         --config-files usr/lib/systemd/system/apisix.service \
         --config-files usr/lib/systemd/system/openresty.service \
-        --config-files usr/local/apisix/conf/config.yaml \
-        --config-files usr/local/apisix/conf/config-default.yaml
+        --config-files usr/local/apisix/conf/config.yaml
 else
     fpm -f -s dir -t "$PACKAGE_TYPE" \
         --"$PACKAGE_TYPE"-dist "$dist" \
@@ -87,8 +86,7 @@ else
         -p /output \
         --url 'http://apisix.apache.org/' \
         --config-files usr/lib/systemd/system/apisix.service \
-        --config-files usr/local/apisix/conf/config.yaml \
-        --config-files usr/local/apisix/conf/config-default.yaml
+        --config-files usr/local/apisix/conf/config.yaml
 fi
 
 PACKAGE_ARCH="amd64"
