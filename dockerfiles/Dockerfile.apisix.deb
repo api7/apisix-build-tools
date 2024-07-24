@@ -22,6 +22,7 @@ ARG IMAGE_TAG
 ARG CODE_PATH
 
 # install dependencies
+RUN apt-get update && apt-get install -y libyaml-dev
 RUN /install-common.sh install_apisix_dependencies_deb
 
 ENV checkout_v=${checkout_v}
