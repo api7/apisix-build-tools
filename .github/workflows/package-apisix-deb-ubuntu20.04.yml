@@ -53,9 +53,9 @@ jobs:
               }
             }'
           result_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/get || eval 'echo error'`
+          docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
           if [[ $result_code -ne 200 ]]; then
               printf "result_code: %s\n" "$result_code"
-              docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
               exit 125
           fi
 
