@@ -37,7 +37,7 @@ install_openssl_3(){
     fi
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+    wget --no-check-certificate https://github.com/openssl/openssl/releases/download/openssl-3.2.0/openssl-${OPENSSL_VERSION}.tar.gz
     tar xvf openssl-${OPENSSL_VERSION}.tar.gz
     cd openssl-${OPENSSL_VERSION}/
     export LDFLAGS="-Wl,-rpath,$zlib_prefix/lib:$OPENSSL_PREFIX/lib"
