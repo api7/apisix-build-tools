@@ -41,6 +41,7 @@ jobs:
         run: |
           docker run -d --rm --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
           sleep 20
+          docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
           curl http://127.0.0.1:9180/apisix/admin/routes/1 \
            -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
             {
@@ -53,7 +54,6 @@ jobs:
               }
             }'
           result_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} http://127.0.0.1:9080/get || eval 'echo error'`
-          docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
           if [[ $result_code -ne 200 ]]; then
               printf "result_code: %s\n" "$result_code"
               exit 125
