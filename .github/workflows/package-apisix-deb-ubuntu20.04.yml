@@ -37,10 +37,15 @@ jobs:
         run: |
           docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.ubuntu20.04 .
 
+      - name: Setup tmate session
+        if: always()
+        uses: mxschmitt/action-tmate@v3
+
       - name: start apisix and test
         run: |
           docker run -d --rm --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
           sleep 20
+          docker ps -a
           docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
           curl http://127.0.0.1:9180/apisix/admin/routes/1 \
            -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
