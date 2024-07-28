@@ -43,7 +43,7 @@ jobs:
 
       - name: start apisix and test
         run: |
-          docker run -d --rm --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
+          docker run -d --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
           sleep 20
           docker ps -a
           docker logs apisix-${PACKAGE_APISIX_VERSION}-deb-test
