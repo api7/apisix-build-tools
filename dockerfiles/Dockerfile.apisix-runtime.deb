@@ -20,6 +20,7 @@ ENV build_latest=${BUILD_LATEST:-}
 
 COPY ${CODE_PATH} ./
 
+RUN apt get-update && apt install libyaml-dev
 RUN mv ./utils/build-common.sh ./utils/determine-dist.sh ./ \
     && ./build-common.sh build_apisix_runtime_deb  ${build_latest} \
     # determine dist and write it into /tmp/dist file
