@@ -1,0 +1,1810 @@
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 0.034 ++ uname -m
+#19 0.034 ++ tr '[:upper:]' '[:lower:]'
+#19 0.035 + ARCH=aarch64
+#19 0.035 ++ pwd
+#19 0.036 + BUILD_PATH=/tmp
+#19 0.036 + case_opt=build_apisix_base_apk
+#19 0.036 + case ${case_opt} in
+#19 0.036 + build_apisix_base_apk
+#19 0.036 + export_openresty_variables
+#19 0.036 + export openssl_prefix=/usr/local/openresty/openssl111
+#19 0.036 + openssl_prefix=/usr/local/openresty/openssl111
+#19 0.036 + export zlib_prefix=/usr/local/openresty/zlib
+#19 0.036 + zlib_prefix=/usr/local/openresty/zlib
+#19 0.036 + export pcre_prefix=/usr/local/openresty/pcre
+#19 0.036 + pcre_prefix=/usr/local/openresty/pcre
+#19 0.036 + export OR_PREFIX=/usr/local/openresty
+#19 0.036 + OR_PREFIX=/usr/local/openresty
+#19 0.036 + export 'cc_opt=-DNGX_LUA_ABORT_AT_PANIC -I/usr/local/openresty/zlib/include -I/usr/local/openresty/pcre/include -I/usr/local/openresty/openssl111/include'
+#19 0.036 + cc_opt='-DNGX_LUA_ABORT_AT_PANIC -I/usr/local/openresty/zlib/include -I/usr/local/openresty/pcre/include -I/usr/local/openresty/openssl111/include'
+#19 0.036 + export 'ld_opt=-L/usr/local/openresty/zlib/lib -L/usr/local/openresty/pcre/lib -L/usr/local/openresty/openssl111/lib -Wl,-rpath,/usr/local/openresty/zlib/lib:/usr/local/openresty/pcre/lib:/usr/local/openresty/openssl111/lib'
+#19 0.036 + ld_opt='-L/usr/local/openresty/zlib/lib -L/usr/local/openresty/pcre/lib -L/usr/local/openresty/openssl111/lib -Wl,-rpath,/usr/local/openresty/zlib/lib:/usr/local/openresty/pcre/lib:/usr/local/openresty/openssl111/lib'
+#19 0.036 + /tmp/build-apisix-base.sh
+#19 0.038 + version=test
+#19 0.038 + '[' 0 -gt 0 ']'
+#19 0.038 + '[' test == latest ']'
+#19 0.039 + ngx_multi_upstream_module_ver=1.1.1
+#19 0.039 + mod_dubbo_ver=1.0.2
+#19 0.039 + apisix_nginx_module_ver=1.15.1
+#19 0.039 + wasm_nginx_module_ver=0.6.4
+#19 0.039 + lua_var_nginx_module_ver=v0.5.3
+#19 0.039 + grpc_client_nginx_module_ver=v0.4.0
+#19 0.039 + amesh_ver=main
+#19 0.039 + debug_args=
+#19 0.039 + OR_PREFIX=/usr/local/openresty
+#19 0.039 + prev_workdir=/tmp
+#19 0.039 ++ basename /tmp
+#19 0.040 + repo=tmp
+#19 0.040 ++ mktemp -d
+#19 0.041 + workdir=/tmp/tmp.rusxilHSRv
+#19 0.041 + cd /tmp/tmp.rusxilHSRv
+#19 0.041 + or_ver=1.21.4.4
+#19 0.041 + wget --no-check-certificate https://openresty.org/download/openresty-1.21.4.4.tar.gz
+#19 0.134 Connecting to openresty.org (52.220.196.30:443)
+#19 0.517 saving to 'openresty-1.21.4.4.tar.gz'
+#19 0.705 openresty-1.21.4.4.t   0% |                                | 48630  0:01:55 ETA
+#19 1.386 openresty-1.21.4.4.t 100% |********************************| 5527k  0:00:00 ETA
+#19 1.386 'openresty-1.21.4.4.tar.gz' saved
+#19 1.386 + tar -zxvpf openresty-1.21.4.4.tar.gz
+#19 2.005 + '[' tmp == ngx_multi_upstream_module ']'
+#19 2.005 + git clone --depth=1 -b 1.1.1 https://github.com/api7/ngx_multi_upstream_module.git ngx_multi_upstream_module-1.1.1
+#19 2.008 Cloning into 'ngx_multi_upstream_module-1.1.1'...
+#19 3.538 Note: switching to '4d4a8a18a1c9c73bee88bc278cbe6d508d5d1347'.
+#19 3.538 
+#19 3.538 You are in 'detached HEAD' state. You can look around, make experimental
+#19 3.538 changes and commit them, and you can discard any commits you make in this
+#19 3.538 state without impacting any branches by switching back to a branch.
+#19 3.538 
+#19 3.538 If you want to create a new branch to retain commits you create, you may
+#19 3.538 do so (now or later) by using -c with the switch command. Example:
+#19 3.538 
+#19 3.538   git switch -c <new-branch-name>
+#19 3.538 
+#19 3.538 Or undo this operation with:
+#19 3.538 
+#19 3.538   git switch -
+#19 3.538 
+#19 3.538 Turn off this advice by setting config variable advice.detachedHead to false
+#19 3.538 
+#19 3.541 + '[' tmp == mod_dubbo ']'
+#19 3.541 + git clone --depth=1 -b 1.0.2 https://github.com/api7/mod_dubbo.git mod_dubbo-1.0.2
+#19 3.543 Cloning into 'mod_dubbo-1.0.2'...
+#19 6.826 Note: switching to '4aabf9448fe4a49ca71009af8e03645ee5dadd15'.
+#19 6.826 
+#19 6.826 You are in 'detached HEAD' state. You can look around, make experimental
+#19 6.826 changes and commit them, and you can discard any commits you make in this
+#19 6.826 state without impacting any branches by switching back to a branch.
+#19 6.826 
+#19 6.826 If you want to create a new branch to retain commits you create, you may
+#19 6.826 do so (now or later) by using -c with the switch command. Example:
+#19 6.826 
+#19 6.826   git switch -c <new-branch-name>
+#19 6.826 
+#19 6.826 Or undo this operation with:
+#19 6.826 
+#19 6.826   git switch -
+#19 6.826 
+#19 6.826 Turn off this advice by setting config variable advice.detachedHead to false
+#19 6.826 
+#19 6.827 + '[' tmp == apisix-nginx-module ']'
+#19 6.827 + git clone --depth=1 -b 1.15.1 https://github.com/api7/apisix-nginx-module.git apisix-nginx-module-1.15.1
+#19 6.830 Cloning into 'apisix-nginx-module-1.15.1'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 12.09 Note: switching to 'cdee98e05b7ac33004a4a97371413112dbd50a1a'.
+#19 12.09 
+#19 12.09 You are in 'detached HEAD' state. You can look around, make experimental
+#19 12.09 changes and commit them, and you can discard any commits you make in this
+#19 12.09 state without impacting any branches by switching back to a branch.
+#19 12.09 
+#19 12.09 If you want to create a new branch to retain commits you create, you may
+#19 12.09 do so (now or later) by using -c with the switch command. Example:
+#19 12.09 
+#19 12.09   git switch -c <new-branch-name>
+#19 12.09 
+#19 12.09 Or undo this operation with:
+#19 12.09 
+#19 12.09   git switch -
+#19 12.09 
+#19 12.09 Turn off this advice by setting config variable advice.detachedHead to false
+#19 12.09 
+#19 12.13 + '[' tmp == wasm-nginx-module ']'
+#19 12.13 + git clone --depth=1 -b 0.6.4 https://github.com/api7/wasm-nginx-module.git wasm-nginx-module-0.6.4
+#19 12.14 Cloning into 'wasm-nginx-module-0.6.4'...
+#19 14.34 Note: switching to '0593cec919182e2fee591a4854fff4f29a4b5b52'.
+#19 14.34 
+#19 14.34 You are in 'detached HEAD' state. You can look around, make experimental
+#19 14.34 changes and commit them, and you can discard any commits you make in this
+#19 14.34 state without impacting any branches by switching back to a branch.
+#19 14.34 
+#19 14.34 If you want to create a new branch to retain commits you create, you may
+#19 14.34 do so (now or later) by using -c with the switch command. Example:
+#19 14.34 
+#19 14.34   git switch -c <new-branch-name>
+#19 14.34 
+#19 14.34 Or undo this operation with:
+#19 14.34 
+#19 14.34   git switch -
+#19 14.34 
+#19 14.34 Turn off this advice by setting config variable advice.detachedHead to false
+#19 14.34 
+#19 14.36 + '[' tmp == lua-var-nginx-module ']'
+#19 14.36 + git clone --depth=1 -b v0.5.3 https://github.com/api7/lua-var-nginx-module lua-var-nginx-module-v0.5.3
+#19 14.36 Cloning into 'lua-var-nginx-module-v0.5.3'...
+#19 17.69 Note: switching to 'dc04c71e14e8a0407831f9019043d7e6da61b3c3'.
+#19 17.69 
+#19 17.69 You are in 'detached HEAD' state. You can look around, make experimental
+#19 17.69 changes and commit them, and you can discard any commits you make in this
+#19 17.69 state without impacting any branches by switching back to a branch.
+#19 17.69 
+#19 17.69 If you want to create a new branch to retain commits you create, you may
+#19 17.69 do so (now or later) by using -c with the switch command. Example:
+#19 17.69 
+#19 17.69   git switch -c <new-branch-name>
+#19 17.69 
+#19 17.69 Or undo this operation with:
+#19 17.69 
+#19 17.69   git switch -
+#19 17.69 
+#19 17.69 Turn off this advice by setting config variable advice.detachedHead to false
+#19 17.69 
+#19 17.69 + '[' tmp == grpc-client-nginx-module ']'
+#19 17.69 + git clone --depth=1 -b v0.4.0 https://github.com/api7/grpc-client-nginx-module grpc-client-nginx-module-v0.4.0
+#19 17.69 Cloning into 'grpc-client-nginx-module-v0.4.0'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 28.44 Note: switching to '069bbe497c1d5bed0c8ebb5da220dd973d115f34'.
+#19 28.44 
+#19 28.44 You are in 'detached HEAD' state. You can look around, make experimental
+#19 28.44 changes and commit them, and you can discard any commits you make in this
+#19 28.44 state without impacting any branches by switching back to a branch.
+#19 28.44 
+#19 28.44 If you want to create a new branch to retain commits you create, you may
+#19 28.44 do so (now or later) by using -c with the switch command. Example:
+#19 28.44 
+#19 28.44   git switch -c <new-branch-name>
+#19 28.44 
+#19 28.44 Or undo this operation with:
+#19 28.44 
+#19 28.44   git switch -
+#19 28.44 
+#19 28.44 Turn off this advice by setting config variable advice.detachedHead to false
+#19 28.44 
+#19 28.44 + '[' tmp == amesh ']'
+#19 28.44 + git clone --depth=1 -b main https://github.com/api7/amesh amesh-main
+#19 28.45 Cloning into 'amesh-main'...
+#19 30.61 + cd ngx_multi_upstream_module-1.1.1
+#19 30.61 + ./patch.sh ../openresty-1.21.4.4
+#19 30.61 Start to patch /tmp/tmp.rusxilHSRv/ngx_multi_upstream_module-1.1.1/nginx-1.21.4.patch to ../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.61 Hmm...  Looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/core/ngx_connection.h src/core/ngx_connection.h
+#19 30.61 |--- src/core/ngx_connection.h
+#19 30.61 |+++ src/core/ngx_connection.h
+#19 30.61 --------------------------
+#19 30.61 patching file src/core/ngx_connection.h
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 192 (offset -1 lines).
+#19 30.61 Hmm...  The next patch looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/http/ngx_http_request.h src/http/ngx_http_request.h
+#19 30.61 |--- src/http/ngx_http_request.h
+#19 30.61 |+++ src/http/ngx_http_request.h
+#19 30.61 --------------------------
+#19 30.61 patching file src/http/ngx_http_request.h
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 597 (offset 4 lines).
+#19 30.61 Hmm...  The next patch looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/http/ngx_http_upstream.c src/http/ngx_http_upstream.c
+#19 30.61 |--- src/http/ngx_http_upstream.c
+#19 30.61 |+++ src/http/ngx_http_upstream.c
+#19 30.61 --------------------------
+#19 30.61 patching file src/http/ngx_http_upstream.c
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 9.
+#19 30.61 Hunk #2 succeeded at 1519 (offset 13 lines).
+#19 30.61 Hunk #3 succeeded at 1586 (offset 14 lines).
+#19 30.61 Hunk #4 succeeded at 1859 with fuzz 1 (offset 28 lines).
+#19 30.61 Hunk #5 succeeded at 2192 with fuzz 1 (offset 71 lines).
+#19 30.61 Hunk #6 succeeded at 2241 (offset 71 lines).
+#19 30.61 Hunk #7 succeeded at 2284 (offset 71 lines).
+#19 30.61 Hunk #8 succeeded at 3701 (offset 69 lines).
+#19 30.61 Hunk #9 succeeded at 4343 (offset 76 lines).
+#19 30.61 Hunk #10 succeeded at 4520 (offset 76 lines).
+#19 30.61 Hmm...  The next patch looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/http/ngx_http_upstream.h src/http/ngx_http_upstream.h
+#19 30.61 |--- src/http/ngx_http_upstream.h
+#19 30.61 |+++ src/http/ngx_http_upstream.h
+#19 30.61 --------------------------
+#19 30.61 patching file src/http/ngx_http_upstream.h
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 406 (offset 4 lines).
+#19 30.61 Hmm...  The next patch looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/stream/ngx_stream.h src/stream/ngx_stream.h
+#19 30.61 |--- src/stream/ngx_stream.h
+#19 30.61 |+++ src/stream/ngx_stream.h
+#19 30.61 --------------------------
+#19 30.61 patching file src/stream/ngx_stream.h
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 232 (offset 3 lines).
+#19 30.61 Hmm...  The next patch looks like a unified diff to me...
+#19 30.61 The text leading up to this was:
+#19 30.61 --------------------------
+#19 30.61 |diff --git src/stream/ngx_stream_upstream.h src/stream/ngx_stream_upstream.h
+#19 30.61 |--- src/stream/ngx_stream_upstream.h
+#19 30.61 |+++ src/stream/ngx_stream_upstream.h
+#19 30.61 --------------------------
+#19 30.61 patching file src/stream/ngx_stream_upstream.h
+#19 30.61 Using Plan A...
+#19 30.61 Hunk #1 succeeded at 143 (offset 1 line).
+#19 30.61 done
+#19 30.61 + cd ..
+#19 30.61 + cd apisix-nginx-module-1.15.1/patch
+#19 30.61 + ./patch.sh ../../openresty-1.21.4.4
+#19 30.62 /tmp/tmp.rusxilHSRv/openresty-1.21.4.4/bundle/nginx-1.21.4 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.62 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-client_max_body_size.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.62 Hmm...  Looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/ngx_http_core_module.c src/http/ngx_http_core_module.c
+#19 30.62 |index fe1da4576..9beba971e 100644
+#19 30.62 |--- src/http/ngx_http_core_module.c
+#19 30.62 |+++ src/http/ngx_http_core_module.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/ngx_http_core_module.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 8.
+#19 30.62 Hunk #2 succeeded at 995 (offset 10 lines).
+#19 30.62 Hmm...  The next patch looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/ngx_http_request_body.c src/http/ngx_http_request_body.c
+#19 30.62 |index ad3549f98..20a5ec500 100644
+#19 30.62 |--- src/http/ngx_http_request_body.c
+#19 30.62 |+++ src/http/ngx_http_request_body.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/ngx_http_request_body.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 8.
+#19 30.62 Hunk #2 succeeded at 51.
+#19 30.62 Hunk #3 succeeded at 1094.
+#19 30.62 Hunk #4 succeeded at 1137.
+#19 30.62 Hmm...  The next patch looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/v2/ngx_http_v2.c src/http/v2/ngx_http_v2.c
+#19 30.62 |index 3afa8b638..c31b98b35 100644
+#19 30.62 |--- src/http/v2/ngx_http_v2.c
+#19 30.62 |+++ src/http/v2/ngx_http_v2.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/v2/ngx_http_v2.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 9.
+#19 30.62 Hunk #2 succeeded at 4342 (offset 15 lines).
+#19 30.62 done
+#19 30.62 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-connection-original-dst.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.62 Hmm...  Looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git auto/os/linux auto/os/linux
+#19 30.62 |index 5e280eca..086e5372 100644
+#19 30.62 |--- auto/os/linux
+#19 30.62 |+++ auto/os/linux
+#19 30.62 --------------------------
+#19 30.62 patching file auto/os/linux
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 215 (offset 25 lines).
+#19 30.62 Hmm...  The next patch looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/ngx_http_variables.c src/http/ngx_http_variables.c
+#19 30.62 |index c2113c84..1c2a06a7 100644
+#19 30.62 |--- src/http/ngx_http_variables.c
+#19 30.62 |+++ src/http/ngx_http_variables.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/ngx_http_variables.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 132 with fuzz 1 (offset 2 lines).
+#19 30.62 Hunk #2 succeeded at 352 with fuzz 2 (offset 5 lines).
+#19 30.62 Hunk #3 succeeded at 2296 (offset 34 lines).
+#19 30.62 Hmm...  The next patch looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/os/unix/ngx_linux_config.h src/os/unix/ngx_linux_config.h
+#19 30.62 |index 3036caeb..2353e9b3 100644
+#19 30.62 |--- src/os/unix/ngx_linux_config.h
+#19 30.62 |+++ src/os/unix/ngx_linux_config.h
+#19 30.62 --------------------------
+#19 30.62 patching file src/os/unix/ngx_linux_config.h
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 103.
+#19 30.62 done
+#19 30.62 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-enable_ntls.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.62 Hmm...  Looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/ngx_http_request.c src/http/ngx_http_request.c
+#19 30.62 |index 013b715..96be553 100644
+#19 30.62 |--- src/http/ngx_http_request.c
+#19 30.62 |+++ src/http/ngx_http_request.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/ngx_http_request.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 8.
+#19 30.62 Hunk #2 succeeded at 757.
+#19 30.62 done
+#19 30.62 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-error_page_contains_apisix.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.62 Hmm...  Looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git docs/html/50x.html docs/html/50x.html
+#19 30.62 |index 2aa3f1e..cd67297 100644
+#19 30.62 |--- docs/html/50x.html
+#19 30.62 |+++ docs/html/50x.html
+#19 30.62 --------------------------
+#19 30.62 patching file docs/html/50x.html
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 1.
+#19 30.62 Hmm...  The next patch looks like a unified diff to me...
+#19 30.62 The text leading up to this was:
+#19 30.62 --------------------------
+#19 30.62 |diff --git src/http/ngx_http_special_response.c src/http/ngx_http_special_response.c
+#19 30.62 |index 0cfc299..79493e2 100644
+#19 30.62 |--- src/http/ngx_http_special_response.c
+#19 30.62 |+++ src/http/ngx_http_special_response.c
+#19 30.62 --------------------------
+#19 30.62 patching file src/http/ngx_http_special_response.c
+#19 30.62 Using Plan A...
+#19 30.62 Hunk #1 succeeded at 20.
+#19 30.62 Hunk #2 succeeded at 28.
+#19 30.62 Hunk #3 succeeded at 36.
+#19 30.62 done
+#19 30.62 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-get_last_reopen_time.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.63 Hmm...  Looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/os/unix/ngx_process_cycle.c src/os/unix/ngx_process_cycle.c
+#19 30.63 |index fe5f34a..e8ebf3d 100644
+#19 30.63 |--- src/os/unix/ngx_process_cycle.c
+#19 30.63 |+++ src/os/unix/ngx_process_cycle.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/os/unix/ngx_process_cycle.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 45.
+#19 30.63 Hunk #2 succeeded at 290.
+#19 30.63 Hunk #3 succeeded at 369.
+#19 30.63 Hunk #4 succeeded at 780 (offset 11 lines).
+#19 30.63 Hunk #5 succeeded at 826 (offset 11 lines).
+#19 30.63 Hunk #6 succeeded at 837 (offset 11 lines).
+#19 30.63 done
+#19 30.63 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-grpc_set_header_authority.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.63 Hmm...  Looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/modules/ngx_http_grpc_module.c src/http/modules/ngx_http_grpc_module.c
+#19 30.63 |index 58332866..01c0f489 100644
+#19 30.63 |--- src/http/modules/ngx_http_grpc_module.c
+#19 30.63 |+++ src/http/modules/ngx_http_grpc_module.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/modules/ngx_http_grpc_module.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 4611 (offset -10 lines).
+#19 30.63 done
+#19 30.63 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-gzip.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.63 Hmm...  Looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/modules/ngx_http_gzip_filter_module.c src/http/modules/ngx_http_gzip_filter_module.c
+#19 30.63 |index c75169c..723b040 100644
+#19 30.63 |--- src/http/modules/ngx_http_gzip_filter_module.c
+#19 30.63 |+++ src/http/modules/ngx_http_gzip_filter_module.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/modules/ngx_http_gzip_filter_module.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 8.
+#19 30.63 Hunk #2 succeeded at 228.
+#19 30.63 Hunk #3 succeeded at 261.
+#19 30.63 Hunk #4 succeeded at 542 (offset 3 lines).
+#19 30.63 Hunk #5 succeeded at 652 (offset 2 lines).
+#19 30.63 Hunk #6 succeeded at 754 (offset 2 lines).
+#19 30.63 Hunk #7 succeeded at 772 (offset 2 lines).
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/ngx_http_core_module.c src/http/ngx_http_core_module.c
+#19 30.63 |index b900467..160e512 100644
+#19 30.63 |--- src/http/ngx_http_core_module.c
+#19 30.63 |+++ src/http/ngx_http_core_module.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/ngx_http_core_module.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 2082 (offset 17 lines).
+#19 30.63 done
+#19 30.63 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-listen-in-privileged-agent.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.63 Hmm...  Looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/core/ngx_connection.c src/core/ngx_connection.c
+#19 30.63 |index 568ae3d..e22c990 100644
+#19 30.63 |--- src/core/ngx_connection.c
+#19 30.63 |+++ src/core/ngx_connection.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/core/ngx_connection.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 434.
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/core/ngx_connection.h src/core/ngx_connection.h
+#19 30.63 |index be75d82..12c8694 100644
+#19 30.63 |--- src/core/ngx_connection.h
+#19 30.63 |+++ src/core/ngx_connection.h
+#19 30.63 --------------------------
+#19 30.63 patching file src/core/ngx_connection.h
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 66.
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/event/ngx_event.c src/event/ngx_event.c
+#19 30.63 |index d800af0..f73e57c 100644
+#19 30.63 |--- src/event/ngx_event.c
+#19 30.63 |+++ src/event/ngx_event.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/event/ngx_event.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 821 (offset 3 lines).
+#19 30.63 Hunk #2 succeeded at 838 (offset 3 lines).
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/ngx_http.c src/http/ngx_http.c
+#19 30.63 |index e1d3d00..7ad72e3 100644
+#19 30.63 |--- src/http/ngx_http.c
+#19 30.63 |+++ src/http/ngx_http.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/ngx_http.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 1254 (offset 37 lines).
+#19 30.63 Hunk #2 succeeded at 1812 (offset 36 lines).
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/ngx_http_core_module.c src/http/ngx_http_core_module.c
+#19 30.63 |index 6287d6e..a84dd80 100644
+#19 30.63 |--- src/http/ngx_http_core_module.c
+#19 30.63 |+++ src/http/ngx_http_core_module.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/ngx_http_core_module.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 4214 (offset 12 lines).
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/ngx_http_core_module.h src/http/ngx_http_core_module.h
+#19 30.63 |index 2aadae7..6ba3a90 100644
+#19 30.63 |--- src/http/ngx_http_core_module.h
+#19 30.63 |+++ src/http/ngx_http_core_module.h
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/ngx_http_core_module.h
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 82.
+#19 30.63 Hmm...  The next patch looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/os/unix/ngx_process_cycle.c src/os/unix/ngx_process_cycle.c
+#19 30.63 |index e8ebf3d..8227ecf 100644
+#19 30.63 |--- src/os/unix/ngx_process_cycle.c
+#19 30.63 |+++ src/os/unix/ngx_process_cycle.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/os/unix/ngx_process_cycle.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 1262 with fuzz 1 (offset 12 lines).
+#19 30.63 Hunk #2 succeeded at 1281 (offset 12 lines).
+#19 30.63 done
+#19 30.63 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-mirror.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.63 Hmm...  Looks like a unified diff to me...
+#19 30.63 The text leading up to this was:
+#19 30.63 --------------------------
+#19 30.63 |diff --git src/http/modules/ngx_http_mirror_module.c src/http/modules/ngx_http_mirror_module.c
+#19 30.63 |index 787adb3..61d0fd3 100644
+#19 30.63 |--- src/http/modules/ngx_http_mirror_module.c
+#19 30.63 |+++ src/http/modules/ngx_http_mirror_module.c
+#19 30.63 --------------------------
+#19 30.63 patching file src/http/modules/ngx_http_mirror_module.c
+#19 30.63 Using Plan A...
+#19 30.63 Hunk #1 succeeded at 8.
+#19 30.63 Hunk #2 succeeded at 39.
+#19 30.63 Hunk #3 succeeded at 114.
+#19 30.63 Hunk #4 succeeded at 207.
+#19 30.63 Hunk #5 succeeded at 222.
+#19 30.63 done
+#19 30.63 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-privileged_agent_process_thread.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/core/ngx_thread_pool.c src/core/ngx_thread_pool.c
+#19 30.64 |index 7fb0f7f..95081a6 100644
+#19 30.64 |--- src/core/ngx_thread_pool.c
+#19 30.64 |+++ src/core/ngx_thread_pool.c
+#19 30.64 --------------------------
+#19 30.64 patching file src/core/ngx_thread_pool.c
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 622 with fuzz 1 (offset 35 lines).
+#19 30.64 done
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-proxy_request_buffering.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/http/modules/ngx_http_proxy_module.c src/http/modules/ngx_http_proxy_module.c
+#19 30.64 |index 3f05235..41c2313 100644
+#19 30.64 |--- src/http/modules/ngx_http_proxy_module.c
+#19 30.64 |+++ src/http/modules/ngx_http_proxy_module.c
+#19 30.64 --------------------------
+#19 30.64 patching file src/http/modules/ngx_http_proxy_module.c
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 8.
+#19 30.64 Hunk #2 succeeded at 1013 (offset -3 lines).
+#19 30.64 done
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-real_ip.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git auto/modules auto/modules
+#19 30.64 |index f1c63f3..a71f9d7 100644
+#19 30.64 |--- auto/modules
+#19 30.64 |+++ auto/modules
+#19 30.64 --------------------------
+#19 30.64 patching file auto/modules
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 578.
+#19 30.64 Hmm...  The next patch looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/http/modules/ngx_http_realip_module.c src/http/modules/ngx_http_realip_module.c
+#19 30.64 |index 9586ebe..05a40ea 100644
+#19 30.64 |--- src/http/modules/ngx_http_realip_module.c
+#19 30.64 |+++ src/http/modules/ngx_http_realip_module.c
+#19 30.64 --------------------------
+#19 30.64 patching file src/http/modules/ngx_http_realip_module.c
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 311.
+#19 30.64 Hmm...  The next patch looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/http/modules/ngx_http_realip_module.h src/http/modules/ngx_http_realip_module.h
+#19 30.64 |new file mode 100644
+#19 30.64 |index 0000000..8593c4b
+#19 30.64 |--- /dev/null
+#19 30.64 |+++ src/http/modules/ngx_http_realip_module.h
+#19 30.64 --------------------------
+#19 30.64 patching file src/http/modules/ngx_http_realip_module.h
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 1.
+#19 30.64 done
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-tcp_over_tls.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/stream/ngx_stream_proxy_module.c src/stream/ngx_stream_proxy_module.c
+#19 30.64 |index b3d8a43..424c381 100644
+#19 30.64 |--- src/stream/ngx_stream_proxy_module.c
+#19 30.64 |+++ src/stream/ngx_stream_proxy_module.c
+#19 30.64 --------------------------
+#19 30.64 patching file src/stream/ngx_stream_proxy_module.c
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 8.
+#19 30.64 Hunk #2 succeeded at 824 (offset 9 lines).
+#19 30.64 Hunk #3 succeeded at 2222 (offset 87 lines).
+#19 30.64 done
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/nginx-upstream_mtls.patch to ../../openresty-1.21.4.4/bundle/nginx-1.21.4...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git src/http/ngx_http_upstream.c src/http/ngx_http_upstream.c
+#19 30.64 |index 76045c4..cee3e2a 100644
+#19 30.64 |--- src/http/ngx_http_upstream.c
+#19 30.64 |+++ src/http/ngx_http_upstream.c
+#19 30.64 --------------------------
+#19 30.64 patching file src/http/ngx_http_upstream.c
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 8.
+#19 30.64 Hunk #2 succeeded at 1792 (offset 23 lines).
+#19 30.64 done
+#19 30.64 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.64 /tmp/tmp.rusxilHSRv/openresty-1.21.4.4/bundle/lua-resty-core-0.1.27 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/lua-resty-core-enable_keepalive.patch to ../../openresty-1.21.4.4/bundle/lua-resty-core-0.1.27...
+#19 30.64 Hmm...  Looks like a unified diff to me...
+#19 30.64 The text leading up to this was:
+#19 30.64 --------------------------
+#19 30.64 |diff --git lib/ngx/balancer.lua lib/ngx/balancer.lua
+#19 30.64 |index 7d64d63..781cbd1 100644
+#19 30.64 |--- lib/ngx/balancer.lua
+#19 30.64 |+++ lib/ngx/balancer.lua
+#19 30.64 --------------------------
+#19 30.64 patching file lib/ngx/balancer.lua
+#19 30.64 Using Plan A...
+#19 30.64 Hunk #1 succeeded at 3.
+#19 30.64 Hunk #2 succeeded at 18.
+#19 30.64 Hunk #3 succeeded at 30.
+#19 30.64 Hunk #4 succeeded at 53.
+#19 30.64 Hunk #5 succeeded at 106.
+#19 30.64 Hunk #6 succeeded at 121.
+#19 30.64 done
+#19 30.64 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/lua-resty-core-pipe_runner.patch to ../../openresty-1.21.4.4/bundle/lua-resty-core-0.1.27...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git lib/ngx/pipe.lua lib/ngx/pipe.lua
+#19 30.65 |index 3757ab7..413a10e 100644
+#19 30.65 |--- lib/ngx/pipe.lua
+#19 30.65 |+++ lib/ngx/pipe.lua
+#19 30.65 --------------------------
+#19 30.65 patching file lib/ngx/pipe.lua
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 47.
+#19 30.65 Hunk #2 succeeded at 624.
+#19 30.65 done
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/lua-resty-core-reject-in-handshake.patch to ../../openresty-1.21.4.4/bundle/lua-resty-core-0.1.27...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git lib/ngx/ssl.lua lib/ngx/ssl.lua
+#19 30.65 |index b769fd8..89ccabe 100644
+#19 30.65 |--- lib/ngx/ssl.lua
+#19 30.65 |+++ lib/ngx/ssl.lua
+#19 30.65 --------------------------
+#19 30.65 patching file lib/ngx/ssl.lua
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 86 (offset 1 line).
+#19 30.65 Hunk #2 succeeded at 157 (offset 2 lines).
+#19 30.65 Hunk #3 succeeded at 417 (offset 3 lines).
+#19 30.65 Hunk #4 succeeded at 427 (offset 3 lines).
+#19 30.65 done
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/lua-resty-core-shared_shdict.patch to ../../openresty-1.21.4.4/bundle/lua-resty-core-0.1.27...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git lib/resty/core/shdict.lua lib/resty/core/shdict.lua
+#19 30.65 |index 8d60d16..4f79df1 100644
+#19 30.65 |--- lib/resty/core/shdict.lua
+#19 30.65 |+++ lib/resty/core/shdict.lua
+#19 30.65 --------------------------
+#19 30.65 patching file lib/resty/core/shdict.lua
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 28.
+#19 30.65 Hunk #2 succeeded at 41.
+#19 30.65 Hunk #3 succeeded at 108.
+#19 30.65 Hunk #4 succeeded at 123.
+#19 30.65 Hunk #5 succeeded at 135.
+#19 30.65 Hunk #6 succeeded at 166.
+#19 30.65 Hunk #7 succeeded at 183.
+#19 30.65 Hunk #8 succeeded at 205.
+#19 30.65 done
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/lua-resty-core-tlshandshake.patch to ../../openresty-1.21.4.4/bundle/lua-resty-core-0.1.27...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git Makefile Makefile
+#19 30.65 |index 3caabe2..6361a23 100644
+#19 30.65 |--- Makefile
+#19 30.65 |+++ Makefile
+#19 30.65 --------------------------
+#19 30.65 patching file Makefile
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 12.
+#19 30.65 Hmm...  The next patch looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git lib/resty/core.lua lib/resty/core.lua
+#19 30.65 |index e92084c..fd823ce 100644
+#19 30.65 |--- lib/resty/core.lua
+#19 30.65 |+++ lib/resty/core.lua
+#19 30.65 --------------------------
+#19 30.65 patching file lib/resty/core.lua
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 25.
+#19 30.65 Hmm...  The next patch looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git lib/resty/core/socket/tcp.lua lib/resty/core/socket/tcp.lua
+#19 30.65 |new file mode 100644
+#19 30.65 |index 0000000..f66f51f
+#19 30.65 |--- /dev/null
+#19 30.65 |+++ lib/resty/core/socket/tcp.lua
+#19 30.65 --------------------------
+#19 30.65 patching file lib/resty/core/socket/tcp.lua
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 1.
+#19 30.65 done
+#19 30.65 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.65 /tmp/tmp.rusxilHSRv/openresty-1.21.4.4/bundle/ngx_lua-0.10.25 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-enable_keepalive.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_balancer.c src/ngx_http_lua_balancer.c
+#19 30.65 |index af4da73..a284317 100644
+#19 30.65 |--- src/ngx_http_lua_balancer.c
+#19 30.65 |+++ src/ngx_http_lua_balancer.c
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_balancer.c
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 16.
+#19 30.65 Hunk #2 succeeded at 159.
+#19 30.65 Hunk #3 succeeded at 237.
+#19 30.65 Hunk #4 succeeded at 302.
+#19 30.65 Hunk #5 succeeded at 351.
+#19 30.65 Hunk #6 succeeded at 373.
+#19 30.65 Hunk #7 succeeded at 412.
+#19 30.65 Hunk #8 succeeded at 449.
+#19 30.65 Hunk #9 succeeded at 488.
+#19 30.65 Hunk #10 succeeded at 577.
+#19 30.65 Hunk #11 succeeded at 916.
+#19 30.65 Hunk #12 succeeded at 930.
+#19 30.65 Hunk #13 succeeded at 943.
+#19 30.65 Hunk #14 succeeded at 974.
+#19 30.65 Hunk #15 succeeded at 997.
+#19 30.65 Hunk #16 succeeded at 1009.
+#19 30.65 Hunk #17 succeeded at 1071.
+#19 30.65 Hunk #18 succeeded at 1102.
+#19 30.65 Hunk #19 succeeded at 1159.
+#19 30.65 Hunk #20 succeeded at 1188.
+#19 30.65 Hunk #21 succeeded at 1214.
+#19 30.65 Hunk #22 succeeded at 1242.
+#19 30.65 Hmm...  The next patch looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_common.h src/ngx_http_lua_common.h
+#19 30.65 |index 8435045..ea45f3a 100644
+#19 30.65 |--- src/ngx_http_lua_common.h
+#19 30.65 |+++ src/ngx_http_lua_common.h
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_common.h
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 247.
+#19 30.65 Hunk #2 succeeded at 341.
+#19 30.65 Hmm...  The next patch looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_module.c src/ngx_http_lua_module.c
+#19 30.65 |index 16f4424..b3b0d72 100644
+#19 30.65 |--- src/ngx_http_lua_module.c
+#19 30.65 |+++ src/ngx_http_lua_module.c
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_module.c
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 1158.
+#19 30.65 done
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-pipe-runner.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_pipe.c src/ngx_http_lua_pipe.c
+#19 30.65 |index 8c0884bc..8369160f 100644
+#19 30.65 |--- src/ngx_http_lua_pipe.c
+#19 30.65 |+++ src/ngx_http_lua_pipe.c
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_pipe.c
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 599.
+#19 30.65 Hunk #2 succeeded at 619.
+#19 30.65 Hunk #3 succeeded at 906.
+#19 30.65 Hunk #4 succeeded at 1176.
+#19 30.65 Hmm...  The next patch looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_pipe.h src/ngx_http_lua_pipe.h
+#19 30.65 |index f1c92835..ecb86c88 100644
+#19 30.65 |--- src/ngx_http_lua_pipe.h
+#19 30.65 |+++ src/ngx_http_lua_pipe.h
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_pipe.h
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 57.
+#19 30.65 done
+#19 30.65 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-reject-in-handshake.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.65 Hmm...  Looks like a unified diff to me...
+#19 30.65 The text leading up to this was:
+#19 30.65 --------------------------
+#19 30.65 |diff --git src/ngx_http_lua_ssl_certby.c src/ngx_http_lua_ssl_certby.c
+#19 30.65 |index 6ed2f3f..c46cc91 100644
+#19 30.65 |--- src/ngx_http_lua_ssl_certby.c
+#19 30.65 |+++ src/ngx_http_lua_ssl_certby.c
+#19 30.65 --------------------------
+#19 30.65 patching file src/ngx_http_lua_ssl_certby.c
+#19 30.65 Using Plan A...
+#19 30.65 Hunk #1 succeeded at 1358 with fuzz 2 (offset 12 lines).
+#19 30.65 Hunk #2 succeeded at 1414 (offset 19 lines).
+#19 30.66 done
+#19 30.66 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-request_header_set.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.66 Hmm...  Looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_headers.c src/ngx_http_lua_headers.c
+#19 30.66 |index d8d5edc..bd17dd8 100644
+#19 30.66 |--- src/ngx_http_lua_headers.c
+#19 30.66 |+++ src/ngx_http_lua_headers.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_headers.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 15.
+#19 30.66 Hunk #2 succeeded at 997 (offset 12 lines).
+#19 30.66 done
+#19 30.66 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-shared_shdict.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.66 Hmm...  Looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git config config
+#19 30.66 |index 0e572c8b..a688cf61 100644
+#19 30.66 |--- config
+#19 30.66 |+++ config
+#19 30.66 --------------------------
+#19 30.66 patching file config
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 269.
+#19 30.66 Hunk #2 succeeded at 333.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/api/ngx_http_lua_api.h src/api/ngx_http_lua_api.h
+#19 30.66 |index 640e0c39..11245d2f 100644
+#19 30.66 |--- src/api/ngx_http_lua_api.h
+#19 30.66 |+++ src/api/ngx_http_lua_api.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/api/ngx_http_lua_api.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 51.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_api.c src/ngx_http_lua_api.c
+#19 30.66 |index 0d3ec9c9..e01cddbb 100644
+#19 30.66 |--- src/ngx_http_lua_api.c
+#19 30.66 |+++ src/ngx_http_lua_api.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_api.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hunk #2 succeeded at 33.
+#19 30.66 Hunk #3 succeeded at 78.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_common.h src/ngx_http_lua_common.h
+#19 30.66 |index 84350454..84f9ce3f 100644
+#19 30.66 |--- src/ngx_http_lua_common.h
+#19 30.66 |+++ src/ngx_http_lua_common.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_common.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 23.
+#19 30.66 Hunk #2 succeeded at 69.
+#19 30.66 Hunk #3 succeeded at 177.
+#19 30.66 Hunk #4 succeeded at 228.
+#19 30.66 Hunk #5 succeeded at 266 (offset -7 lines).
+#19 30.66 Hunk #6 succeeded at 296 (offset -7 lines).
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_directive.c src/ngx_http_lua_directive.c
+#19 30.66 |index f42aae9d..1fb66b2e 100644
+#19 30.66 |--- src/ngx_http_lua_directive.c
+#19 30.66 |+++ src/ngx_http_lua_directive.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_directive.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 25.
+#19 30.66 Hunk #2 succeeded at 75.
+#19 30.66 Hunk #3 succeeded at 99.
+#19 30.66 Hunk #4 succeeded at 1185.
+#19 30.66 Hunk #5 succeeded at 1256.
+#19 30.66 Hunk #6 succeeded at 1324.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_directive.h src/ngx_http_lua_directive.h
+#19 30.66 |index 4bec5e30..d91315c4 100644
+#19 30.66 |--- src/ngx_http_lua_directive.h
+#19 30.66 |+++ src/ngx_http_lua_directive.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_directive.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_exitworkerby.c src/ngx_http_lua_exitworkerby.c
+#19 30.66 |index e8f65110..5f9079bc 100644
+#19 30.66 |--- src/ngx_http_lua_exitworkerby.c
+#19 30.66 |+++ src/ngx_http_lua_exitworkerby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_exitworkerby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 75.
+#19 30.66 Hunk #2 succeeded at 93.
+#19 30.66 Hunk #3 succeeded at 106.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_exitworkerby.h src/ngx_http_lua_exitworkerby.h
+#19 30.66 |index 3a4274c0..ad8f63b6 100644
+#19 30.66 |--- src/ngx_http_lua_exitworkerby.h
+#19 30.66 |+++ src/ngx_http_lua_exitworkerby.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_exitworkerby.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_headerfilterby.c src/ngx_http_lua_headerfilterby.c
+#19 30.66 |index 71553558..86c58754 100644
+#19 30.66 |--- src/ngx_http_lua_headerfilterby.c
+#19 30.66 |+++ src/ngx_http_lua_headerfilterby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_headerfilterby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 19.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_initby.c src/ngx_http_lua_initby.c
+#19 30.66 |index 1f956e7e..4e8d898f 100644
+#19 30.66 |--- src/ngx_http_lua_initby.c
+#19 30.66 |+++ src/ngx_http_lua_initby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_initby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 14.
+#19 30.66 Hunk #2 succeeded at 28.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_initby.h src/ngx_http_lua_initby.h
+#19 30.66 |index 67ac0b6c..cbd439aa 100644
+#19 30.66 |--- src/ngx_http_lua_initby.h
+#19 30.66 |+++ src/ngx_http_lua_initby.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_initby.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_initworkerby.c src/ngx_http_lua_initworkerby.c
+#19 30.66 |index 449e604a..41ce55b8 100644
+#19 30.66 |--- src/ngx_http_lua_initworkerby.c
+#19 30.66 |+++ src/ngx_http_lua_initworkerby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_initworkerby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 295.
+#19 30.66 Hunk #2 succeeded at 317.
+#19 30.66 Hunk #3 succeeded at 330.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_initworkerby.h src/ngx_http_lua_initworkerby.h
+#19 30.66 |index 40b2db0e..d4c399cf 100644
+#19 30.66 |--- src/ngx_http_lua_initworkerby.h
+#19 30.66 |+++ src/ngx_http_lua_initworkerby.h
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_initworkerby.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_logby.c src/ngx_http_lua_logby.c
+#19 30.66 |index b47058be..a31d424b 100644
+#19 30.66 |--- src/ngx_http_lua_logby.c
+#19 30.66 |+++ src/ngx_http_lua_logby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_logby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 21.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_module.c src/ngx_http_lua_module.c
+#19 30.66 |index 16f44246..ea40b587 100644
+#19 30.66 |--- src/ngx_http_lua_module.c
+#19 30.66 |+++ src/ngx_http_lua_module.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_module.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 10.
+#19 30.66 Hunk #2 succeeded at 120.
+#19 30.66 Hunk #3 succeeded at 728.
+#19 30.66 Hunk #4 succeeded at 916.
+#19 30.66 Hunk #5 succeeded at 980.
+#19 30.66 Hunk #6 succeeded at 989.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_setby.c src/ngx_http_lua_setby.c
+#19 30.66 |index 98e8d47f..4994ccd2 100644
+#19 30.66 |--- src/ngx_http_lua_setby.c
+#19 30.66 |+++ src/ngx_http_lua_setby.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_setby.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 19.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_shdict.c src/ngx_http_lua_shdict.c
+#19 30.66 |deleted file mode 100644
+#19 30.66 |index 2e0b0440..00000000
+#19 30.66 |--- src/ngx_http_lua_shdict.c
+#19 30.66 |+++ /dev/null
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_shdict.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 1.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_shdict.h src/ngx_http_lua_shdict.h
+#19 30.66 |deleted file mode 100644
+#19 30.66 |index 67dd4d4e..00000000
+#19 30.66 |--- src/ngx_http_lua_shdict.h
+#19 30.66 |+++ /dev/null
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_shdict.h
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 1.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_util.c src/ngx_http_lua_util.c
+#19 30.66 |index 8fd26561..2e5a3b45 100644
+#19 30.66 |--- src/ngx_http_lua_util.c
+#19 30.66 |+++ src/ngx_http_lua_util.c
+#19 30.66 --------------------------
+#19 30.66 patching file src/ngx_http_lua_util.c
+#19 30.66 Using Plan A...
+#19 30.66 Hunk #1 succeeded at 12.
+#19 30.66 Hunk #2 succeeded at 29.
+#19 30.66 Hunk #3 succeeded at 117.
+#19 30.66 Hunk #4 succeeded at 817.
+#19 30.66 Hunk #5 succeeded at 845.
+#19 30.66 Hmm...  The next patch looks like a unified diff to me...
+#19 30.66 The text leading up to this was:
+#19 30.66 --------------------------
+#19 30.66 |diff --git src/ngx_http_lua_util.h src/ngx_http_lua_util.h
+#19 30.66 |index faea7a07..20d5410a 100644
+#19 30.66 |--- src/ngx_http_lua_util.h
+#19 30.66 |+++ src/ngx_http_lua_util.h
+#19 30.66 --------------------------
+#19 30.67 patching file src/ngx_http_lua_util.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 334.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_http_lua_worker_thread.c src/ngx_http_lua_worker_thread.c
+#19 30.67 |index ed7b0892..26aa1295 100644
+#19 30.67 |--- src/ngx_http_lua_worker_thread.c
+#19 30.67 |+++ src/ngx_http_lua_worker_thread.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_http_lua_worker_thread.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 16.
+#19 30.67 Hunk #2 succeeded at 154.
+#19 30.67 done
+#19 30.67 Removing file src/ngx_http_lua_shdict.c
+#19 30.67 Removing file src/ngx_http_lua_shdict.h
+#19 30.67 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_lua-skip_filter.patch to ../../openresty-1.21.4.4/bundle/ngx_lua-0.10.25...
+#19 30.67 Hmm...  Looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_http_lua_bodyfilterby.c src/ngx_http_lua_bodyfilterby.c
+#19 30.67 |index 78e3b5c2..bfdb01b3 100644
+#19 30.67 |--- src/ngx_http_lua_bodyfilterby.c
+#19 30.67 |+++ src/ngx_http_lua_bodyfilterby.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_http_lua_bodyfilterby.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 22.
+#19 30.67 Hunk #2 succeeded at 245.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_http_lua_headerfilterby.c src/ngx_http_lua_headerfilterby.c
+#19 30.67 |index 86c58754..1bc946cd 100644
+#19 30.67 |--- src/ngx_http_lua_headerfilterby.c
+#19 30.67 |+++ src/ngx_http_lua_headerfilterby.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_http_lua_headerfilterby.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 19.
+#19 30.67 Hunk #2 succeeded at 83.
+#19 30.67 done
+#19 30.67 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.67 /tmp/tmp.rusxilHSRv/openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.67 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_stream_lua-expose_request_struct.patch to ../../openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13...
+#19 30.67 Hmm...  Looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/api/ngx_stream_lua_api.h src/api/ngx_stream_lua_api.h
+#19 30.67 |index 92f933d..812e0c4 100644
+#19 30.67 |--- src/api/ngx_stream_lua_api.h
+#19 30.67 |+++ src/api/ngx_stream_lua_api.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/api/ngx_stream_lua_api.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 20.
+#19 30.67 done
+#19 30.67 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_stream_lua-reject-in-handshake.patch to ../../openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13...
+#19 30.67 Hmm...  Looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_ssl_certby.c src/ngx_stream_lua_ssl_certby.c
+#19 30.67 |index bc1b156..49fa0d3 100644
+#19 30.67 |--- src/ngx_stream_lua_ssl_certby.c
+#19 30.67 |+++ src/ngx_stream_lua_ssl_certby.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_ssl_certby.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 1370 with fuzz 2 (offset 5 lines).
+#19 30.67 Hunk #2 succeeded at 1426 (offset 12 lines).
+#19 30.67 done
+#19 30.67 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_stream_lua-shared_shdict.patch to ../../openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13...
+#19 30.67 Hmm...  Looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git config config
+#19 30.67 |index e984f96..05bd086 100644
+#19 30.67 |--- config
+#19 30.67 |+++ config
+#19 30.67 --------------------------
+#19 30.67 patching file config
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 260.
+#19 30.67 Hunk #2 succeeded at 304.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/api/ngx_stream_lua_api.h src/api/ngx_stream_lua_api.h
+#19 30.67 |index 58c8012..da29db6 100644
+#19 30.67 |--- src/api/ngx_stream_lua_api.h
+#19 30.67 |+++ src/api/ngx_stream_lua_api.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/api/ngx_stream_lua_api.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 61 (offset 4 lines).
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_api.c src/ngx_stream_lua_api.c
+#19 30.67 |index cf01b36..fcc685c 100644
+#19 30.67 |--- src/ngx_stream_lua_api.c
+#19 30.67 |+++ src/ngx_stream_lua_api.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_api.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 20.
+#19 30.67 Hunk #2 succeeded at 34.
+#19 30.67 Hunk #3 succeeded at 79.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_common.h src/ngx_stream_lua_common.h
+#19 30.67 |index 8d8cf48..5d3821e 100644
+#19 30.67 |--- src/ngx_stream_lua_common.h
+#19 30.67 |+++ src/ngx_stream_lua_common.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_common.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 31.
+#19 30.67 Hunk #2 succeeded at 55.
+#19 30.67 Hunk #3 succeeded at 166.
+#19 30.67 Hunk #4 succeeded at 213.
+#19 30.67 Hunk #5 succeeded at 226.
+#19 30.67 Hunk #6 succeeded at 238.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_directive.c src/ngx_stream_lua_directive.c
+#19 30.67 |index 5580106..04fed32 100644
+#19 30.67 |--- src/ngx_stream_lua_directive.c
+#19 30.67 |+++ src/ngx_stream_lua_directive.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_directive.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 27.
+#19 30.67 Hunk #2 succeeded at 68.
+#19 30.67 Hunk #3 succeeded at 105.
+#19 30.67 Hunk #4 succeeded at 570.
+#19 30.67 Hunk #5 succeeded at 631.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_directive.h src/ngx_stream_lua_directive.h
+#19 30.67 |index 6b36bb1..fa469b6 100644
+#19 30.67 |--- src/ngx_stream_lua_directive.h
+#19 30.67 |+++ src/ngx_stream_lua_directive.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_directive.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 20.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_initby.c src/ngx_stream_lua_initby.c
+#19 30.67 |index c6bbf0d..98e3c6f 100644
+#19 30.67 |--- src/ngx_stream_lua_initby.c
+#19 30.67 |+++ src/ngx_stream_lua_initby.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_initby.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 22.
+#19 30.67 Hunk #2 succeeded at 36.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_initby.h src/ngx_stream_lua_initby.h
+#19 30.67 |index f2e2c40..060ee41 100644
+#19 30.67 |--- src/ngx_stream_lua_initby.h
+#19 30.67 |+++ src/ngx_stream_lua_initby.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_initby.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 20.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_initworkerby.c src/ngx_stream_lua_initworkerby.c
+#19 30.67 |index 786ba34..b50e2fe 100644
+#19 30.67 |--- src/ngx_stream_lua_initworkerby.c
+#19 30.67 |+++ src/ngx_stream_lua_initworkerby.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_initworkerby.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 305.
+#19 30.67 Hunk #2 succeeded at 327.
+#19 30.67 Hunk #3 succeeded at 341.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_initworkerby.h src/ngx_stream_lua_initworkerby.h
+#19 30.67 |index 43f6de3..53a443a 100644
+#19 30.67 |--- src/ngx_stream_lua_initworkerby.h
+#19 30.67 |+++ src/ngx_stream_lua_initworkerby.h
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_initworkerby.h
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 20.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_module.c src/ngx_stream_lua_module.c
+#19 30.67 |index 7f4c7c0..9eeb4e3 100644
+#19 30.67 |--- src/ngx_stream_lua_module.c
+#19 30.67 |+++ src/ngx_stream_lua_module.c
+#19 30.67 --------------------------
+#19 30.67 patching file src/ngx_stream_lua_module.c
+#19 30.67 Using Plan A...
+#19 30.67 Hunk #1 succeeded at 19.
+#19 30.67 Hunk #2 succeeded at 114.
+#19 30.67 Hunk #3 succeeded at 498.
+#19 30.67 Hunk #4 succeeded at 609.
+#19 30.67 Hunk #5 succeeded at 673.
+#19 30.67 Hunk #6 succeeded at 682.
+#19 30.67 Hmm...  The next patch looks like a unified diff to me...
+#19 30.67 The text leading up to this was:
+#19 30.67 --------------------------
+#19 30.67 |diff --git src/ngx_stream_lua_shdict.c src/ngx_stream_lua_shdict.c
+#19 30.67 |deleted file mode 100644
+#19 30.67 |index 7be30e3..0000000
+#19 30.67 |--- src/ngx_stream_lua_shdict.c
+#19 30.67 |+++ /dev/null
+#19 30.67 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_shdict.c
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 1.
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_shdict.h src/ngx_stream_lua_shdict.h
+#19 30.68 |deleted file mode 100644
+#19 30.68 |index 3554764..0000000
+#19 30.68 |--- src/ngx_stream_lua_shdict.h
+#19 30.68 |+++ /dev/null
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_shdict.h
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 1.
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_util.c src/ngx_stream_lua_util.c
+#19 30.68 |index 58061b4..ab52d5a 100644
+#19 30.68 |--- src/ngx_stream_lua_util.c
+#19 30.68 |+++ src/ngx_stream_lua_util.c
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_util.c
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 20.
+#19 30.68 Hunk #2 succeeded at 32.
+#19 30.68 Hunk #3 succeeded at 102.
+#19 30.68 Hunk #4 succeeded at 501.
+#19 30.68 Hunk #5 succeeded at 529.
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_util.h src/ngx_stream_lua_util.h
+#19 30.68 |index 61d0727..5610d5e 100644
+#19 30.68 |--- src/ngx_stream_lua_util.h
+#19 30.68 |+++ src/ngx_stream_lua_util.h
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_util.h
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 353.
+#19 30.68 done
+#19 30.68 Removing file src/ngx_stream_lua_shdict.c
+#19 30.68 Removing file src/ngx_stream_lua_shdict.h
+#19 30.68 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_stream_lua-tlshandshake.patch to ../../openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13...
+#19 30.68 Hmm...  Looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_socket_tcp.c src/ngx_stream_lua_socket_tcp.c
+#19 30.68 |index 46e117e..7fcfb45 100644
+#19 30.68 |--- src/ngx_stream_lua_socket_tcp.c
+#19 30.68 |+++ src/ngx_stream_lua_socket_tcp.c
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_socket_tcp.c
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 30.
+#19 30.68 Hunk #2 succeeded at 177 (offset -2 lines).
+#19 30.68 Hunk #3 succeeded at 239 (offset -2 lines).
+#19 30.68 Hunk #4 succeeded at 316 (offset -2 lines).
+#19 30.68 Hunk #5 succeeded at 389 (offset -2 lines).
+#19 30.68 Hunk #6 succeeded at 1511 (offset -17 lines).
+#19 30.68 Hunk #7 succeeded at 1584 (offset -17 lines).
+#19 30.68 Hunk #8 succeeded at 1728 (offset -17 lines).
+#19 30.68 Hunk #9 succeeded at 1750 (offset -17 lines).
+#19 30.68 Hunk #10 succeeded at 1761 (offset -17 lines).
+#19 30.68 Hunk #11 succeeded at 1776 (offset -17 lines).
+#19 30.68 Hunk #12 succeeded at 1816 (offset -17 lines).
+#19 30.68 Hunk #13 succeeded at 1827 (offset -17 lines).
+#19 30.68 Hunk #14 succeeded at 1868 (offset -17 lines).
+#19 30.68 Hunk #15 succeeded at 2002 (offset -17 lines).
+#19 30.68 Hunk #16 succeeded at 6199 (offset -19 lines).
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_socket_tcp.h src/ngx_stream_lua_socket_tcp.h
+#19 30.68 |index 3473250..a8abe83 100644
+#19 30.68 |--- src/ngx_stream_lua_socket_tcp.h
+#19 30.68 |+++ src/ngx_stream_lua_socket_tcp.h
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_socket_tcp.h
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 123.
+#19 30.68 done
+#19 30.68 Start to patch /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch/1.21.4/ngx_stream_lua-xrpc.patch to ../../openresty-1.21.4.4/bundle/ngx_stream_lua-0.0.13...
+#19 30.68 Hmm...  Looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_input_filters.c src/ngx_stream_lua_input_filters.c
+#19 30.68 |index 159185c..83ff85f 100644
+#19 30.68 |--- src/ngx_stream_lua_input_filters.c
+#19 30.68 |+++ src/ngx_stream_lua_input_filters.c
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_input_filters.c
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 144.
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_input_filters.h src/ngx_stream_lua_input_filters.h
+#19 30.68 |index e65d572..25175a5 100644
+#19 30.68 |--- src/ngx_stream_lua_input_filters.h
+#19 30.68 |+++ src/ngx_stream_lua_input_filters.h
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_input_filters.h
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 31.
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_socket_tcp.c src/ngx_stream_lua_socket_tcp.c
+#19 30.68 |index 7fcfb45..9981b4b 100644
+#19 30.68 |--- src/ngx_stream_lua_socket_tcp.c
+#19 30.68 |+++ src/ngx_stream_lua_socket_tcp.c
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_socket_tcp.c
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 232 (offset -2 lines).
+#19 30.68 Hunk #2 succeeded at 2625 (offset -17 lines).
+#19 30.68 Hunk #3 succeeded at 6048 (offset -17 lines).
+#19 30.68 Hmm...  The next patch looks like a unified diff to me...
+#19 30.68 The text leading up to this was:
+#19 30.68 --------------------------
+#19 30.68 |diff --git src/ngx_stream_lua_socket_tcp.h src/ngx_stream_lua_socket_tcp.h
+#19 30.68 |index a8abe83..a7ce31d 100644
+#19 30.68 |--- src/ngx_stream_lua_socket_tcp.h
+#19 30.68 |+++ src/ngx_stream_lua_socket_tcp.h
+#19 30.68 --------------------------
+#19 30.68 patching file src/ngx_stream_lua_socket_tcp.h
+#19 30.68 Using Plan A...
+#19 30.68 Hunk #1 succeeded at 28.
+#19 30.68 done
+#19 30.68 /tmp/tmp.rusxilHSRv/apisix-nginx-module-1.15.1/patch
+#19 30.68 + cd ../..
+#19 30.68 + cd wasm-nginx-module-0.6.4
+#19 30.68 + ./install-wasmtime.sh
+#19 30.69 ++ tr '[:upper:]' '[:lower:]'
+#19 30.69 ++ uname -m
+#19 30.69 + arch=aarch64
+#19 30.69 ++ uname -s
+#19 30.69 ++ tr '[:upper:]' '[:lower:]'
+#19 30.69 + os=linux
+#19 30.69 + '[' linux = darwin ']'
+#19 30.69 + os=linux
+#19 30.69 + ARCH=aarch64
+#19 30.69 + VER=v0.38.1
+#19 30.69 + wget https://github.com/bytecodealliance/wasmtime/releases/download/v0.38.1/wasmtime-v0.38.1-aarch64-linux-c-api.tar.xz
+#19 30.69 Connecting to github.com (20.205.243.166:443)
+#19 31.73 Connecting to objects.githubusercontent.com (185.199.109.133:443)
+#19 33.46 saving to 'wasmtime-v0.38.1-aarch64-linux-c-api.tar.xz'
+#19 33.69 wasmtime-v0.38.1-aar   0% |                                | 74484  0:02:26 ETA
+#19 34.69 wasmtime-v0.38.1-aar  10% |***                             | 1112k  0:00:17 ETA
+#19 35.69 wasmtime-v0.38.1-aar  28% |*********                       | 3048k  0:00:07 ETA
+#19 36.69 wasmtime-v0.38.1-aar  55% |*****************               | 5912k  0:00:03 ETA
+#19 37.69 wasmtime-v0.38.1-aar  90% |****************************    | 9672k  0:00:00 ETA
+#19 37.92 wasmtime-v0.38.1-aar 100% |********************************| 10.4M  0:00:00 ETA
+#19 37.92 'wasmtime-v0.38.1-aarch64-linux-c-api.tar.xz' saved
+#19 37.92 + tar -xvf ./wasmtime-v0.38.1-aarch64-linux-c-api.tar.xz
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 39.76 + '[' -d wasmtime-c-api ']'
+#19 39.76 + mv wasmtime-v0.38.1-aarch64-linux-c-api wasmtime-c-api
+#19 39.76 + echo 'int main(void) {}'
+#19 39.76 + + + tr -s ' ' '\012'
+#19 39.76 gcc -o grep /dev/null -v collect-x 
+#19 39.76 c -
+#19 39.76 + grep musl
+#19 39.79 /usr/libexec/gcc/aarch64-alpine-linux-musl/10.3.1/collect2
+#19 39.80 /usr/libexec/gcc/aarch64-alpine-linux-musl/10.3.1/liblto_plugin.so
+#19 39.80 -plugin-opt=/usr/libexec/gcc/aarch64-alpine-linux-musl/10.3.1/lto-wrapper
+#19 39.80 /lib/ld-musl-aarch64.so.1
+#19 39.80 /usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../lib/Scrt1.o
+#19 39.80 /usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../lib/crti.o
+#19 39.80 /usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/crtbeginS.o
+#19 39.80 -L/usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1
+#19 39.80 -L/usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../aarch64-alpine-linux-musl/lib/../lib
+#19 39.80 -L/usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../lib
+#19 39.80 -L/usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../aarch64-alpine-linux-musl/lib
+#19 39.80 -L/usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../..
+#19 39.80 /usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/crtendS.o
+#19 39.80 /usr/lib/gcc/aarch64-alpine-linux-musl/10.3.1/../../../../lib/crtn.o
+#19 39.80 + command -v cargo
+#19 39.80 + curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs
+#19 39.80 + sh -s -- -y
+#19 40.06 info: downloading installer
+#19 41.01 info: profile set to 'default'
+#19 41.01 info: default host triple is aarch64-unknown-linux-musl
+#19 41.01 warning: Updating existing toolchain, profile choice will be ignored
+#19 41.17 info: syncing channel updates for 'stable-aarch64-unknown-linux-musl'
+#19 41.44 
+#19 41.44 info: default toolchain set to 'stable-aarch64-unknown-linux-musl'
+#19 41.45   stable-aarch64-unknown-linux-musl unchanged - rustc 1.79.0 (129f3b996 2024-06-10)
+#19 41.45 
+#19 41.45 
+#19 41.45 Rust is installed now. Great!
+#19 41.45 
+#19 41.45 To get started you may need to restart your current shell.
+#19 41.45 This would reload your PATH environment variable to include
+#19 41.45 Cargo's bin directory ($HOME/.cargo/bin).
+#19 41.45 
+#19 41.45 To configure your current shell, you need to source
+#19 41.45 the corresponding env file under $HOME/.cargo.
+#19 41.45 
+#19 41.45 This is usually done by running one of the following (note the leading DOT):
+#19 41.45 . "$HOME/.cargo/env"            # For sh/bash/zsh/ash/dash/pdksh
+#19 41.45 source "$HOME/.cargo/env.fish"  # For fish
+#19 41.46 + source /root/.cargo/env
+#19 41.46 ++ case ":${PATH}:" in
+#19 41.46 ++ export PATH=/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
+#19 41.46 ++ PATH=/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
+#19 41.46 + git clone https://github.com/bytecodealliance/wasmtime -b v0.38.1 --depth 1
+#19 41.46 Cloning into 'wasmtime'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 54.58 Note: switching to '9e2adfb34531610d691f74dd3f559bc5b800eb02'.
+#19 54.58 
+#19 54.58 You are in 'detached HEAD' state. You can look around, make experimental
+#19 54.58 changes and commit them, and you can discard any commits you make in this
+#19 54.58 state without impacting any branches by switching back to a branch.
+#19 54.58 
+#19 54.58 If you want to create a new branch to retain commits you create, you may
+#19 54.58 do so (now or later) by using -c with the switch command. Example:
+#19 54.58 
+#19 54.58   git switch -c <new-branch-name>
+#19 54.58 
+#19 54.58 Or undo this operation with:
+#19 54.58 
+#19 54.58   git switch -
+#19 54.58 
+#19 54.58 Turn off this advice by setting config variable advice.detachedHead to false
+#19 54.58 
+#19 54.78 + cd wasmtime
+#19 54.78 + git submodule update --init
+#19 54.79 Submodule 'crates/c-api/examples/wasm-c-api' (https://github.com/WebAssembly/wasm-c-api) registered for path 'crates/c-api/wasm-c-api'
+#19 54.79 Submodule 'WASI' (https://github.com/WebAssembly/WASI) registered for path 'crates/wasi-common/WASI'
+#19 54.79 Submodule 'crates/wasi-crypto/spec' (https://github.com/WebAssembly/wasi-crypto.git) registered for path 'crates/wasi-crypto/spec'
+#19 54.79 Submodule 'crates/wasi-nn/spec' (https://github.com/WebAssembly/wasi-nn) registered for path 'crates/wasi-nn/spec'
+#19 54.79 Submodule 'spec_testsuite' (https://github.com/WebAssembly/testsuite) registered for path 'tests/spec_testsuite'
+#19 54.80 Cloning into '/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/crates/c-api/wasm-c-api'...
+#19 61.87 Cloning into '/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/crates/wasi-common/WASI'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 69.85 Cloning into '/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/crates/wasi-crypto/spec'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 79.09 Cloning into '/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/crates/wasi-nn/spec'...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 86.92 Cloning into '/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/tests/spec_testsuite'...
+#19 89.93 Submodule path 'crates/c-api/wasm-c-api': checked out 'c9d31284651b975f05ac27cee0bab1377560b87e'
+#19 89.95 Submodule path 'crates/wasi-common/WASI': checked out '0ba0c5e2e37625ca5a6d3e4255a998dfaa3efc52'
+#19 89.98 Submodule path 'crates/wasi-crypto/spec': checked out '67d9821f2763f4626a97c70c411ccb92a2047712'
+#19 90.00 Submodule path 'crates/wasi-nn/spec': checked out '8adc5b9b3bb8f885d44f55b464718e24af892c94'
+#19 90.06 Submodule path 'tests/spec_testsuite': checked out 'e25ae159357c055b3a6fac99043644e208d26d2a'
+#19 90.06 + RUSTFLAGS='-C target-feature=-crt-static'
+#19 90.06 + cargo build --release --manifest-path crates/c-api/Cargo.toml
+#19 90.23     Updating crates.io index
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 125.2 warning: spurious network error (3 tries remaining): [28] Timeout was reached (Operation too slow. Less than 10 bytes/sec transferred the last 30 seconds)
+#19 125.2 warning: spurious network error (3 tries remaining): [28] Timeout was reached (Operation too slow. Less than 10 bytes/sec transferred the last 30 seconds)
+#19 125.2 warning: spurious network error (3 tries remaining): [28] Timeout was reached (Operation too slow. Less than 10 bytes/sec transferred the last 30 seconds)
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 133.8  Downloading crates ...
+#19 134.2   Downloaded cap-time-ext v0.24.3
+#19 134.2   Downloaded atty v0.2.14
+#19 134.2   Downloaded block-buffer v0.9.0
+#19 134.2   Downloaded bitflags v1.3.2
+#19 134.3   Downloaded fxhash v0.2.1
+#19 134.3   Downloaded zstd-safe v5.0.1+zstd.1.5.2
+#19 134.3   Downloaded is-terminal v0.1.0
+#19 134.3   Downloaded more-asserts v0.2.2
+#19 134.3   Downloaded wat v1.0.43
+#19 134.3   Downloaded thiserror-impl v1.0.31
+#19 134.3   Downloaded memoffset v0.6.5
+#19 134.3   Downloaded cap-rand v0.24.3
+#19 134.3   Downloaded adler v1.0.2
+#19 134.3   Downloaded byteorder v1.4.3
+#19 134.3   Downloaded ambient-authority v0.0.1
+#19 134.3   Downloaded opaque-debug v0.3.0
+#19 134.3   Downloaded fallible-iterator v0.2.0
+#19 134.3   Downloaded either v1.6.1
+#19 134.3   Downloaded humantime v2.1.0
+#19 134.3   Downloaded psm v0.1.18
+#19 134.3   Downloaded zstd v0.11.1+zstd.1.5.2
+#19 134.4   Downloaded leb128 v0.2.5
+#19 134.4   Downloaded digest v0.9.0
+#19 134.4   Downloaded heck v0.4.0
+#19 134.4   Downloaded file-per-thread-logger v0.1.5
+#19 134.4   Downloaded directories-next v2.0.0
+#19 134.4   Downloaded cpufeatures v0.2.2
+#19 134.4   Downloaded autocfg v1.1.0
+#19 134.4   Downloaded dirs-sys-next v0.1.2
+#19 134.4   Downloaded cfg-if v1.0.0
+#19 134.4   Downloaded addr2line v0.17.0
+#19 134.4   Downloaded stable_deref_trait v1.2.0
+#19 134.4   Downloaded slice-group-by v0.3.0
+#19 134.4   Downloaded maybe-owned v0.3.4
+#19 134.4   Downloaded lazy_static v1.4.0
+#19 134.4   Downloaded ppv-lite86 v0.2.16
+#19 134.4   Downloaded itoa v1.0.1
+#19 134.4   Downloaded thiserror v1.0.31
+#19 134.4   Downloaded unicode-xid v0.2.3
+#19 134.4   Downloaded version_check v0.9.4
+#19 134.4   Downloaded pin-project-lite v0.2.9
+#19 134.4   Downloaded crc32fast v1.3.2
+#19 134.4   Downloaded system-interface v0.20.0
+#19 134.4   Downloaded anyhow v1.0.57
+#19 134.4   Downloaded typenum v1.15.0
+#19 134.4   Downloaded wast v41.0.0
+#19 134.4   Downloaded miniz_oxide v0.5.1
+#19 134.4   Downloaded tracing-core v0.1.26
+#19 134.4   Downloaded serde_derive v1.0.137
+#19 134.4   Downloaded tracing v0.1.34
+#19 134.4   Downloaded wast v35.0.2
+#19 134.5   Downloaded regalloc2 v0.2.3
+#19 134.5   Downloaded itertools v0.10.3
+#19 134.5   Downloaded aho-corasick v0.7.18
+#19 134.5   Downloaded syn v1.0.92
+#19 134.5   Downloaded rustix v0.33.7
+#19 134.5   Downloaded regex-syntax v0.6.25
+#19 134.5   Downloaded libc v0.2.125
+#19 134.6   Downloaded zstd-sys v2.0.1+zstd.1.5.2
+#19 134.6   Downloaded linux-raw-sys v0.0.42
+#19 134.6   Downloaded gimli v0.26.1
+#19 134.7   Downloaded regex v1.5.5
+#19 134.7   Downloaded object v0.28.3
+#19 134.7   Downloaded wasmparser v0.85.0
+#19 134.7   Downloaded serde v1.0.137
+#19 134.7   Downloaded rand v0.8.5
+#19 134.7   Downloaded hashbrown v0.11.2
+#19 134.7   Downloaded cap-primitives v0.24.3
+#19 134.7   Downloaded backtrace v0.3.65
+#19 134.7   Downloaded memchr v2.5.0
+#19 134.7   Downloaded cpp_demangle v0.3.5
+#19 134.7   Downloaded cc v1.0.73
+#19 134.7   Downloaded base64 v0.13.0
+#19 134.7   Downloaded toml v0.5.9
+#19 134.7   Downloaded rustc-demangle v0.1.21
+#19 134.7   Downloaded proc-macro2 v1.0.37
+#19 134.7   Downloaded paste v1.0.7
+#19 134.8   Downloaded indexmap v1.8.1
+#19 134.8   Downloaded tracing-attributes v0.1.21
+#19 134.8   Downloaded smallvec v1.8.0
+#19 134.8   Downloaded quote v1.0.18
+#19 134.8   Downloaded once_cell v1.12.0
+#19 134.8   Downloaded log v0.4.17
+#19 134.8   Downloaded io-lifetimes v0.5.3
+#19 134.8   Downloaded generic-array v0.14.5
+#19 134.8   Downloaded env_logger v0.9.0
+#19 134.8   Downloaded jobserver v0.1.24
+#19 134.8   Downloaded ipnet v2.5.0
+#19 134.8   Downloaded getrandom v0.2.6
+#19 134.8   Downloaded unicode-width v0.1.9
+#19 134.8   Downloaded io-extras v0.13.2
+#19 134.8   Downloaded fs-set-times v0.15.0
+#19 134.8   Downloaded cap-std v0.24.3
+#19 134.8   Downloaded cap-fs-ext v0.24.3
+#19 134.8   Downloaded bincode v1.3.3
+#19 134.8   Downloaded async-trait v0.1.53
+#19 134.8   Downloaded ahash v0.7.6
+#19 134.8   Downloaded termcolor v1.1.3
+#19 134.8   Downloaded target-lexicon v0.12.3
+#19 134.8   Downloaded shellexpand v2.1.0
+#19 134.8   Downloaded region v2.2.0
+#19 134.8   Downloaded rand_core v0.6.3
+#19 134.8   Downloaded sha2 v0.9.9
+#19 134.8   Downloaded rand_chacha v0.3.1
+#19 134.8   Downloaded dirs-next v2.0.0
+#19 134.9    Compiling libc v0.2.125
+#19 134.9    Compiling proc-macro2 v1.0.37
+#19 134.9    Compiling unicode-xid v0.2.3
+#19 134.9    Compiling syn v1.0.92
+#19 134.9    Compiling cfg-if v1.0.0
+#19 134.9    Compiling version_check v0.9.4
+#19 134.9    Compiling once_cell v1.12.0
+#19 134.9    Compiling serde_derive v1.0.137
+#19 135.0    Compiling serde v1.0.137
+#19 135.1    Compiling autocfg v1.1.0
+#19 135.4    Compiling memchr v2.5.0
+#19 135.4    Compiling io-lifetimes v0.5.3
+#19 135.4    Compiling log v0.4.17
+#19 135.7    Compiling ahash v0.7.6
+#19 135.9    Compiling bitflags v1.3.2
+#19 135.9    Compiling indexmap v1.8.1
+#19 136.0    Compiling rustix v0.33.7
+#19 136.1    Compiling anyhow v1.0.57
+#19 136.4    Compiling itoa v1.0.1
+#19 136.5    Compiling linux-raw-sys v0.0.42
+#19 136.6    Compiling quote v1.0.18
+#19 136.7    Compiling fallible-iterator v0.2.0
+#19 136.7    Compiling stable_deref_trait v1.2.0
+#19 136.8    Compiling target-lexicon v0.12.3
+#19 136.9    Compiling getrandom v0.2.6
+#19 137.2    Compiling jobserver v0.1.24
+#19 137.5    Compiling cc v1.0.73
+#19 137.7    Compiling cranelift-isle v0.85.1 (/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/cranelift/isle/isle)
+#19 137.8    Compiling hashbrown v0.11.2
+#19 138.0    Compiling crc32fast v1.3.2
+#19 138.0    Compiling cranelift-codegen-shared v0.85.1 (/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/cranelift/codegen/shared)
+#19 138.1    Compiling cranelift-codegen-meta v0.85.1 (/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/cranelift/codegen/meta)
+#19 139.1    Compiling typenum v1.15.0
+#19 139.2    Compiling byteorder v1.4.3
+#19 139.8    Compiling fxhash v0.2.1
+#19 139.8    Compiling generic-array v0.14.5
+#19 139.9    Compiling slice-group-by v0.3.0
+#19 140.1    Compiling smallvec v1.8.0
+#19 140.5    Compiling zstd-sys v2.0.1+zstd.1.5.2
+#19 140.7    Compiling regalloc2 v0.2.3
+#19 141.8    Compiling rand_core v0.6.3
+#19 142.2    Compiling io-extras v0.13.2
+#19 142.2    Compiling lazy_static v1.4.0
+#19 142.3    Compiling ppv-lite86 v0.2.16
+#19 142.8    Compiling rand_chacha v0.3.1
+#19 143.3    Compiling backtrace v0.3.65
+#19 143.5    Compiling aho-corasick v0.7.18
+#19 143.8    Compiling memoffset v0.6.5
+#19 143.8    Compiling more-asserts v0.2.2
+#19 143.9    Compiling cap-primitives v0.24.3
+#19 144.1    Compiling ambient-authority v0.0.1
+#19 144.2    Compiling regex-syntax v0.6.25
+#19 144.4    Compiling zstd-safe v5.0.1+zstd.1.5.2
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 145.1    Compiling adler v1.0.2
+#19 145.4    Compiling miniz_oxide v0.5.1
+#19 145.8    Compiling cranelift-codegen v0.85.1 (/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/cranelift/codegen)
+#19 146.5    Compiling rand v0.8.5
+#19 147.0    Compiling regex v1.5.5
+#19 147.6    Compiling fs-set-times v0.15.0
+#19 148.3    Compiling wasmtime-runtime v0.38.1 (/tmp/tmp.rusxilHSRv/wasm-nginx-module-0.6.4/wasmtime/crates/runtime)
+#19 148.7    Compiling dirs-sys-next v0.1.2
+#19 149.3    Compiling atty v0.2.14
+#19 149.5    Compiling cpp_demangle v0.3.5
+#19 149.5    Compiling humantime v2.1.0
+#19 149.6    Compiling ipnet v2.5.0
+#19 149.8    Compiling rustc-demangle v0.1.21
+#19 150.1    Compiling either v1.6.1
+#19 150.3    Compiling maybe-owned v0.3.4
+#19 150.4    Compiling termcolor v1.1.3
+#19 150.5    Compiling leb128 v0.2.5
+#19 150.7    Compiling wast v35.0.2
+#19 151.3 error[E0061]: this method takes 1 argument but 2 arguments were supplied
+#19 151.3   --> /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cap-primitives-0.24.3/src/rustix/linux/fs/set_times_impl.rs:20:25
+#19 151.3    |
+#19 151.3 20 |             return file.set_times(
+#19 151.3    |                         ^^^^^^^^^
+#19 151.3 21 |                 atime.map(SystemTimeSpec::into_std),
+#19 151.3 22 |                 mtime.map(SystemTimeSpec::into_std),
+#19 151.3    |                 ----------------------------------- unexpected argument of type `Option<fs_set_times::SystemTimeSpec>`
+#19 151.3    |
+#19 151.3 note: expected `FileTimes`, found `Option<SystemTimeSpec>`
+#19 151.3   --> /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cap-primitives-0.24.3/src/rustix/linux/fs/set_times_impl.rs:21:17
+#19 151.3    |
+#19 151.3 21 |                 atime.map(SystemTimeSpec::into_std),
+#19 151.3    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#19 151.3    = note: expected struct `FileTimes`
+#19 151.3                 found enum `Option<fs_set_times::SystemTimeSpec>`
+#19 151.3 note: method defined here
+#19 151.3   --> /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/fs.rs:710:12
+#19 151.3 help: remove the extra argument
+#19 151.3    |
+#19 151.3 21 -                 atime.map(SystemTimeSpec::into_std),
+#19 151.3 21 +                 /* FileTimes */,
+#19 151.3    |
+#19 151.3 
+#19 151.3 error[E0061]: this method takes 1 argument but 2 arguments were supplied
+#19 151.3   --> /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cap-primitives-0.24.3/src/rustix/linux/fs/set_times_impl.rs:34:25
+#19 151.3    |
+#19 151.3 34 |             return file.set_times(
+#19 151.3    |                         ^^^^^^^^^
+#19 151.3 35 |                 atime.map(SystemTimeSpec::into_std),
+#19 151.3 36 |                 mtime.map(SystemTimeSpec::into_std),
+#19 151.3    |                 ----------------------------------- unexpected argument of type `Option<fs_set_times::SystemTimeSpec>`
+#19 151.3    |
+#19 151.3 note: expected `FileTimes`, found `Option<SystemTimeSpec>`
+#19 151.3   --> /root/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cap-primitives-0.24.3/src/rustix/linux/fs/set_times_impl.rs:35:17
+#19 151.3    |
+#19 151.3 35 |                 atime.map(SystemTimeSpec::into_std),
+#19 151.3    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#19 151.3    = note: expected struct `FileTimes`
+#19 151.3                 found enum `Option<fs_set_times::SystemTimeSpec>`
+#19 151.3 note: method defined here
+#19 151.3   --> /rustc/129f3b9964af4d4a709d1383930ade12dfe7c081/library/std/src/fs.rs:710:12
+#19 151.3 help: remove the extra argument
+#19 151.3    |
+#19 151.3 35 -                 atime.map(SystemTimeSpec::into_std),
+#19 151.3 35 +                 /* FileTimes */,
+#19 151.3    |
+#19 151.3 
+#19 151.6    Compiling env_logger v0.9.0
+#19 151.7 For more information about this error, try `rustc --explain E0061`.
+#19 151.7 error: could not compile `cap-primitives` (lib) due to 2 previous errors
+#19 151.7 warning: build failed, waiting for other jobs to finish...
+#19 ...
+#19 [linux/arm64 build 8/9] RUN cd /tmp     && ./build-common.sh build_apisix_base_apk
+#19 ERROR: process "/bin/sh -c cd /tmp     && ./build-common.sh build_apisix_base_apk" did not complete successfully: exit code: 101
