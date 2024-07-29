@@ -111,6 +111,10 @@ install_apisix() {
     else
         echo ''
     fi
+
+    sed -i '35i print(package.cpath)' /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua
+    sed -i '36i print(package.path)' /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua
+
     # delete unnecessary files
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/doc
