@@ -90,7 +90,7 @@ install_apisix() {
     install_rust
 
     # build the lib and specify the storage path of the package installed
-    luarocks install ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
+    luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
     # copy the compiled files to the package install directory
