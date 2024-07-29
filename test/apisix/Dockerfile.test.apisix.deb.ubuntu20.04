@@ -29,7 +29,7 @@ RUN /install-common.sh install_etcd
 
 # install apisix
 RUN set -x \
-    && apt install -y libldap2-dev \
+    && apt install -y libldap2-dev libyaml-dev \
     && dpkg -i /apisix_${APISIX_VERSION}-0~${IMAGE_BASE}${IMAGE_TAG}_amd64.deb
 
 # start etcd and test
