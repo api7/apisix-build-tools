@@ -50,13 +50,6 @@ then
 	artifact=${ARTIFACT}
 fi
 
-if [ "$PACKAGE_TYPE" == "deb" ]
-then
-    apt install -y libyaml-dev
-else
-    yum install -y libyaml-devel
-fi
-
 if [ "$OPENRESTY" == "apisix-runtime" ]
 then
     fpm -f -s dir -t "$PACKAGE_TYPE" \
