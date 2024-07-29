@@ -50,7 +50,7 @@ jobs:
 
       - name: run ubi8 docker and mapping rpm into container
         run: |
-          docker run -itd -v $PWD/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+          docker run -itd -v $PWD/output:/output -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml  --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
 
       - name: enable apisix repository in container
         run: |
