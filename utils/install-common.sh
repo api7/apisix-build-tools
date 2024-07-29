@@ -111,7 +111,7 @@ install_apisix() {
     else
         echo ''
     fi
-    sed -i 'package.path = "/usr/local/apisix/deps/share/lua/5.1/?/init.lua;" .. package.path'
+    sed -i '1i package.path = "/usr/local/apisix/deps/share/lua/5.1/?/init.lua;" .. package.path'
     # delete unnecessary files
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/doc
