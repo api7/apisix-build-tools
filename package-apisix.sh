@@ -8,10 +8,12 @@ ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 
 # Determine the dependencies
 dep_ldap="openldap-devel"
+dep_libyaml="libyaml-devel"
 if [ "$PACKAGE_TYPE" == "deb" ]
 then
     # the pkg contains the so library could be libldap-2.5 or libldap-2.4-2
 	dep_ldap="libldap2-dev"
+    dep_libyaml="libyaml-dev"
 fi
 dep_pcre="pcre"
 if [ "$PACKAGE_TYPE" == "deb" ]
@@ -59,6 +61,7 @@ then
         -d "$dep_ldap" \
         -d "$dep_pcre" \
         -d "$dep_which" \
+        -d "$dep_libyaml" \
         --post-install post-install-apisix-runtime.sh \
         --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
         --license "ASL 2.0" \
