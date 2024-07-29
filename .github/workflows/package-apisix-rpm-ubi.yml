@@ -73,7 +73,7 @@ jobs:
       - name: stop and uninstall APISIX(-remote) master
         run: |
           docker exec ubiInstance bash -c 'yum -y install procps-ng'
-          docker exec ubiInstance bash -c 'PIDS=$(pgrep -f nginx); for PID in $PIDS; do kill -TERM $PID; done'
+          docker exec ubiInstance bash -c 'PIDS=$(pgrep -f nginx); for PID in $PIDS; do kill -TERM $PID; done' || echo "this echo will make exit code 0"
           docker exec ubiInstance bash -c "yum -y erase apisix-remote-master"
 
       - name: install APISIX(-local) by rpm in container
