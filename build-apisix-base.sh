@@ -4,9 +4,9 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.1}
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.25.3.2}
 if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
-    OPENRESTY_VERSION="1.25.3.1"
+    OPENRESTY_VERSION="1.25.3.2"
 fi
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
@@ -21,7 +21,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
 else
     ngx_multi_upstream_module_ver="1.2.0"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="1.16.0"
+    apisix_nginx_module_ver="1.16.1"
     wasm_nginx_module_ver="0.7.0"
     lua_var_nginx_module_ver="v0.5.3"
     lua_resty_events_ver="0.2.0"

@@ -21,10 +21,10 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
-OPENRESTY_VERSION="1.25.3.1"
+OPENRESTY_VERSION="1.25.3.2"
 ngx_multi_upstream_module_ver="1.2.0"
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver="1.16.0"
+apisix_nginx_module_ver="1.16.1"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -37,7 +37,7 @@ install_openssl_3(){
     fi
     # required for openssl 3.x config
     cpanm IPC/Cmd.pm
-    wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+    wget --no-check-certificate https://github.com/openssl/openssl/releases/download/openssl-3.2.0/openssl-${OPENSSL_VERSION}.tar.gz
     tar xvf openssl-${OPENSSL_VERSION}.tar.gz
     cd openssl-${OPENSSL_VERSION}/
     export LDFLAGS="-Wl,-rpath,$zlib_prefix/lib:$OPENSSL_PREFIX/lib"

@@ -23,8 +23,7 @@ install_dependencies_rpm() {
         yum install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms yum-utils
     else
         yum install -y wget tar gcc automake autoconf libtool make curl git which unzip sudo
-        yum install -y epel-release
-        yum install -y yum-utils readline-devel
+        yum install -y yum-utils
     fi
 }
 
@@ -112,6 +111,7 @@ install_apisix() {
     else
         echo ''
     fi
+    sed -i '1i package.path = "/usr/local/apisix/deps/share/lua/5.1/?/init.lua;" .. package.path' /tmp/build/output/apisix/usr/local/apisix/apisix/cli/apisix.lua
     # delete unnecessary files
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib64/luarocks
     rm -rf /tmp/build/output/apisix/usr/local/apisix/deps/lib/luarocks/rocks-5.1/apisix/master-"${iteration}"/doc

@@ -31,6 +31,7 @@ ARG IMAGE_TAG
 ARG CODE_PATH
 
 # install dependencies
+RUN yum install -y libyaml-devel
 RUN /install-common.sh install_apisix_dependencies_rpm
 
 ENV checkout_v=${checkout_v}
