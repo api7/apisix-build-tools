@@ -13,15 +13,25 @@ on:
       - '*.md'
   schedule:
     - cron: '0 0 * * *'
-
+  workflow_dispatch: # Allows the workflow to be triggered manually
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on' 
+        required: true
+        default: 'master'
+      apisix-runtime-version:
+        description: 'apisix-runtime version to build'
+        required: false
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      BUILD_APISIX_RUNTIME_VERSION: ${{ github.event.inputs.apisix-runtime-version || '1.0.1' }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
 
       - name: install dependencies
         run: |
@@ -48,7 +58,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
+          name: apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb
+          path: output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb
           retention-days: 5
           if-no-files-found: error
