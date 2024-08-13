@@ -58,7 +58,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb
-          path: output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
           retention-days: 5
           if-no-files-found: error
