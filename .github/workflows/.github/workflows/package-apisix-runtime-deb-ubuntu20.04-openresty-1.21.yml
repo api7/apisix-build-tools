@@ -1,0 +1,52 @@
+name: package apisix-runtime deb for ubuntu 20.04 with openresty 1.21
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BUILD_APISIX_RUNTIME_VERSION: 1.1.2
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            arch: x86_64
+          - runner: buildjet-2vcpu-ubuntu-2204-arm
+            arch: aarch64
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: openresty/1.21.4
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: build apisix-runtime deb
+        run: |
+          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04
+
+      - name: run ubuntu 20.04 docker and mapping apisix-runtime deb into container
+        run: |
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
+
+      - name: install deb in container
+        run: |
+          docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb"
+
+      - name: check and ensure apisix-runtime is installed
+        run: |
+          docker exec ubuntu20.04Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
+          export APISIX_RUNTIME_VER=$(docker exec ubuntu20.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+          if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_${{ matrix.platform.arch }}.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_${{ matrix.platform.arch }}.deb
+          retention-days: 5
+          if-no-files-found: error
