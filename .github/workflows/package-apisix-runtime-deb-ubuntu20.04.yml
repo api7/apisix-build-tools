@@ -29,6 +29,8 @@ jobs:
     env:
       BUILD_APISIX_RUNTIME_VERSION: ${{ github.event.inputs.apisix-runtime-version || '1.0.1' }}
     steps:
+      - name: print github.ref_name
+        run: echo ${{ github.ref_name }}
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.branch || github.ref_name }}
