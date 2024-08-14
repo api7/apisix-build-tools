@@ -1,27 +1,18 @@
 name: package apisix-runtime deb for ubuntu 20.04(Focal Fossa)
 
 on:
-  push:
-    branches: [ master ]
-    tags:
-      - "v*"
-    paths-ignore:
-      - '*.md'
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-      - '*.md'
-  schedule:
-    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      BUILD_APISIX_RUNTIME_VERSION: 1.1.2
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: openresty/1.21.4
 
       - name: install dependencies
         run: |
