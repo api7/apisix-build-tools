@@ -45,7 +45,7 @@ jobs:
     
       - name: install deb in container
         run: |
-          docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb"
+          docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_${{ matrix.platform.arch }}.deb"
 
       - name: check and ensure apisix-runtime is installed
         run: |
