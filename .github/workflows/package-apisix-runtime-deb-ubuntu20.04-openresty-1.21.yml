@@ -13,7 +13,7 @@ jobs:
       matrix:
         platform:
           - runner: ubuntu-22.04
-            arch: x86_64
+            arch: amd64
           - runner: buildjet-2vcpu-ubuntu-2204-arm
             arch: aarch64
     steps:
