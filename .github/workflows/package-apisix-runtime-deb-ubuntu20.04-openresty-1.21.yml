@@ -33,6 +33,16 @@ jobs:
         run: |
           docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
 
+      - name: install dependencies in container
+        run: |
+            docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
+            docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libssl-dev perl build-essential"
+            docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates"
+            docker exec ubuntu20.04Instance bash -c "wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -"
+            docker exec ubuntu20.04Instance bash -c 'echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list'
+            docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get update"
+            docker exec ubuntu20.04Instance bash -c "DEBIAN_FRONTEND=noninteractive apt-get -y install openresty-pcre openresty-zlib"
+    
       - name: install deb in container
         run: |
           docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb"
