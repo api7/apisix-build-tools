@@ -24,7 +24,7 @@ jobs:
       - name: set env.ARCH if platform.arch is aarch64
         run: |
           if [ "${{ matrix.platform.arch }}" == "aarch64" ]; then
-            export ARCH="arm64"
+            echo "ARCH=arm64" >> $GITHUB_ENV
           fi
       - name: check arch
         run: |
