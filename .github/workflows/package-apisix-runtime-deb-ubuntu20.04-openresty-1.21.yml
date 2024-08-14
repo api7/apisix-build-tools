@@ -15,7 +15,7 @@ jobs:
           - runner: ubuntu-22.04
             arch: amd64
           - runner: buildjet-2vcpu-ubuntu-2204-arm
-            arch: aarch64
+            arch: arm64
     steps:
       - uses: actions/checkout@v2
         with:
