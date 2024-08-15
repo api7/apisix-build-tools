@@ -55,6 +55,7 @@ define build
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
+		--platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 else
@@ -70,6 +71,7 @@ define build
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 endif
@@ -88,7 +90,7 @@ define build_runtime
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
-		--platform $(5) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 else
@@ -103,7 +105,7 @@ define build_runtime
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
-		--platform $(5) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 endif
@@ -121,6 +123,7 @@ define build-image
 		--build-arg OPENRESTY_NAME=$(4) \
 		--build-arg OPENRESTY_VERSION=$(5) \
 		--build-arg CODE_PATH=$(6) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 else
@@ -132,6 +135,7 @@ define build-image
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 endif
@@ -148,6 +152,7 @@ define package
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
 		--build-arg ARTIFACT=$(artifact) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(version)
 	docker cp output:/output ${PWD}
@@ -167,7 +172,7 @@ define package_runtime
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
 		--build-arg ARTIFACT=$(artifact) \
-		--platform $(3) \
+    --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(runtime_version)
 	docker cp output:/output ${PWD}
@@ -251,16 +256,16 @@ endif
 build-apisix-runtime-deb:
 ifeq ($(app),apisix)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime",$(arch))
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
 	rm -fr ./apisix-runtime
 else
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./",$(arch))
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
 endif
 
 ### build rpm for apisix-runtime:
 .PHONY: package-apisix-runtime-rpm
 package-apisix-runtime-rpm:
-	$(call package_runtime,apisix-runtime,rpm,$(arch))
+	$(call package_runtime,apisix-runtime,rpm)
 
 ### build deb for apisix-runtime:
 .PHONY: package-apisix-runtime-deb
