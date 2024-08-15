@@ -87,6 +87,7 @@ define build_runtime
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg CODE_PATH=$(4) \
+		--platform $(5) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 else
@@ -101,6 +102,7 @@ define build_runtime
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \
+		--platform $(5) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
 endif
@@ -164,6 +166,7 @@ define package_runtime
 		--build-arg PACKAGE_TYPE=$(2) \
 		--build-arg OPENRESTY=$(openresty) \
 		--build-arg ARTIFACT=$(artifact) \
+		--platform $(3) \
 		-f ./dockerfiles/Dockerfile.package.$(1) .
 	docker run -d --rm --name output --net="host" apache/$(1)-packaged-$(2):$(runtime_version)
 	docker cp output:/output ${PWD}
@@ -247,16 +250,16 @@ endif
 build-apisix-runtime-deb:
 ifeq ($(app),apisix)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime",$(arch))
 	rm -fr ./apisix-runtime
 else
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./",$(arch))
 endif
 
 ### build rpm for apisix-runtime:
 .PHONY: package-apisix-runtime-rpm
 package-apisix-runtime-rpm:
-	$(call package_runtime,apisix-runtime,rpm)
+	$(call package_runtime,apisix-runtime,rpm,$(arch))
 
 ### build deb for apisix-runtime:
 .PHONY: package-apisix-runtime-deb
@@ -290,13 +293,14 @@ package-apisix-base-deb:
 .PHONY: build-fpm
 ifneq ($(buildx), True)
 build-fpm:
-	docker build -t api7/fpm - < ./dockerfiles/Dockerfile.fpm
+	docker build --platform $(arch) -t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 else
 build-fpm:
 	docker buildx build \
 	--load \
 	--cache-from=$(cache_from) \
 	--cache-to=$(cache_to) \
+	--platform $(arch) \
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 

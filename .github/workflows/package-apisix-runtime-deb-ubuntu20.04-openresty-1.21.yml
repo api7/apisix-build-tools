@@ -35,11 +35,19 @@ jobs:
 
       - name: build apisix-runtime deb
         run: |
-          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04
+          if [ "${{ matrix.platform.arch }}" == "aarch64" ]; then
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04 arch=linux/arm64
+          else
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04 arch=linux/amd64
+          fi
 
       - name: run ubuntu 20.04 docker and mapping apisix-runtime deb into container
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
+          if [ "${{ matrix.platform.arch }}" == "aarch64" ]; then
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" --platform linux/arm64 docker.io/ubuntu:20.04 /bin/bash
+          else
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" --platform linux/amd64 docker.io/ubuntu:20.04 /bin/bash
+          fi
 
       - name: install dependencies in container
         run: |
