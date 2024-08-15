@@ -35,7 +35,8 @@ ifeq ($(type), deb)
 image_base="ubuntu"
 image_tag="20.04"
 endif
-
+# Set arch to linux/amd64 if it's not defined
+arch ?= linux/amd64
 buildx=0
 cache_from=type=local,src=/tmp/.buildx-cache
 cache_to=type=local,dest=/tmp/.buildx-cache
