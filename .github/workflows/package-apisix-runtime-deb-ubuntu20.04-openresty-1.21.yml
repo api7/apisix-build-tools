@@ -33,7 +33,11 @@ jobs:
 
       - name: build apisix-runtime deb
         run: |
-          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=arm64v8/ubuntu image_tag=20.04 arch=${{ matrix.platform }}
+          if [ "${{ matrix.platform }}" == "linux/arm64" ]; then
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=arm64v8/ubuntu image_tag=20.04 arch=${{ matrix.platform }}
+          else
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04 arch=${{ matrix.platform }}
+          fi
 
       - name: run ubuntu 20.04 docker and mapping apisix-runtime deb into container
         run: |
