@@ -44,9 +44,9 @@ jobs:
       - name: run ubuntu 20.04 docker and mapping apisix-runtime deb into container
         run: |
           if [ "${{ matrix.platform.arch }}" == "arm64" ]; then
-            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" --platfrom linux/arm64/v8 docker.io/ubuntu:20.04 /bin/bash
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/arm64v8/ubuntu:20.04 /bin/bash
           else
-            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" --platfrom linux/amd64 docker.io/ubuntu:20.04 /bin/bash
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
           fi
 
       - name: install dependencies in container
