@@ -1,4 +1,4 @@
-name: package apisix-runtime deb for ubuntu 20.04 with openresty 1.21
+name: package apisix-runtime deb for debianbullseye-slim with openresty 1.21
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_${{ env.ARCH }}.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_${{ env.ARCH }}.deb
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ env.ARCH }}.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ env.ARCH }}.deb
           retention-days: 5
           if-no-files-found: error
