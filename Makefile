@@ -19,7 +19,6 @@ version=0
 checkout=0
 app=0
 type=0
-image_base="centos"
 image_tag="7"
 iteration=0
 local_code_path=0

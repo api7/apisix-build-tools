@@ -1,21 +1,8 @@
-ARG IMAGE_BASE="centos"
-ARG IMAGE_TAG="7"
 ARG PACKAGE_TYPE
 ARG RUNTIME_VERSION
 
 FROM apache/apisix-runtime-${PACKAGE_TYPE}:${RUNTIME_VERSION} AS APISIX-RUNTIME
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
-
-# Note: The duplication around the rpm series dockerfile here
-#       is used for reuse the container layer cache
-RUN if [[ $(rpm --eval '%{centos_ver}') == "8" ]]; then \
-        sed -re "s/^#?\s*(mirrorlist)/#\1/g" \
-             -e "s|^#?\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" \
-             -i /etc/yum.repos.d/CentOS-Linux-*; \
-        dnf install -y centos-release-stream; \
-        dnf swap -y centos-{linux,stream}-repos; \
-        dnf distro-sync -y; \
-    fi
 
 COPY ./utils/install-common.sh /install-common.sh
 COPY ./utils/determine-dist.sh /determine-dist.sh
