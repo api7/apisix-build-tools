@@ -1,3 +1,6 @@
+ARG IMAGE_BASE="registry.access.redhat.com/ubi8/ubi"
+ARG IMAGE_TAG="8.6"
+
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 WORKDIR /tmp
