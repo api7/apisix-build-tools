@@ -74,7 +74,7 @@ jobs:
 
           # build apisix
           make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-${APISIX_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-${APISIX_TAG_VERSION}-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
@@ -85,7 +85,7 @@ jobs:
           # build apisix-base
           echo ${{ env.TAG_TYPE }} ${{ env.TAG_VERSION }}
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-runtime RPM Package
@@ -96,7 +96,7 @@ jobs:
           # build apisix-runtime
           echo ${{ env.TAG_TYPE }} ${{ env.TAG_VERSION }}
           make package type=rpm app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-runtime-${APISIX_RUNTIME_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-runtime-${APISIX_RUNTIME_TAG_VERSION}-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-runtime" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
