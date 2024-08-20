@@ -13,7 +13,6 @@ jobs:
     timeout-minutes: 60
     env:
       BUILD_APISIX_RUNTIME_VERSION: 1.1.2
-      ARCH: amd64
     strategy:
       matrix:
         platform:
@@ -27,15 +26,9 @@ jobs:
         with:
           ref: openresty/1.21.4
 
-      - name: Set env.ARCH if platform.arch is aarch64
-        run: |
-          if [ "${{ matrix.platform.arch }}" == "arm64" ]; then
-            echo "ARCH=arm64" >> $GITHUB_ENV
-          fi
-
       - name: Check arch
         run: |
-          echo "ARCH: ${{ env.ARCH }}"
+          echo "ARCH: ${{ matrix.platform.arch }}"
 
       - name: Install dependencies
         run: |
@@ -52,8 +45,8 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ env.ARCH }}.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ env.ARCH }}.deb
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
           retention-days: 5
           if-no-files-found: error
 
