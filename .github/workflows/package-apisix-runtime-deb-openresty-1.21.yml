@@ -78,6 +78,9 @@ jobs:
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.event.inputs.tag_name }}
+          body: |
+            Release apisix-runtime ${{ github.event.inputs.tag_name }}
           files: |
             ./artifacts/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_arm64.deb
             ./artifacts/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_amd64.deb
