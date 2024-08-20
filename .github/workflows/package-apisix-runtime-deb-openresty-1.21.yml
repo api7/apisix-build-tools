@@ -1,0 +1,81 @@
+name: package apisix-runtime deb for debianbullseye-slim with openresty 1.21
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: true
+        default: ''
+
+jobs:
+  build:
+    timeout-minutes: 60
+    env:
+      BUILD_APISIX_RUNTIME_VERSION: 1.1.2
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            arch: amd64
+          - runner: buildjet-2vcpu-ubuntu-2204-arm
+            arch: arm64
+    runs-on: ${{ matrix.platform.runner }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: openresty/1.21.4
+
+      - name: Check arch
+        run: |
+          echo "ARCH: ${{ matrix.platform.arch }}"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: Build apisix-runtime deb
+        run: |
+          if [ "${{ matrix.platform.arch }}" == "arm64" ]; then
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=debian image_tag=bullseye-slim arch=linux/arm64/v8
+          else
+            make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=debian image_tag=bullseye-slim arch=linux/amd64
+          fi
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+          retention-days: 5
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      BUILD_APISIX_RUNTIME_VERSION: 1.1.2
+    steps:
+      - name: Download ARM64 artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_arm64.deb
+          path: ./artifacts
+
+      - name: Download AMD64 artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_amd64.deb
+          path: ./artifacts
+
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.tag_name }}
+          body: |
+            Release apisix-runtime ${{ github.event.inputs.tag_name }}
+          files: |
+            ./artifacts/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_arm64.deb
+            ./artifacts/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbullseye-slim_amd64.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
