@@ -7,7 +7,6 @@ on:
         description: 'Tag name for the release'
         required: true
         default: ''
-  pull_request:
 
 jobs:
   build:
