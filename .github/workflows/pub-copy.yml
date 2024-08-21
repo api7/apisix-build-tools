@@ -80,8 +80,8 @@ jobs:
           source .requirements
 
           # build apisix
-          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=3.10.0 version=3.10.0-test image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-3.10.0-test-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=3.10.0 version=3.10.0 image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+          mv ./output/apisix-3.10.0-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
@@ -124,7 +124,7 @@ jobs:
         if: ${{ env.TAG_TYPE == 'apisix' }}
         uses: actions/upload-artifact@v4.0.0
         env:
-          PACKAGE_NAME: apisix-3.10.0-test-0.ubi8.6.${{ env.ARCH }}.rpm
+          PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.ubi8.6.${{ env.ARCH }}.rpm
         with:
           name: "${{ env.PACKAGE_NAME }}"
           path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
