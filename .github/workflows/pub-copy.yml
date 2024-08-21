@@ -59,7 +59,6 @@ jobs:
           echo "TAG_VERSION=test-3.10.0" >> "$GITHUB_ENV"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         shell: bash
         run: |
           type=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}')
@@ -68,6 +67,7 @@ jobs:
       - name: Check Tags Type
         if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' && env.TAG_TYPE != 'dashboard' }}
         run: |
+
           echo "##[error]Tag type is not correct, or not support, please check it."
           exit 1
 
