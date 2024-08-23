@@ -2,8 +2,15 @@ name: Build and Publish RPM Package
 
 on:
   push:
+    branches: [ master ]
     tags:
-      - "apisix/*"
+      - "v*"
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
@@ -49,18 +56,18 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         shell: bash
         run: |
-          echo "TAG_VERSION=${GITHUB_REF##*/}" >> "$GITHUB_ENV"
+          echo "TAG_VERSION=3.10.0" >> "$GITHUB_ENV"
 
       - name: Extract Tags Type
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         shell: bash
         run: |
           type=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}')
-          echo "TAG_TYPE=${type}" >> "$GITHUB_ENV"
+          echo "TAG_TYPE=apisix" >> "$GITHUB_ENV"
 
       - name: Check Tags Type
         if: ${{ env.TAG_TYPE != 'apisix' && env.TAG_TYPE != 'apisix-base' && env.TAG_TYPE != 'dashboard' }}
         run: |
+
           echo "##[error]Tag type is not correct, or not support, please check it."
           exit 1
 
@@ -69,12 +76,12 @@ jobs:
         env:
           APISIX_TAG_VERSION: ${{ env.TAG_VERSION }}
         run: |
-          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_TAG_VERSION}/.requirements
+          wget https://raw.githubusercontent.com/apache/apisix/3.10.0/.requirements
           source .requirements
 
           # build apisix
-          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=${APISIX_TAG_VERSION} version=${APISIX_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-${APISIX_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          make package type=rpm app=apisix openresty=apisix-runtime runtime_version=${APISIX_RUNTIME} checkout=3.10.0 version=3.10.0 image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+          mv ./output/apisix-3.10.0-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix" >> "$GITHUB_ENV"
 
       - name: Build apisix-base RPM Package
@@ -85,7 +92,7 @@ jobs:
           # build apisix-base
           echo ${{ env.TAG_TYPE }} ${{ env.TAG_VERSION }}
           make package type=rpm app=apisix-base checkout=${APISIX_BASE_TAG_VERSION} version=${APISIX_BASE_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-base-${APISIX_BASE_TAG_VERSION}-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-base" >> "$GITHUB_ENV"
 
       - name: Build apisix-runtime RPM Package
@@ -96,7 +103,7 @@ jobs:
           # build apisix-runtime
           echo ${{ env.TAG_TYPE }} ${{ env.TAG_VERSION }}
           make package type=rpm app=apisix-runtime checkout=${APISIX_RUNTIME_TAG_VERSION} version=${APISIX_RUNTIME_TAG_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
-          mv ./output/apisix-runtime-${APISIX_RUNTIME_TAG_VERSION}-0.{el7,el8,ubi8.6}.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
+          mv ./output/apisix-runtime-${APISIX_RUNTIME_TAG_VERSION}-0.ubi8.6.${ARCH}.rpm ${VAR_RPM_WORKBENCH_DIR}
           echo "TARGET_APP=apisix-runtime" >> "$GITHUB_ENV"
 
       - name: Build apisix-dashboard RPM Package
@@ -117,7 +124,7 @@ jobs:
         if: ${{ env.TAG_TYPE == 'apisix' }}
         uses: actions/upload-artifact@v4.0.0
         env:
-          PACKAGE_NAME: apisix-${{ env.TAG_VERSION }}-0.ubi8.6.${{ env.ARCH }}.rpm
+          PACKAGE_NAME: apisix-3.10.0-0.ubi8.6.${{ env.ARCH }}.rpm
         with:
           name: "${{ env.PACKAGE_NAME }}"
           path: "${{ env.VAR_RPM_WORKBENCH_DIR }}/${{ env.PACKAGE_NAME }}"
