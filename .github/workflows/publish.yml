@@ -192,3 +192,7 @@ jobs:
       - name: RPM repo publish for redhat
         run: |
           sudo -E ./utils/publish-rpm.sh repo_publish
+
+      - name: Setup tmate session
+        if: always()
+        uses: mxschmitt/action-tmate@v3

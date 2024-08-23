@@ -24,6 +24,7 @@ VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
 # GPG extension
 # =======================================
 func_rpmsign_macros_init() {
+    echo "dibag"
     cat > ~/.rpmmacros <<_EOC_
 # Macros for signing RPMs.
 %_signature gpg
