@@ -39,6 +39,12 @@ func_gpg_key_load() {
     # ${2} gpg key passphrase
     gpg --import --pinentry-mode loopback --batch --passphrase-file "${2}" "${1}"
 
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' |
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }'
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' | gpg --import-ownertrust
+
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
     | gpg --import-ownertrust
@@ -161,6 +167,8 @@ rpm_gpg_sign)
     func_rpmsign_macros_init
     func_gpg_key_load "${VAR_GPG_PRIV_KET}" "${VAR_GPG_PASSPHRASE}"
 
+    echo "dibag key load done"
+    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm"
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm" \
         -exec echo "rpmsign for: {}" \; \
         -exec rpmsign --addsign {} \;
