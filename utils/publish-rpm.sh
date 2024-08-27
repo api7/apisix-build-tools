@@ -47,7 +47,7 @@ func_gpg_key_load() {
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }'
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' | gpg --import-ownertrust
 
-    gpg --list-keys --fingerprint | grep dev@apisix.apache.org -B 1 \
+    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
     | gpg --import-ownertrust
 }
