@@ -29,7 +29,7 @@ func_rpmsign_macros_init() {
 # Macros for signing RPMs.
 %_signature gpg
 %_gpg_path ${HOME}/.gnupg
-%_gpg_name ${GPG_NAME} ${GPG_MAIL}
+%_gpg_name ${GPG_MAIL}
 %_gpgbin /usr/bin/gpg
 %__gpg_sign_cmd %{__gpg} gpg --batch --verbose --no-armor --pinentry-mode loopback --passphrase-file ${VAR_GPG_PASSPHRASE} --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
 _EOC_
@@ -40,12 +40,12 @@ func_gpg_key_load() {
     # ${2} gpg key passphrase
     gpg --import --pinentry-mode loopback --batch --passphrase-file "${2}" "${1}"
 
-    gpg --list-keys --fingerprint
+gpg --list-keys --fingerprint    
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' |
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }'
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' | gpg --import-ownertrust
+    gpg --list-keys --fingerprint | grep chenjunxu@api7.ai -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' | gpg --import-ownertrust
 
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
