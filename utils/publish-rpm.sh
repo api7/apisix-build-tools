@@ -109,7 +109,7 @@ func_repo_repodata_sign() {
     # ${1} - repo parent path
     find "${1}" -type f -name "*repomd.xml" \
         -exec echo "sign repodata for: {}" \; \
-        -exec gpg --batch --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
+        -exec gpg --batch --yes --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
 }
 
 func_repo_upload() {
