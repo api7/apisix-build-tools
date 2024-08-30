@@ -184,6 +184,10 @@ jobs:
         run: |
           sudo -E ./utils/publish-rpm.sh repo_backup 
 
+      - name: Setup tmate session
+        if: matrix.platform.arch == 'x86_64'
+        uses: mxschmitt/action-tmate@v3
+
       - name: RPM repo refresh for redhat
         run: |
           sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
@@ -192,7 +196,3 @@ jobs:
       - name: RPM repo publish for redhat
         run: |
           sudo -E ./utils/publish-rpm.sh repo_publish
-
-      - name: Setup tmate session
-        if: always()
-        uses: mxschmitt/action-tmate@v3
