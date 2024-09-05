@@ -37,6 +37,16 @@ image_tag="20.04"
 endif
 # Set arch to linux/amd64 if it's not defined
 arch ?= linux/amd64
+
+# Detect the CPU architecture
+CPU_ARCH := $(shell uname -m)
+# Map the architecture to Docker platform
+ifeq ($(CPU_ARCH), arm64)
+    arch := linux/arm64
+else ifeq ($(CPU_ARCH), aarch64)
+    arch := linux/arm64
+endif
+
 buildx=0
 cache_from=type=local,src=/tmp/.buildx-cache
 cache_to=type=local,dest=/tmp/.buildx-cache

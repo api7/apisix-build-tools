@@ -28,7 +28,7 @@ func_rpmsign_macros_init() {
 # Macros for signing RPMs.
 %_signature gpg
 %_gpg_path ${HOME}/.gnupg
-%_gpg_name ${GPG_NAME} ${GPG_MAIL}
+%_gpg_name ${GPG_MAIL}
 %_gpgbin /usr/bin/gpg
 %__gpg_sign_cmd %{__gpg} gpg --batch --verbose --no-armor --pinentry-mode loopback --passphrase-file ${VAR_GPG_PASSPHRASE} --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
 _EOC_
