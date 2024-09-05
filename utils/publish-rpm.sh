@@ -24,7 +24,6 @@ VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
 # GPG extension
 # =======================================
 func_rpmsign_macros_init() {
-    echo "dibag"
     cat > ~/.rpmmacros <<_EOC_
 # Macros for signing RPMs.
 %_signature gpg
@@ -39,13 +38,6 @@ func_gpg_key_load() {
     # ${1} gpg private key
     # ${2} gpg key passphrase
     gpg --import --pinentry-mode loopback --batch --passphrase-file "${2}" "${1}"
-
-gpg --list-keys --fingerprint    
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' |
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1
-    gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }'
-    gpg --list-keys --fingerprint | grep chenjunxu@api7.ai -B 1 | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' | gpg --import-ownertrust
 
     gpg --list-keys --fingerprint | grep "${GPG_MAIL}" -B 1 \
     | tr -d ' ' | head -1 | awk 'BEGIN { FS = "\n" } ; { print $1":6:" }' \
@@ -109,7 +101,7 @@ func_repo_repodata_sign() {
     # ${1} - repo parent path
     find "${1}" -type f -name "*repomd.xml" \
         -exec echo "sign repodata for: {}" \; \
-        -exec gpg --batch --yes --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
+        -exec gpg --batch --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
 }
 
 func_repo_upload() {
@@ -169,8 +161,6 @@ rpm_gpg_sign)
     func_rpmsign_macros_init
     func_gpg_key_load "${VAR_GPG_PRIV_KET}" "${VAR_GPG_PASSPHRASE}"
 
-    echo "dibag key load done"
-    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm"
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm" \
         -exec echo "rpmsign for: {}" \; \
         -exec rpmsign --addsign {} \;
