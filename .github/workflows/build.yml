@@ -8,6 +8,10 @@ on:
     branches:
       - api7ee-runtime-test
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build
