@@ -12,6 +12,7 @@ jobs:
     name: Release
     timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         platform:
           - runner: ubuntu-22.04
@@ -40,7 +41,13 @@ jobs:
         run: |
           make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bullseye-slim arch=${{ matrix.platform.build_arch }}
 
+      - uses: mukunku/tag-exists-action@v1.6.0
+        id: check-tag
+        with: 
+          tag: api7ee-runtime/${{ env.version }}
+
       - name: Create Release
+        if: steps.check-tag.outputs.exists == 'false'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
