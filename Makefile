@@ -23,7 +23,7 @@ image_base="centos"
 image_tag="7"
 iteration=0
 local_code_path=0
-openresty="apisix-runtime"
+openresty="api7ee-runtime"
 artifact="0"
 runtime_version="0"
 apisix_repo="https://github.com/apache/apisix"
@@ -76,7 +76,7 @@ define build
 endef
 endif
 
-### function for building apisix-runtime
+### function for building api7ee-runtime
 ### $(1) is name
 ### $(2) is dockerfile filename
 ### $(3) is package type
@@ -241,36 +241,36 @@ package-dashboard-rpm:
 package-dashboard-deb:
 	$(call package,apisix-dashboard,deb)
 
-### build apisix-runtime:
-.PHONY: build-apisix-runtime-rpm
-build-apisix-runtime-rpm:
+### build api7ee-runtime:
+.PHONY: build-api7ee-runtime-rpm
+build-api7ee-runtime-rpm:
 ifeq ($(app),apisix)
-	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
-	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./apisix-runtime")
-	rm -fr ./apisix-runtime
+	git clone -b api7ee-runtime/$(runtime_version) $(apisix_runtime_repo) ./api7ee-runtime
+	$(call build_runtime,api7ee-runtime,api7ee-runtime,rpm,"./api7ee-runtime")
+	rm -fr ./api7ee-runtime
 else
-	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
+	$(call build_runtime,api7ee-runtime,api7ee-runtime,rpm,"./")
 endif
 
-.PHONY: build-apisix-runtime-deb
-build-apisix-runtime-deb:
+.PHONY: build-api7ee-runtime-deb
+build-api7ee-runtime-deb:
 ifeq ($(app),apisix)
-	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
-	rm -fr ./apisix-runtime
+	git clone -b api7ee-runtime/$(runtime_version) $(apisix_runtime_repo) ./api7ee-runtime
+	$(call build_runtime,api7ee-runtime,api7ee-runtime,deb,"./api7ee-runtime")
+	rm -fr ./api7ee-runtime
 else
-	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+	$(call build_runtime,api7ee-runtime,api7ee-runtime,deb,"./")
 endif
 
-### build rpm for apisix-runtime:
-.PHONY: package-apisix-runtime-rpm
-package-apisix-runtime-rpm:
-	$(call package_runtime,apisix-runtime,rpm)
+### build rpm for api7ee-runtime:
+.PHONY: package-api7ee-runtime-rpm
+package-api7ee-runtime-rpm:
+	$(call package_runtime,api7ee-runtime,rpm)
 
-### build deb for apisix-runtime:
-.PHONY: package-apisix-runtime-deb
-package-apisix-runtime-deb:
-	$(call package_runtime,apisix-runtime,deb)
+### build deb for api7ee-runtime:
+.PHONY: package-api7ee-runtime-deb
+package-api7ee-runtime-deb:
+	$(call package_runtime,api7ee-runtime,deb)
 
 ### build apisix-base:
 .PHONY: build-apisix-base-rpm
@@ -310,8 +310,8 @@ build-fpm:
 	-t api7/fpm - < ./dockerfiles/Dockerfile.fpm
 endif
 
-ifeq ($(filter $(app),apisix dashboard apisix-base apisix-runtime),)
-$(info  the app's value have to be apisix, dashboard, apisix-base and apisix-runtime!)
+ifeq ($(filter $(app),apisix dashboard apisix-base api7ee-runtime),)
+$(info  the app's value have to be apisix, dashboard, apisix-base and api7ee-runtime!)
 
 else ifeq ($(filter $(type),rpm deb apk),)
 $(info  the type's value have to be rpm, deb or apk!)
@@ -326,15 +326,15 @@ package: build-fpm
 package: build-apisix-base-deb
 package: package-apisix-base-deb
 
-else ifeq ($(app)_$(type),apisix-runtime_deb)
+else ifeq ($(app)_$(type),api7ee-runtime_deb)
 package: build-fpm
-package: build-apisix-runtime-deb
-package: package-apisix-runtime-deb
+package: build-api7ee-runtime-deb
+package: package-api7ee-runtime-deb
 
-else ifeq ($(app)_$(type),apisix-runtime_rpm)
+else ifeq ($(app)_$(type),api7ee-runtime_rpm)
 package: build-fpm
-package: build-apisix-runtime-rpm
-package: package-apisix-runtime-rpm
+package: build-api7ee-runtime-rpm
+package: package-api7ee-runtime-rpm
 
 else ifeq ($(app)_$(type),apisix-base_apk)
 package: build-apisix-base-apk
@@ -344,13 +344,13 @@ $(info  you have to input a checkout value!)
 
 else ifeq ($(app)_$(type),apisix_rpm)
 package: build-fpm
-package: build-apisix-runtime-rpm
+package: build-api7ee-runtime-rpm
 package: build-apisix-rpm
 package: package-apisix-rpm
 
 else ifeq ($(app)_$(type),apisix_deb)
 package: build-fpm
-package: build-apisix-runtime-deb
+package: build-api7ee-runtime-deb
 package: build-apisix-deb
 package: package-apisix-deb
 

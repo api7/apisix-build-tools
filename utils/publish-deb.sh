@@ -150,9 +150,9 @@ func_deb_upload() {
         -exec echo "upload : {}" \; \
         -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${UPLOAD_TARGET_FILE}"' \;
 
-    find "${1}" -type f -name "apisix-runtime*.deb" \
+    find "${1}" -type f -name "api7ee-runtime*.deb" \
         -exec echo "upload : {}" \; \
-        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-runtime/${UPLOAD_TARGET_FILE}"' \;
+        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/api7ee-runtime/${UPLOAD_TARGET_FILE}"' \;
 
 }
 
