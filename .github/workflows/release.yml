@@ -1,0 +1,62 @@
+name: Release api7ee-runtime
+
+on:
+  push:
+    branches:
+      - release/api7ee-runtime
+    paths:
+      - VERSION
+
+jobs:
+  release:
+    name: Release
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            arch: amd64
+            build_arch: linux/amd64
+          - runner: buildjet-2vcpu-ubuntu-2204-arm
+            arch: arm64
+            build_arch: linux/arm64/v8
+    runs-on: ${{ matrix.platform.runner }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract VERSION
+        id: read_version
+        run: |
+          version=$(cat VERSION)
+          echo "VERSION=${version}"
+          echo "version=${version}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: Build api7ee-runtime deb
+        run: |
+          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bullseye-slim arch=${{ matrix.platform.build_arch }}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: api7ee-runtime/${{ env.version }}
+          release_name: api7ee-runtime/${{ env.version }}
+          draft: false
+          prerelease: false
+
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: api7ee-runtime/${{ env.version }}
+          body: |
+            Release api7ee-runtime ${{ env.version }}
+          files: |
+            ./output/api7ee-runtime_${{ env.version }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
