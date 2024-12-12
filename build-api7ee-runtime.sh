@@ -233,6 +233,10 @@ cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
+cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
+sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
+cd ..
+
 # package etcdctl
 ETCD_ARCH="amd64"
 ETCD_VERSION=${ETCD_VERSION:-'3.5.4'}
