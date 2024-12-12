@@ -2,10 +2,6 @@ name: Release api7ee-runtime
 
 on:
   push:
-    branches:
-      - release/api7ee-runtime
-    paths:
-      - VERSION
 
 jobs:
   release:
