@@ -150,10 +150,6 @@ cd wasm-nginx-module-${wasm_nginx_module_ver} || exit 1
 ./install-wasmtime.sh
 cd ..
 
-cd grpc-client-nginx-module-${grpc_client_nginx_module_ver} || exit 1
-sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
-cd ..
-
 luajit_xcflags=${luajit_xcflags:="-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT"}
 no_pool_patch=${no_pool_patch:-}
 # TODO: remove old NGX_HTTP_GRPC_CLI_ENGINE_PATH once we have released a new
