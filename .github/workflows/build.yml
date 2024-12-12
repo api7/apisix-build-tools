@@ -1,0 +1,46 @@
+name: Build api7ee-runtime
+
+on:
+  push:
+    branches:
+      - release/api7ee-runtime
+  pull_request:
+    branches:
+      - release/api7ee-runtime
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 30
+    env:
+      version: 0.0.0
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            arch: amd64
+            build_arch: linux/amd64
+
+    runs-on: ${{ matrix.platform.runner }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: Build api7ee-runtime deb
+        run: |
+          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bullseye-slim arch=${{ matrix.platform.build_arch }}
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api7ee-runtime_${{ env.version }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+          path: ./output/api7ee-runtime_${{ env.version }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb

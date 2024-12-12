@@ -21,7 +21,7 @@ ENV build_latest=${BUILD_LATEST:-}
 COPY ${CODE_PATH} ./
 
 RUN mv ./utils/build-common.sh ./utils/determine-dist.sh ./ \
-    && ./build-common.sh build_apisix_runtime_deb  ${build_latest} \
+    && ./build-common.sh build_api7ee_runtime_deb  ${build_latest} \
     # determine dist and write it into /tmp/dist file
     && ./determine-dist.sh
 
