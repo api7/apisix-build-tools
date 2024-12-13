@@ -21,11 +21,11 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.3"}
-OPENRESTY_VERSION="1.21.4.4"
+OPENRESTY_VERSION="1.25.3.2"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="1.16.3"
-wasm_nginx_module_ver="0.6.5"
+wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 grpc_client_nginx_module_ver="v0.4.4"
 lua_resty_events_ver="0.2.0"
@@ -158,7 +158,7 @@ grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_
 
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
-or_limit_ver=0.08
+or_limit_ver=0.09
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
     exit 1
@@ -193,6 +193,7 @@ fi
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module \
     --with-http_v2_module \
+    --with-http_v3_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
     --without-mail_smtp_module \
