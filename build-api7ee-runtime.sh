@@ -158,6 +158,15 @@ grpc_engine_path="-DNGX_GRPC_CLI_ENGINE_PATH=$OR_PREFIX/libgrpc_engine.so -DNGX_
 
 cd openresty-${OPENRESTY_VERSION} || exit 1
 
+if [[ "$OPENRESTY_VERSION" == 1.21.4.4 ]] ; then
+    # upgrade luajit
+    rm -rf bundle/LuaJIT-2.1-20230410.1
+    lj_ver=2.1-20240815
+    wget "https://github.com/openresty/luajit2/archive/v$lj_ver.tar.gz" -O "LuaJIT-$lj_ver.tar.gz"
+    tar -xzf LuaJIT-$lj_ver.tar.gz
+    mv luajit2-* bundle/LuaJIT-2.1-20230410.1
+fi
+
 or_limit_ver=0.08
 if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     echo "ERROR: the official repository of lua-resty-limit-traffic has been updated, please sync to API7's repository." >&2
