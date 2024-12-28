@@ -210,6 +210,10 @@ fi
     $no_pool_patch \
     -j`nproc`
 
+# ref: https://github.com/api7/grpc-client-nginx-module/pull/34
+# After loading Go code from .so, the signalfd doesn't work anymore
+sed -i "s/#ifndef NGX_HTTP_LUA_HAVE_SIGNALFD/#ifdef NGX_HTTP_LUA_HAVE_SIGNALFD/" $(find -name 'ngx_auto_config.h')
+
 make -j`nproc`
 sudo make install
 cd ..
