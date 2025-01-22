@@ -21,48 +21,13 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
-OPENRESTY_VERSION="1.25.3.2"
-ngx_multi_upstream_module_ver="1.2.0"
+OPENRESTY_VERSION="1.27.1.1"
+ngx_multi_upstream_module_ver="12711"
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver="1.16.2"
+apisix_nginx_module_ver="12711"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
-
-
-install_openssl_3(){
-    local fips=""
-    if [ "$ENABLE_FIPS" == "true" ]; then
-        fips="enable-fips"
-    fi
-    # required for openssl 3.x config
-    cpanm IPC/Cmd.pm
-    wget --no-check-certificate https://github.com/openssl/openssl/releases/download/openssl-3.2.0/openssl-${OPENSSL_VERSION}.tar.gz
-    tar xvf openssl-${OPENSSL_VERSION}.tar.gz
-    cd openssl-${OPENSSL_VERSION}/
-    export LDFLAGS="-Wl,-rpath,$zlib_prefix/lib:$OPENSSL_PREFIX/lib"
-    ./config $fips \
-      shared \
-      zlib \
-	  enable-camellia enable-seed enable-rfc3779 \
-	  enable-cms enable-md2 enable-rc5 \
-	  enable-weak-ssl-ciphers \
-      --prefix=$OPENSSL_PREFIX \
-      --libdir=lib               \
-      --with-zlib-lib=$zlib_prefix/lib \
-      --with-zlib-include=$zlib_prefix/include
-    make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
-    sudo make install
-    if [ -f "$OPENSSL_CONF_PATH" ]; then
-        sudo cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
-    fi
-    if [ "$ENABLE_FIPS" == "true" ]; then
-        $OPENSSL_PREFIX/bin/openssl fipsinstall -out $OPENSSL_PREFIX/ssl/fipsmodule.cnf -module $OPENSSL_PREFIX/lib/ossl-modules/fips.so
-        sudo sed -i 's@# .include fipsmodule.cnf@.include '"$OPENSSL_PREFIX"'/ssl/fipsmodule.cnf@g; s/# \(fips = fips_sect\)/\1\nbase = base_sect\n\n[base_sect]\nactivate=1\n/g' $OPENSSL_PREFIX/ssl/openssl.cnf
-    fi
-    cd ..
-}
-
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$runtime_version" == "0.0.0" ]; then
     debug_args="--with-debug"
@@ -73,8 +38,6 @@ repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
-
-install_openssl_3
 
 wget --no-check-certificate https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
 tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
@@ -91,7 +54,7 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
     git clone --depth=1 -b $ngx_multi_upstream_module_ver \
-        https://github.com/api7/ngx_multi_upstream_module.git \
+        https://github.com/shreemaan-abhishek/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 
