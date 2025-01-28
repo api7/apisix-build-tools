@@ -71,6 +71,7 @@ fi
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
+echo $workdir dibag
 cd "$workdir" || exit 1
 
 
