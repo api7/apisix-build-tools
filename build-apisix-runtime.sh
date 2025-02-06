@@ -17,15 +17,14 @@ pcre_prefix=${OR_PREFIX}/pcre
 
 cc_opt=${cc_opt:-"-DNGX_LUA_ABORT_AT_PANIC -I$zlib_prefix/include -I$pcre_prefix/include -I$OPENSSL_PREFIX/include"}
 ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -Wl,-rpath,$zlib_prefix/lib:$pcre_prefix/lib:$OPENSSL_PREFIX/lib"}
-old_cc=${CC:-}
-CC=""
+
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.0"}
 OPENRESTY_VERSION="1.27.1.1"
-ngx_multi_upstream_module_ver="12711"
+ngx_multi_upstream_module_ver="1.3.0"
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver="12711"
+apisix_nginx_module_ver="1.18.0"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -72,7 +71,6 @@ fi
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
-echo $workdir dibag
 cd "$workdir" || exit 1
 
 
@@ -93,7 +91,7 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
     git clone --depth=1 -b $ngx_multi_upstream_module_ver \
-        https://github.com/shreemaan-abhishek/ngx_multi_upstream_module.git \
+        https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 
@@ -159,8 +157,7 @@ else
     mv lua-resty-limit-traffic-$limit_ver bundle/lua-resty-limit-traffic-$or_limit_ver
 fi
 
-CC=${old_cc}
-echo "dibag"
+
 ./configure --prefix="$OR_PREFIX" \
     --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \

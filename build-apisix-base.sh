@@ -19,9 +19,9 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$version" == "latest" ]; then
     debug_args="--with-debug"
     OR_PREFIX=${OR_PREFIX:="/usr/local/openresty-debug"}
 else
-    ngx_multi_upstream_module_ver="12711"
+    ngx_multi_upstream_module_ver="1.3.0"
     mod_dubbo_ver="1.0.2"
-    apisix_nginx_module_ver="12711"
+    apisix_nginx_module_ver="1.18.0"
     wasm_nginx_module_ver="0.7.0"
     lua_var_nginx_module_ver="v0.5.3"
     lua_resty_events_ver="0.2.0"
@@ -41,7 +41,7 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
     git clone --depth=1 -b $ngx_multi_upstream_module_ver \
-        https://github.com/shreemaan-abhishek/ngx_multi_upstream_module.git \
+        https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 
