@@ -4,7 +4,7 @@ set -x
 
 version=${version:-0.0.0}
 
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.27.1.1}
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-1.27.1.2}
 if [ "$OPENRESTY_VERSION" == "source" ] || [ "$OPENRESTY_VERSION" == "default" ]; then
     OPENRESTY_VERSION="1.27.1.2"
 fi
