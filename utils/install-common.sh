@@ -90,6 +90,7 @@ install_apisix() {
     install_rust
 
     # build the lib and specify the storage path of the package installed
+    # To be removed after https://github.com/luarocks/luarocks/issues/1797 is fixed
     luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
