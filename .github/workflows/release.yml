@@ -39,7 +39,7 @@ jobs:
 
       - name: Build api7ee-runtime deb
         run: |
-          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bullseye-slim arch=${{ matrix.platform.build_arch }}
+          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
 
       - uses: mukunku/tag-exists-action@v1.6.0
         id: check-tag
@@ -64,6 +64,6 @@ jobs:
           body: |
             Release api7ee-runtime ${{ env.version }}
           files: |
-            ./output/api7ee-runtime_${{ env.version }}-0~debianbullseye-slim_${{ matrix.platform.arch }}.deb
+            ./output/api7ee-runtime_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
