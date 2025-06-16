@@ -21,7 +21,7 @@ RUN set -x \
     && wget -O - https://openresty.org/package/pubkey.gpg | apt-key add - \
     && wget -O - http://repos.apiseven.com/pubkey.gpg | apt-key add - \
     && echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list \
-    && echo "deb http://repos.apiseven.com/packages/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list \
+    && echo "deb http://repos.apiseven.com/packages/debian bookworm main" | tee /etc/apt/sources.list.d/apisix.list \
     && DEBIAN_FRONTEND=noninteractive apt-get update
 
 # install etcd
