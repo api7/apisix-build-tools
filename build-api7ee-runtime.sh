@@ -20,7 +20,7 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 
 # dependencies for building openresty
-OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.3"}
+OPENSSL_VERSION=${OPENSSL_VERSION:-"3.2.4"}
 OPENRESTY_VERSION="1.21.4.4"
 ngx_multi_upstream_module_ver="1.1.1"
 mod_dubbo_ver="1.0.2"
