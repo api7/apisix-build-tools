@@ -195,7 +195,7 @@ endef
 build-apisix-rpm:
 ifeq ($(local_code_path), 0)
 	git clone -b $(checkout) $(apisix_repo) --depth 1 ./apisix
-	./build-apisix-ui.sh ./apisix
+	./build-apisix-dashboard.sh ./apisix
 	$(call build,apisix,apisix,rpm,"./apisix")
 	rm -fr ./apisix
 else
@@ -206,7 +206,7 @@ endif
 build-apisix-deb:
 ifeq ($(local_code_path), 0)
 	git clone -b $(checkout) $(apisix_repo) --depth 1 ./apisix
-	./build-apisix-ui.sh ./apisix
+	./build-apisix-dashboard.sh ./apisix
 	$(call build,apisix,apisix,deb,"./apisix")
 	rm -fr ./apisix
 else

@@ -4,6 +4,10 @@ set -x
 
 cd $1
 source .requirements
+if [ -z "${APISIX_DASHBOARD_COMMIT:-}" ]; then
+    echo "Error: APISIX_DASHBOARD_COMMIT is not set or empty"
+    exit 1
+fi
 git clone --revision=${APISIX_DASHBOARD_COMMIT} --depth 1 https://github.com/apache/apisix-dashboard.git
 pushd apisix-dashboard
 # compile
