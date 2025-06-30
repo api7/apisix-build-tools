@@ -40,6 +40,9 @@ jobs:
       - name: Init basic publish env
         run: |
           sudo apt-get update
+          # install node.js and pnpm
+          sudo n lts
+          corepack enable pnpm
           mkdir -p "${VAR_DEB_WORKBENCH_DIR}"
 
       - name: Extract Tags version

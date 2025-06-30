@@ -105,6 +105,7 @@ install_apisix() {
         sed -i "1s@.*@$bin@" /tmp/build/output/apisix/usr/bin/apisix
     fi
     cp -r /usr/local/apisix/* /tmp/build/output/apisix/usr/local/apisix/
+    cp -r /apisix/ui /tmp/build/output/apisix/usr/local/apisix/ui
     mv /tmp/build/output/apisix/usr/local/apisix/deps/share/lua/5.1/apisix /tmp/build/output/apisix/usr/local/apisix/
     if is_newer_version "${checkout_v}"; then
         bin='package.path = "/usr/local/apisix/?.lua;" .. package.path'

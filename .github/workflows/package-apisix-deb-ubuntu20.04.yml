@@ -27,6 +27,9 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get install -y make
+          # install node.js and pnpm
+          sudo n lts
+          corepack enable pnpm
       
       - name: run apisix packaging
         run: |
@@ -60,6 +63,12 @@ jobs:
           if [[ $result_code -ne 200 ]]; then
               printf "result_code: %s\n" "$result_code"
               exit 125
+          fi
+
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/ui/)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to access Apache APISIX UI"
+              exit 1
           fi
 
       - name: Publish Artifact

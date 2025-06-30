@@ -40,6 +40,9 @@ jobs:
           # install publish env deps
           sudo apt-get update
           sudo apt install -y createrepo-c
+          # install node.js and pnpm
+          sudo n lts
+          corepack enable pnpm
           mkdir -p "${VAR_RPM_WORKBENCH_DIR}"
           # init env var
           TAG_DATE=$(date +%Y%m%d)
