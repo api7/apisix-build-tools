@@ -65,6 +65,12 @@ jobs:
               exit 125
           fi
 
+          code=$(curl -k -i -m 20 -o /dev/null -s -w %{http_code} http://127.0.0.1:9180/ui/)
+          if [ ! $code -eq 200 ]; then
+              echo "failed: failed to access Apache APISIX UI"
+              exit 1
+          fi
+
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
