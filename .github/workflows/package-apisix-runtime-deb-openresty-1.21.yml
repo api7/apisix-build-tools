@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         platform:
-          - runner: ubuntu-22.04
+          - runner: ubuntu-latest
             arch: amd64
-          - runner: buildjet-2vcpu-ubuntu-2204-arm
+          - runner: ubuntu-24.04-arm
             arch: arm64
     runs-on: ${{ matrix.platform.runner }}
     steps:
