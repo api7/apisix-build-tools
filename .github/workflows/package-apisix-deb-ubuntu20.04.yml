@@ -27,6 +27,9 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get install -y make
+          # install node.js and pnpm
+          sudo n lts
+          corepack enable pnpm
       
       - name: run apisix packaging
         run: |
