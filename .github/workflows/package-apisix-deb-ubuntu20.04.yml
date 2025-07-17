@@ -1,4 +1,4 @@
-name: package apisix deb for ubuntu 20.04(Focal Fossa)
+name: package apisix deb for ubuntu 24.04
 
 on:
   push:
@@ -34,11 +34,11 @@ jobs:
       - name: run apisix packaging
         run: |
           wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
-          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=${APISIX_VERSION} image_base=ubuntu image_tag=20.04
+          make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=${APISIX_VERSION} image_base=ubuntu image_tag=24.04
 
       - name: install apisix deb into container
         run: |
-          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.ubuntu20.04 .
+          docker build -t apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test --build-arg APISIX_VERSION=${PACKAGE_APISIX_VERSION} -f test/apisix/Dockerfile.test.apisix.deb.ubuntu24.04 .
 
       - name: start apisix and test
         run: |
@@ -74,7 +74,7 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
-          path: output/apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu20.04_amd64.deb
+          name: apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu24.04_amd64.deb
+          path: output/apisix_${{ env.PACKAGE_APISIX_VERSION }}-0~ubuntu24.04_amd64.deb
           retention-days: 5
           if-no-files-found: error

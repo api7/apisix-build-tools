@@ -1,4 +1,4 @@
-name: package apisix-runtime deb for ubuntu 20.04(Focal Fossa)
+name: package apisix-runtime deb for ubuntu 24.04
 
 on:
   push:
@@ -29,26 +29,26 @@ jobs:
 
       - name: build apisix-runtime deb
         run: |
-          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=20.04
+          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=24.04
 
-      - name: run ubuntu 20.04 docker and mapping apisix-runtime deb into container
+      - name: run ubuntu 24.04 docker and mapping apisix-runtime deb into container
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu20.04Instance --net="host" docker.io/ubuntu:20.04 /bin/bash
+          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu24.04Instance --net="host" docker.io/ubuntu:24.04 /bin/bash
 
       - name: install deb in container
         run: |
-          docker exec ubuntu20.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu20.04_amd64.deb"
+          docker exec ubuntu24.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu24.04_amd64.deb"
 
       - name: check and ensure apisix-runtime is installed
         run: |
-          docker exec ubuntu20.04Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
-          export APISIX_RUNTIME_VER=$(docker exec ubuntu20.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
+          docker exec ubuntu24.04Instance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
+          export APISIX_RUNTIME_VER=$(docker exec ubuntu24.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu20.04_amd64.deb
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
           retention-days: 5
           if-no-files-found: error
