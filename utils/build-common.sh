@@ -7,7 +7,7 @@ BUILD_PATH=${BUILD_PATH:-`pwd`}
 
 build_apisix_base_rpm() {
     dnf install -y yum-utils
-    yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms gcc gcc-c++ patch wget git make sudo xz
+    yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz
 
     command -v gcc
     gcc --version
@@ -56,7 +56,7 @@ build_apisix_base_apk() {
 
 build_apisix_runtime_rpm() {
     dnf install -y yum-utils
-    yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
+    yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
 
     command -v gcc
     gcc --version
