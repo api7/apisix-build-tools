@@ -21,16 +21,16 @@ jobs:
       - run:
           name: build apisix-runtime rpm
           command: |
-            make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=registry.access.redhat.com/ubi8/ubi image_tag=8.6
+            make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6
       - run:
-          name: run ubi8 docker and mapping apisix-runtime rpm into container
+          name: run ubi9 docker and mapping apisix-runtime rpm into container
           command: |
-            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi8/ubi:8.6 /bin/bash
+            docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubiInstance --net="host" registry.access.redhat.com/ubi9/ubi:9.6 /bin/bash
       - run:
           name: install rpm in container
           command: |
             docker exec ubiInstance bash -c "ls -la /output"
-            docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-runtime-${BUILD_APISIX_RUNTIME_VERSION}-0.ubi8.6.x86_64.rpm"
+            docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-runtime-${BUILD_APISIX_RUNTIME_VERSION}-0.ubi9.6.x86_64.rpm"
       - run:
           name: check and ensure apisix-runtime is installed
           command: |
