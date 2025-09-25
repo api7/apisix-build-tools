@@ -42,13 +42,13 @@ jobs:
 
       - name: packaging APISIX(-remote) with remote code
         run: |
-          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6 artifact=apisix-remote
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6 artifact=apisix-remote
 
       - name: packaging APISIX(-local) with local code
         run: |
           git clone -b ${APISIX_VERSION} https://github.com/apache/apisix.git
           ./build-apisix-dashboard.sh ./apisix
-          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} runtime_version=${APISIX_RUNTIME} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6 local_code_path=./apisix artifact=apisix-local
+          make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6 local_code_path=./apisix artifact=apisix-local
 
       - name: run ubi9 docker and mapping rpm into container
         run: |
