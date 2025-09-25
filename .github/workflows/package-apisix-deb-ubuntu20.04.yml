@@ -33,7 +33,6 @@ jobs:
       
       - name: run apisix packaging
         run: |
-          wget https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements && source .requirements
           make package type=deb app=apisix version=${PACKAGE_APISIX_VERSION} runtime_version=${APISIX_RUNTIME} checkout=${APISIX_VERSION} image_base=ubuntu image_tag=24.04
 
       - name: install apisix deb into container

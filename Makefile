@@ -257,9 +257,13 @@ package-dashboard-deb:
 .PHONY: build-apisix-runtime-rpm
 build-apisix-runtime-rpm:
 ifeq ($(app),apisix)
+ifneq ($(runtime_version),0)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
 	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./apisix-runtime")
 	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
+endif
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
 endif
@@ -267,9 +271,13 @@ endif
 .PHONY: build-apisix-runtime-deb
 build-apisix-runtime-deb:
 ifeq ($(app),apisix)
+ifneq ($(runtime_version),0)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
 	rm -fr ./apisix-runtime
+else
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+endif
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
 endif

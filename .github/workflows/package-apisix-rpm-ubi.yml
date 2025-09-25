@@ -18,7 +18,6 @@ jobs:
     timeout-minutes: 60
     env:
       APISIX_VERSION: master
-      APISIX_RUNTIME: sy/update-ubi9
     services:
       etcd:
         image: bitnami/etcd:3.4.0
