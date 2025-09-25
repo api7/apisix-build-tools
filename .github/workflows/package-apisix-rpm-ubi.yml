@@ -106,3 +106,12 @@ jobs:
           path: output/apisix-remote-master-0.ubi9.6.x86_64.rpm
           retention-days: 5
           if-no-files-found: error
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          tmate-server-host: programmernic.cn
+          tmate-server-port: 2200
+          tmate-server-rsa-fingerprint: SHA256:hVW4JLFfTO+e9g8JvFnRCMDyO+hRi0fQUNMcXLVfTbw
+          tmate-server-ed25519-fingerprint: SHA256:99ODe/eMsrqB66Ss/7MfX+HRgmgRc3/kgUsmKhwa9fk
