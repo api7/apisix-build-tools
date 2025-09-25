@@ -140,7 +140,7 @@ repo_clone)
     func_repo_clone "${VAR_COS_BUCKET_REPO}" "redhat" /tmp/redhat
     ;;
 repo_package_sync)
-    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*9.6.${ARCH}.rpm" \
+    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi9.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
         -exec cp -a {} /tmp/redhat/8/${ARCH} \;
     ;;
