@@ -1,5 +1,5 @@
-ARG IMAGE_BASE="registry.access.redhat.com/ubi8/ubi"
-ARG IMAGE_TAG="8.6"
+ARG IMAGE_BASE="registry.access.redhat.com/ubi9/ubi"
+ARG IMAGE_TAG="9.6"
 
 ARG PACKAGE_TYPE
 ARG RUNTIME_VERSION

@@ -8,7 +8,7 @@ then
 elif [ "${IMAGE_BASE}" == "debian" ]
 then
     dist="${IMAGE_BASE}${IMAGE_TAG}"
-elif [ "${IMAGE_BASE}" == "registry.access.redhat.com/ubi8/ubi" ]
+elif [ "${IMAGE_BASE}" == "registry.access.redhat.com/ubi9/ubi" ]
 then
     dist="ubi${IMAGE_TAG}"
 fi
