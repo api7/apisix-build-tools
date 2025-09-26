@@ -50,6 +50,14 @@ jobs:
           ./build-apisix-dashboard.sh ./apisix
           make package type=rpm app=apisix version=master checkout=${APISIX_VERSION} image_base=registry.access.redhat.com/ubi9/ubi image_tag=9.6 local_code_path=./apisix artifact=apisix-local
 
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-remote-master-0.ubi9.6.x86_64.rpm
+          path: output/apisix-remote-master-0.ubi9.6.x86_64.rpm
+          retention-days: 5
+          if-no-files-found: error
+
       - name: run ubi9 docker and mapping rpm into container
         run: |
           docker run -itd -v $PWD/output:/output -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml  --name ubiInstance --net="host" registry.access.redhat.com/ubi9/ubi:9.6 /bin/bash
@@ -96,11 +104,3 @@ jobs:
               echo "failed: failed to access Apache APISIX UI"
               exit 1
           fi
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4.0.0
-        with:
-          name: apisix-remote-master-0.ubi9.6.x86_64.rpm
-          path: output/apisix-remote-master-0.ubi9.6.x86_64.rpm
-          retention-days: 5
-          if-no-files-found: error

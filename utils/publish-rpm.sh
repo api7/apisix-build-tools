@@ -59,7 +59,7 @@ func_cos_utils_credential_init() {
 # =======================================
 func_repo_init() {
     # ${1} - repo workbench path
-    mkdir -p "${1}"/redhat/8/${ARCH}
+    mkdir -p "${1}"/redhat/9/${ARCH}
 }
 
 func_repo_clone() {
@@ -142,7 +142,7 @@ repo_clone)
 repo_package_sync)
     find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*ubi9.6.${ARCH}.rpm" \
         -exec echo "repo sync for: {}" \; \
-        -exec cp -a {} /tmp/redhat/8/${ARCH} \;
+        -exec cp -a {} /tmp/redhat/9/${ARCH} \;
     ;;
 repo_repodata_rebuild)
     func_repo_repodata_rebuild /tmp/redhat
