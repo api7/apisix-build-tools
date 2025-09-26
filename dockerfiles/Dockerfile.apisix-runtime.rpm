@@ -1,5 +1,5 @@
-ARG IMAGE_BASE="registry.access.redhat.com/ubi8/ubi"
-ARG IMAGE_TAG="8.6"
+ARG IMAGE_BASE="registry.access.redhat.com/ubi9/ubi"
+ARG IMAGE_TAG="9.6"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
@@ -18,8 +18,7 @@ ENV runtime_version=${RUNTIME_VERSION}
 
 COPY ${CODE_PATH} ./
 
-RUN yum install -y curl \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && source "$HOME/.cargo/env" \
     && rustup install 1.69 \
     && rustup default 1.69 \

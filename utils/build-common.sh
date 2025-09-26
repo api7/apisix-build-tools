@@ -7,7 +7,7 @@ BUILD_PATH=${BUILD_PATH:-`pwd`}
 
 build_apisix_base_rpm() {
     dnf install -y yum-utils
-    yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms gcc gcc-c++ patch wget git make sudo xz
+    yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz
 
     command -v gcc
     gcc --version
@@ -56,13 +56,13 @@ build_apisix_base_apk() {
 
 build_apisix_runtime_rpm() {
     dnf install -y yum-utils
-    yum -y install --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
+    yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
 
     command -v gcc
     gcc --version
 
     yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install openresty-pcre-devel openresty-zlib-devel
+    yum -y install --nogpgcheck openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
     ${BUILD_PATH}/build-apisix-runtime.sh
