@@ -62,11 +62,6 @@ jobs:
         run: |
           docker run -itd -v $PWD/output:/output -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml  --name ubiInstance --net="host" registry.access.redhat.com/ubi9/ubi:9.6 /bin/bash
 
-      - name: enable apisix repository in container
-        run: |
-          docker exec ubiInstance bash -c "rpm --import https://repos.apiseven.com/KEYS"
-          docker exec ubiInstance bash -c "yum -y install https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm"
-
       - name: install APISIX(-remote) master by rpm in container
         run: |
           docker exec ubiInstance bash -c "yum -y localinstall /output/apisix-remote-master-0.ubi9.6.x86_64.rpm"
