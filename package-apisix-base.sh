@@ -6,7 +6,7 @@ dist=$(cat /tmp/dist)
 codename=$(cat /tmp/codename)
 
 # Determine the name of artifact
-# The defaut is apisix-base
+# The default is apisix-base
 artifact="apisix-base"
 if [ "$ARTIFACT" != "0" ]; then
     artifact=${ARTIFACT}
