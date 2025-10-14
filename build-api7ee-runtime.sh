@@ -46,7 +46,7 @@ install_openssl_3(){
       zlib \
 	  enable-camellia enable-seed enable-rfc3779 \
 	  enable-cms enable-md2 enable-rc5 \
-	  enable-weak-ssl-ciphers \
+	  enable-weak-ssl-ciphers enable-ktls \
       --prefix=$OPENSSL_PREFIX \
       --libdir=lib               \
       --with-zlib-lib=$zlib_prefix/lib \
@@ -206,6 +206,7 @@ fi
     --with-http_gunzip_module \
     --with-threads \
     --with-compat \
+    --with-openssl-opt=enable-ktls \
     --with-luajit-xcflags="$luajit_xcflags" \
     $no_pool_patch \
     -j`nproc`
