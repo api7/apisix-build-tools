@@ -161,7 +161,7 @@ if [ ! -d "bundle/lua-resty-limit-traffic-$or_limit_ver" ]; then
     exit 1
 else
     rm -rf bundle/lua-resty-limit-traffic-$or_limit_ver
-    limit_ver=1.0.0
+    limit_ver=1.1.0
     wget "https://github.com/api7/lua-resty-limit-traffic/archive/refs/tags/v$limit_ver.tar.gz" -O "lua-resty-limit-traffic-$limit_ver.tar.gz"
     tar -xzf lua-resty-limit-traffic-$limit_ver.tar.gz
     mv lua-resty-limit-traffic-$limit_ver bundle/lua-resty-limit-traffic-$or_limit_ver
