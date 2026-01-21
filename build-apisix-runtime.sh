@@ -52,7 +52,7 @@ install_openssl_3(){
       --with-zlib-lib=$zlib_prefix/lib \
       --with-zlib-include=$zlib_prefix/include
     make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
-    sudo make install
+    sudo make install_sw
     if [ -f "$OPENSSL_CONF_PATH" ]; then
         sudo cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
     fi
