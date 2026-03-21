@@ -38,9 +38,19 @@ jobs:
       - name: Build api7ee-runtime deb
         run: |
           make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
+
+      - name: Build api7ee-runtime-debug deb
+        run: |
+          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }} build_latest=latest artifact=api7ee-runtime-debug
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: api7ee-runtime_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
           path: ./output/api7ee-runtime_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
+
+      - name: Upload Debug Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api7ee-runtime-debug_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
+          path: ./output/api7ee-runtime-debug_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb

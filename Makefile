@@ -25,6 +25,7 @@ iteration=0
 local_code_path=0
 openresty="api7ee-runtime"
 artifact="0"
+build_latest=
 runtime_version="0"
 apisix_repo="https://github.com/apache/apisix"
 apisix_runtime_repo="https://github.com/api7/apisix-build-tools.git"
@@ -89,6 +90,7 @@ define build_runtime
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
     --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
@@ -101,6 +103,7 @@ define build_runtime
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
 		--load \
 		--cache-from=$(cache_from) \
