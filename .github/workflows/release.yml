@@ -6,6 +6,7 @@ on:
       - release/api7ee-runtime
     paths:
       - VERSION
+  workflow_dispatch:
 
 jobs:
   release:
@@ -41,6 +42,10 @@ jobs:
         run: |
           make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
 
+      - name: Build api7ee-runtime-debug deb
+        run: |
+          make package type=deb app=api7ee-runtime runtime_version=${version} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }} build_latest=latest artifact=api7ee-runtime-debug
+
       - uses: mukunku/tag-exists-action@v1.6.0
         id: check-tag
         with: 
@@ -65,5 +70,6 @@ jobs:
             Release api7ee-runtime ${{ env.version }}
           files: |
             ./output/api7ee-runtime_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
+            ./output/api7ee-runtime-debug_${{ env.version }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

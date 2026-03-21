@@ -45,5 +45,5 @@ fi
 
 if [ "$PACKAGE_TYPE" == "deb" ]; then
     # Rename deb file with adding $DIST section
-    mv /output/api7ee-runtime_"${RUNTIME_VERSION}"-"${ITERATION}"_"${PACKAGE_ARCH}".deb /output/api7ee-runtime_"${RUNTIME_VERSION}"-"${ITERATION}"~"${dist}"_"${PACKAGE_ARCH}".deb
+    mv /output/"${artifact}"_"${RUNTIME_VERSION}"-"${ITERATION}"_"${PACKAGE_ARCH}".deb /output/"${artifact}"_"${RUNTIME_VERSION}"-"${ITERATION}"~"${dist}"_"${PACKAGE_ARCH}".deb
 fi
