@@ -12,19 +12,17 @@ build_api7ee_runtime_deb() {
     fi
     DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing
     DEBIAN_FRONTEND=noninteractive apt-get install -y sudo git libreadline-dev lsb-release libssl-dev perl build-essential gcc g++ xz-utils curl cpanminus
-    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates 
-    wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-
-    if [[ $IMAGE_BASE == "ubuntu" ]]; then
-        echo "deb http://openresty.org/package/${arch_path}ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list
-    fi
-
-    if [[ $IMAGE_BASE == "debian" ]]; then
-        echo "deb http://openresty.org/package/${arch_path}debian $(lsb_release -sc) openresty" | tee /etc/apt/sources.list.d/openresty.list
-    fi
-
-    DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y openresty-pcre-dev openresty-zlib-dev
+    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
+    # Use system pcre/zlib dev packages instead of openresty apt repo packages
+    # to avoid dependency on the unreliable openresty.org apt repository.
+    # Symlink them into the paths expected by the build scripts.
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libpcre3-dev zlib1g-dev
+    MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+    mkdir -p /usr/local/openresty/pcre /usr/local/openresty/zlib
+    ln -sf /usr/include /usr/local/openresty/pcre/include
+    ln -sf /usr/lib/${MULTIARCH} /usr/local/openresty/pcre/lib
+    ln -sf /usr/include /usr/local/openresty/zlib/include
+    ln -sf /usr/lib/${MULTIARCH} /usr/local/openresty/zlib/lib
 
     export_openresty_variables
     # fix OR_PREFIX
