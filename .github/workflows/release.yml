@@ -19,7 +19,7 @@ jobs:
           - runner: ubuntu-22.04
             arch: amd64
             build_arch: linux/amd64
-          - runner: buildjet-2vcpu-ubuntu-2204-arm
+          - runner: ubuntu-22.04-arm
             arch: arm64
             build_arch: linux/arm64/v8
     runs-on: ${{ matrix.platform.runner }}
