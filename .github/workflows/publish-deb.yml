@@ -22,8 +22,8 @@ jobs:
             arch: arm64
         target:
           - os: debian
-            codename: bullseye
-            release: bullseye-slim
+            codename: debian12
+            release: bookworm-slim
           - os: ubuntu
             codename: noble
             release: 24.04
