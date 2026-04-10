@@ -22,7 +22,7 @@ jobs:
             arch: arm64
         target:
           - os: debian
-            codename: bookworm
+            codename: debian12
             release: bookworm-slim
           - os: ubuntu
             codename: noble
