@@ -21,10 +21,11 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
-OPENRESTY_VERSION="1.29.2.4"
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
 ngx_multi_upstream_module_ver="1.3.2"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="openresty-1.29.2.4-patches"
+apisix_nginx_module_commit="b3dfda59b581aec62e45ebca0bf3e973d10b778e"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -109,6 +110,12 @@ else
     git clone --depth=1 -b $apisix_nginx_module_ver \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
+fi
+if [ -n "$apisix_nginx_module_commit" ]; then
+    git -C apisix-nginx-module-${apisix_nginx_module_ver} fetch --depth=1 \
+        origin "$apisix_nginx_module_commit"
+    git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
+        "$apisix_nginx_module_commit"
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
