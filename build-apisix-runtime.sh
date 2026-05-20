@@ -25,6 +25,7 @@ OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
 ngx_multi_upstream_module_ver="1.3.2"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="openresty-1.29.2.4-patches"
+# TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
 apisix_nginx_module_commit="e7eff2a33e261de06fb1e55fda7fd3e7159bf98d"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
@@ -105,13 +106,15 @@ else
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
+    apisix_nginx_module_cloned=0
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
+    apisix_nginx_module_cloned=1
     git clone --depth=1 -b $apisix_nginx_module_ver \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
-if [ -n "$apisix_nginx_module_commit" ]; then
+if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]; then
     git -C apisix-nginx-module-${apisix_nginx_module_ver} fetch --depth=1 \
         origin "$apisix_nginx_module_commit"
     git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
