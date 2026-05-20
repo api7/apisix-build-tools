@@ -23,6 +23,8 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
 OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
 ngx_multi_upstream_module_ver="1.3.2"
+# TODO: remove this local patch after ngx_multi_upstream_module releases OpenResty 1.29.2 support.
+ngx_multi_upstream_module_patch="patches/ngx_multi_upstream_module/nginx-1.29.2.patch"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver="openresty-1.29.2.4-patches"
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
@@ -95,6 +97,12 @@ else
     git clone --depth=1 -b $ngx_multi_upstream_module_ver \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
+fi
+if [[ "$OPENRESTY_VERSION" == 1.29.2.* ]]; then
+    cp "$prev_workdir/$ngx_multi_upstream_module_patch" \
+        ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}/nginx-1.29.2.patch
+    sed -i '/dir="\$1\/bundle\/nginx-1.27.1"/a\elif [[ "$1" == *openresty-1.29.2.* ]]; then\n    patch="$PWD/nginx-1.29.2.patch"\n    dir="$1/bundle/nginx-1.29.2"' \
+        ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}/patch.sh
 fi
 
 if [ "$repo" == mod_dubbo ]; then
