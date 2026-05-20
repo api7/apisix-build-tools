@@ -26,9 +26,9 @@ ngx_multi_upstream_module_ver="1.3.2"
 # TODO: remove this local patch after ngx_multi_upstream_module releases OpenResty 1.29.2 support.
 ngx_multi_upstream_module_patch="patches/ngx_multi_upstream_module/nginx-1.29.2.patch"
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver="openresty-1.29.2.4-patches"
+apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
-apisix_nginx_module_commit="e7eff2a33e261de06fb1e55fda7fd3e7159bf98d"
+apisix_nginx_module_commit=${apisix_nginx_module_commit-"e7eff2a33e261de06fb1e55fda7fd3e7159bf98d"}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -118,7 +118,11 @@ if [ "$repo" == apisix-nginx-module ]; then
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
     apisix_nginx_module_cloned=1
-    git clone --depth=1 -b $apisix_nginx_module_ver \
+    apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
+    if [ -n "$apisix_nginx_module_commit" ]; then
+        apisix_nginx_module_clone_ref="main"
+    fi
+    git clone --depth=1 -b $apisix_nginx_module_clone_ref \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
 fi
