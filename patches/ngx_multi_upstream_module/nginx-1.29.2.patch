@@ -98,7 +98,7 @@ index 6ff78fc..cf19c07 100644
 +                                           NGX_HTTP_INTERNAL_SERVER_ERROR);
 +        ngx_log_error(NGX_LOG_ERR, c->log, 0,
 +                      "multi: need multi, but upstream not support, "
-+                      "maybee need configuration 'multi' in upstream");
++                      "maybe need configuration 'multi' in upstream");
 +        return;
 +    }
 +#endif

@@ -101,8 +101,8 @@ fi
 if [[ "$OPENRESTY_VERSION" == 1.29.2.* ]]; then
     cp "$prev_workdir/$ngx_multi_upstream_module_patch" \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}/nginx-1.29.2.patch
-    sed -i '/dir="\$1\/bundle\/nginx-1.27.1"/a\elif [[ "$1" == *openresty-1.29.2.* ]]; then\n    patch="$PWD/nginx-1.29.2.patch"\n    dir="$1/bundle/nginx-1.29.2"' \
-        ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}/patch.sh
+    patch -d ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} -p0 \
+        < "$prev_workdir/patches/ngx_multi_upstream_module/patch-sh-openresty-1.29.2.patch"
 fi
 
 if [ "$repo" == mod_dubbo ]; then
