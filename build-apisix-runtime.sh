@@ -66,6 +66,23 @@ install_openssl_3(){
     cd ..
 }
 
+verify_module_commit() {
+    local module_dir=$1
+    local expected_commit=$2
+    local current_commit
+
+    if ! git -C "$module_dir" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        echo "ERROR: $module_dir is not a git worktree; cannot verify pinned commit ($expected_commit)" >&2
+        exit 1
+    fi
+
+    current_commit=$(git -C "$module_dir" rev-parse HEAD)
+    if [ "$current_commit" != "$expected_commit" ]; then
+        echo "ERROR: $module_dir HEAD ($current_commit) does not match pinned commit ($expected_commit)" >&2
+        exit 1
+    fi
+}
+
 
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$runtime_version" == "0.0.0" ]; then
     debug_args="--with-debug"
@@ -106,11 +123,8 @@ if [ -n "$ngx_multi_upstream_module_commit" ] && [ "$ngx_multi_upstream_module_c
     git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} checkout \
         "$ngx_multi_upstream_module_commit"
 elif [ -n "$ngx_multi_upstream_module_commit" ]; then
-    current_commit=$(git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} rev-parse HEAD)
-    if [ "$current_commit" != "$ngx_multi_upstream_module_commit" ]; then
-        echo "ERROR: ngx_multi_upstream_module HEAD ($current_commit) does not match pinned commit ($ngx_multi_upstream_module_commit)" >&2
-        exit 1
-    fi
+    verify_module_commit "ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}" \
+        "$ngx_multi_upstream_module_commit"
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -137,11 +151,8 @@ if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]
     git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
         "$apisix_nginx_module_commit"
 elif [ -n "$apisix_nginx_module_commit" ]; then
-    current_commit=$(git -C apisix-nginx-module-${apisix_nginx_module_ver} rev-parse HEAD)
-    if [ "$current_commit" != "$apisix_nginx_module_commit" ]; then
-        echo "ERROR: apisix-nginx-module HEAD ($current_commit) does not match pinned commit ($apisix_nginx_module_commit)" >&2
-        exit 1
-    fi
+    verify_module_commit "apisix-nginx-module-${apisix_nginx_module_ver}" \
+        "$apisix_nginx_module_commit"
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
