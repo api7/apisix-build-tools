@@ -108,6 +108,12 @@ if [ -n "$ngx_multi_upstream_module_commit" ] && [ "$ngx_multi_upstream_module_c
         origin "$ngx_multi_upstream_module_commit"
     git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} checkout \
         "$ngx_multi_upstream_module_commit"
+elif [ -n "$ngx_multi_upstream_module_commit" ]; then
+    current_commit=$(git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} rev-parse HEAD)
+    if [ "$current_commit" != "$ngx_multi_upstream_module_commit" ]; then
+        echo "ERROR: ngx_multi_upstream_module HEAD ($current_commit) does not match pinned commit ($ngx_multi_upstream_module_commit)" >&2
+        exit 1
+    fi
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -136,6 +142,12 @@ if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]
         origin "$apisix_nginx_module_commit"
     git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
         "$apisix_nginx_module_commit"
+elif [ -n "$apisix_nginx_module_commit" ]; then
+    current_commit=$(git -C apisix-nginx-module-${apisix_nginx_module_ver} rev-parse HEAD)
+    if [ "$current_commit" != "$apisix_nginx_module_commit" ]; then
+        echo "ERROR: apisix-nginx-module HEAD ($current_commit) does not match pinned commit ($apisix_nginx_module_commit)" >&2
+        exit 1
+    fi
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
