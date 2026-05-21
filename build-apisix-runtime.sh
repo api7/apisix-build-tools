@@ -81,6 +81,11 @@ verify_module_commit() {
         echo "ERROR: $module_dir HEAD ($current_commit) does not match pinned commit ($expected_commit)" >&2
         exit 1
     fi
+
+    if [ -n "$(git -C "$module_dir" status --porcelain --untracked-files=all)" ]; then
+        echo "ERROR: $module_dir has uncommitted changes; cannot verify pinned commit ($expected_commit)" >&2
+        exit 1
+    fi
 }
 
 
@@ -141,9 +146,9 @@ if [ "$repo" == apisix-nginx-module ]; then
 else
     apisix_nginx_module_cloned=1
     apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
-    git clone --depth=1 -b $apisix_nginx_module_clone_ref \
+    git clone --depth=1 -b "$apisix_nginx_module_clone_ref" -- \
         https://github.com/api7/apisix-nginx-module.git \
-        apisix-nginx-module-${apisix_nginx_module_ver}
+        "apisix-nginx-module-${apisix_nginx_module_ver}"
 fi
 if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]; then
     git -C apisix-nginx-module-${apisix_nginx_module_ver} fetch --depth=1 \
