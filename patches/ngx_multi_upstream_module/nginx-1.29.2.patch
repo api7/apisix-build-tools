@@ -58,7 +58,7 @@ index 6ff78fc..cf19c07 100644
  static void
  ngx_http_upstream_connect(ngx_http_request_t *r, ngx_http_upstream_t *u)
  {
-@@ -1641,6 +1651,47 @@ ngx_http_upstream_connect(ngx_http_request_t *r, ngx_http_upstream_t *u)
+@@ -1641,6 +1651,49 @@ ngx_http_upstream_connect(ngx_http_request_t *r, ngx_http_upstream_t *u)
  
      c = u->peer.connection;
  
@@ -88,6 +88,8 @@ index 6ff78fc..cf19c07 100644
 +                ngx_log_error(NGX_LOG_ERR, c->log, 0, "multi: connect reuse unfinished %p", c);
 +            }
 +        } else {
++            ngx_http_multi_upstream_finalize_request(c,
++                                                     NGX_HTTP_INTERNAL_SERVER_ERROR);
 +            ngx_log_error(NGX_LOG_ERR, c->log, 0,
 +                          "multi: connect return %i error", rc);
 +        }

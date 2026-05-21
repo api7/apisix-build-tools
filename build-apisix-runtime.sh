@@ -73,6 +73,7 @@ if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$runtime_version" == "0.0.0" ]; 
 fi
 
 prev_workdir="$PWD"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo=$(basename "$prev_workdir")
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
@@ -99,10 +100,10 @@ else
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 fi
 if [[ "$OPENRESTY_VERSION" == 1.29.2.* ]]; then
-    cp "$prev_workdir/$ngx_multi_upstream_module_patch" \
+    cp "$script_dir/$ngx_multi_upstream_module_patch" \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}/nginx-1.29.2.patch
     patch -d ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} -p0 \
-        < "$prev_workdir/patches/ngx_multi_upstream_module/patch-sh-openresty-1.29.2.patch"
+        < "$script_dir/patches/ngx_multi_upstream_module/patch-sh-openresty-1.29.2.patch"
 fi
 
 if [ "$repo" == mod_dubbo ]; then
