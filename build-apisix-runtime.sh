@@ -21,10 +21,13 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
-OPENRESTY_VERSION="1.27.1.2"
-ngx_multi_upstream_module_ver="1.3.2"
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
+ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
+ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit-"0081acfacb2e79b7a5aa4f1f455316dd343e145f"}
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver="1.19.4"
+apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
+# TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
+apisix_nginx_module_commit=${apisix_nginx_module_commit-"36c6de78d74dd0f093e9a25910875762f6f56da6"}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -52,7 +55,7 @@ install_openssl_3(){
       --with-zlib-lib=$zlib_prefix/lib \
       --with-zlib-include=$zlib_prefix/include
     make -j $(nproc) LD_LIBRARY_PATH= CC="gcc"
-    sudo make install
+    sudo make install_sw install_ssldirs
     if [ -f "$OPENSSL_CONF_PATH" ]; then
         sudo cp "$OPENSSL_CONF_PATH" "$OPENSSL_PREFIX"/ssl/openssl.cnf
     fi
@@ -88,11 +91,23 @@ else
 fi
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
+    ngx_multi_upstream_module_cloned=0
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
-    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
+    ngx_multi_upstream_module_cloned=1
+    ngx_multi_upstream_module_clone_ref="$ngx_multi_upstream_module_ver"
+    if [ -n "$ngx_multi_upstream_module_commit" ]; then
+        ngx_multi_upstream_module_clone_ref="master"
+    fi
+    git clone --depth=1 -b $ngx_multi_upstream_module_clone_ref \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
+fi
+if [ -n "$ngx_multi_upstream_module_commit" ] && [ "$ngx_multi_upstream_module_cloned" = 1 ]; then
+    git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} fetch --depth=1 \
+        origin "$ngx_multi_upstream_module_commit"
+    git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} checkout \
+        "$ngx_multi_upstream_module_commit"
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -104,11 +119,23 @@ else
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
+    apisix_nginx_module_cloned=0
     cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
 else
-    git clone --depth=1 -b $apisix_nginx_module_ver \
+    apisix_nginx_module_cloned=1
+    apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
+    if [ -n "$apisix_nginx_module_commit" ]; then
+        apisix_nginx_module_clone_ref="main"
+    fi
+    git clone --depth=1 -b $apisix_nginx_module_clone_ref \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
+fi
+if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]; then
+    git -C apisix-nginx-module-${apisix_nginx_module_ver} fetch --depth=1 \
+        origin "$apisix_nginx_module_commit"
+    git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
+        "$apisix_nginx_module_commit"
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
