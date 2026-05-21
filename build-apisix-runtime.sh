@@ -23,7 +23,7 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
 OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
 ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
-ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit-"0081acfacb2e79b7a5aa4f1f455316dd343e145f"}
+ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit-"125e594a1a400165fa40d21288e4eea8952bbf89"}
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
