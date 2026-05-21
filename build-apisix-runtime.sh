@@ -28,7 +28,7 @@ ngx_multi_upstream_module_patch="patches/ngx_multi_upstream_module/nginx-1.29.2.
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
-apisix_nginx_module_commit=${apisix_nginx_module_commit-"e7eff2a33e261de06fb1e55fda7fd3e7159bf98d"}
+apisix_nginx_module_commit=${apisix_nginx_module_commit-"36c6de78d74dd0f093e9a25910875762f6f56da6"}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
