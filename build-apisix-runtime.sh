@@ -22,6 +22,10 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
 OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
+if [[ ! "$OPENRESTY_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+    echo "ERROR: invalid OPENRESTY_VERSION: $OPENRESTY_VERSION" >&2
+    exit 1
+fi
 ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
 ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-"125e594a1a400165fa40d21288e4eea8952bbf89"}
 mod_dubbo_ver="1.0.2"
@@ -101,8 +105,8 @@ cd "$workdir" || exit 1
 
 install_openssl_3
 
-wget --no-check-certificate https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz
-tar -zxvpf openresty-${OPENRESTY_VERSION}.tar.gz > /dev/null
+wget --no-check-certificate "https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz"
+tar -zxvpf "openresty-${OPENRESTY_VERSION}.tar.gz" > /dev/null
 
 if [ "$repo" == lua-resty-events ]; then
     cp -r "$prev_workdir" ./lua-resty-events-${lua_resty_events_ver}
