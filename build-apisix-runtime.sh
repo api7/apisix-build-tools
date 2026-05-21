@@ -23,11 +23,11 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
 OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
 ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
-ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit-"125e594a1a400165fa40d21288e4eea8952bbf89"}
+ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-"125e594a1a400165fa40d21288e4eea8952bbf89"}
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
-apisix_nginx_module_commit=${apisix_nginx_module_commit-"36c6de78d74dd0f093e9a25910875762f6f56da6"}
+apisix_nginx_module_commit=${apisix_nginx_module_commit:-"36c6de78d74dd0f093e9a25910875762f6f56da6"}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -96,9 +96,6 @@ if [ "$repo" == ngx_multi_upstream_module ]; then
 else
     ngx_multi_upstream_module_cloned=1
     ngx_multi_upstream_module_clone_ref="$ngx_multi_upstream_module_ver"
-    if [ -n "$ngx_multi_upstream_module_commit" ]; then
-        ngx_multi_upstream_module_clone_ref="master"
-    fi
     git clone --depth=1 -b $ngx_multi_upstream_module_clone_ref \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
@@ -130,9 +127,6 @@ if [ "$repo" == apisix-nginx-module ]; then
 else
     apisix_nginx_module_cloned=1
     apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
-    if [ -n "$apisix_nginx_module_commit" ]; then
-        apisix_nginx_module_clone_ref="main"
-    fi
     git clone --depth=1 -b $apisix_nginx_module_clone_ref \
         https://github.com/api7/apisix-nginx-module.git \
         apisix-nginx-module-${apisix_nginx_module_ver}
