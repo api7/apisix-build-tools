@@ -30,6 +30,10 @@ ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
 ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-"125e594a1a400165fa40d21288e4eea8952bbf89"}
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
+if [[ ! "$apisix_nginx_module_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+    echo "ERROR: invalid apisix_nginx_module_ver: $apisix_nginx_module_ver" >&2
+    exit 1
+fi
 # TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
 apisix_nginx_module_commit=${apisix_nginx_module_commit:-"c4b38ecbb54a47223112ba5d406f1dd392d44409"}
 wasm_nginx_module_ver="0.7.0"
@@ -146,7 +150,7 @@ fi
 
 if [ "$repo" == apisix-nginx-module ]; then
     apisix_nginx_module_cloned=0
-    cp -r "$prev_workdir" ./apisix-nginx-module-${apisix_nginx_module_ver}
+    cp -r "$prev_workdir" "./apisix-nginx-module-${apisix_nginx_module_ver}"
 else
     apisix_nginx_module_cloned=1
     apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
@@ -155,9 +159,9 @@ else
         "apisix-nginx-module-${apisix_nginx_module_ver}"
 fi
 if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]; then
-    git -C apisix-nginx-module-${apisix_nginx_module_ver} fetch --depth=1 \
+    git -C "apisix-nginx-module-${apisix_nginx_module_ver}" fetch --depth=1 \
         origin "$apisix_nginx_module_commit"
-    git -C apisix-nginx-module-${apisix_nginx_module_ver} checkout \
+    git -C "apisix-nginx-module-${apisix_nginx_module_ver}" checkout \
         "$apisix_nginx_module_commit"
 elif [ -n "$apisix_nginx_module_commit" ]; then
     verify_module_commit "apisix-nginx-module-${apisix_nginx_module_ver}" \
@@ -184,7 +188,7 @@ cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
 ./patch.sh ../openresty-${OPENRESTY_VERSION}
 cd ..
 
-cd apisix-nginx-module-${apisix_nginx_module_ver}/patch || exit 1
+cd "apisix-nginx-module-${apisix_nginx_module_ver}/patch" || exit 1
 ./patch.sh ../../openresty-${OPENRESTY_VERSION}
 cd ../..
 
@@ -217,9 +221,9 @@ fi
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
     --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
-    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver} \
-    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver}/src/stream \
-    --add-module=../apisix-nginx-module-${apisix_nginx_module_ver}/src/meta \
+    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}" \
+    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}/src/stream" \
+    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}/src/meta" \
     --add-module=../wasm-nginx-module-${wasm_nginx_module_ver} \
     --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
     --add-module=../lua-resty-events-${lua_resty_events_ver} \
@@ -265,7 +269,7 @@ sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
 sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
 cd ..
 
-cd apisix-nginx-module-${apisix_nginx_module_ver} || exit 1
+cd "apisix-nginx-module-${apisix_nginx_module_ver}" || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
