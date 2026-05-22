@@ -1,0 +1,54 @@
+name: Release apisix-runtime
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "apisix-runtime version to release"
+        required: true
+
+jobs:
+  release:
+    name: Release
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            arch: amd64
+            build_arch: linux/amd64
+          - runner: ubuntu-22.04-arm
+            arch: arm64
+            build_arch: linux/arm64/v8
+    runs-on: ${{ matrix.platform.runner }}
+    env:
+      VERSION: ${{ github.event.inputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make ruby ruby-dev rubygems build-essential
+
+      - name: Build apisix-runtime deb
+        run: |
+          make package type=deb app=apisix-runtime runtime_version=${VERSION} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
+
+      - name: Build apisix-runtime-debug deb
+        run: |
+          make package type=deb app=apisix-runtime runtime_version=${VERSION} image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }} build_latest=latest artifact=apisix-runtime-debug
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apisix-runtime/${{ env.VERSION }}
+          name: apisix-runtime/${{ env.VERSION }}
+          body: Release apisix-runtime ${{ env.VERSION }}
+          files: |
+            ./output/apisix-runtime_${{ env.VERSION }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
+            ./output/apisix-runtime-debug_${{ env.VERSION }}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb
+          fail_on_unmatched_files: true
+          overwrite_files: true
