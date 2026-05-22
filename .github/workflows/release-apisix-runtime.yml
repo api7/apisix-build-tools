@@ -51,8 +51,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="apisix-runtime/${VERSION}"
-          gh release view "$tag" >/dev/null 2>&1 || \
-            gh release create "$tag" --title "$tag" --notes "Release apisix-runtime ${VERSION}"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --title "$tag" --notes "Release apisix-runtime ${VERSION}" || \
+              gh release view "$tag" >/dev/null 2>&1
+          fi
           gh release upload "$tag" \
             "./output/apisix-runtime_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
             "./output/apisix-runtime-debug_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
