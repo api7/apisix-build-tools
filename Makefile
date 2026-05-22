@@ -99,6 +99,7 @@ define build_runtime
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
     --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
@@ -111,6 +112,7 @@ define build_runtime
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
 		--build-arg IMAGE_BASE=$(image_base) \
 		--build-arg IMAGE_TAG=$(image_tag) \
+		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
 		--load \
 		--cache-from=$(cache_from) \
