@@ -1,6 +1,9 @@
 name: Release apisix-runtime
 
 on:
+  release:
+    types:
+      - published
   workflow_dispatch:
     inputs:
       version:
@@ -13,6 +16,7 @@ permissions:
 jobs:
   release:
     name: Release
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'apisix-runtime/')
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -25,8 +29,6 @@ jobs:
             arch: arm64
             build_arch: linux/arm64/v8
     runs-on: ${{ matrix.platform.runner }}
-    env:
-      VERSION: ${{ github.event.inputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -38,12 +40,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
-      - name: Validate version input
+      - name: Resolve release version
+        env:
+          RAW_VERSION: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event.inputs.version }}
         run: |
-          if [[ ! "$VERSION" =~ ^[0-9A-Za-z._-]+$ ]]; then
-            echo "invalid version: $VERSION" >&2
+          version="${RAW_VERSION#apisix-runtime/}"
+          if [[ ! "$version" =~ ^[0-9A-Za-z._-]+$ ]]; then
+            echo "invalid version: $version" >&2
             exit 1
           fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=apisix-runtime/$version" >> "$GITHUB_ENV"
 
       - name: Build apisix-runtime deb
         run: |
@@ -57,9 +64,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="apisix-runtime/${VERSION}"
-          gh release view "$tag" >/dev/null
-          gh release upload "$tag" \
+          gh release view "$RELEASE_TAG" >/dev/null
+          gh release upload "$RELEASE_TAG" \
             "./output/apisix-runtime_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
             "./output/apisix-runtime-debug_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
             --clobber
