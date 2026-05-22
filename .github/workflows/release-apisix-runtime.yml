@@ -38,6 +38,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
+      - name: Validate version input
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9A-Za-z._-]+$ ]]; then
+            echo "invalid version: $VERSION" >&2
+            exit 1
+          fi
+
       - name: Build apisix-runtime deb
         run: |
           make package type=deb app=apisix-runtime runtime_version="${VERSION}" image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
@@ -51,10 +58,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="apisix-runtime/${VERSION}"
-          if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag" --title "$tag" --notes "Release apisix-runtime ${VERSION}" || \
-              gh release view "$tag" >/dev/null 2>&1
-          fi
+          gh release view "$tag" >/dev/null
           gh release upload "$tag" \
             "./output/apisix-runtime_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
             "./output/apisix-runtime-debug_${VERSION}-0~debianbookworm-slim_${{ matrix.platform.arch }}.deb" \
