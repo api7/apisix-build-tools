@@ -27,14 +27,12 @@ if [[ ! "$OPENRESTY_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
     exit 1
 fi
 ngx_multi_upstream_module_ver="1.3.3"
-ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-""}
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"1.19.5"}
 if [[ ! "$apisix_nginx_module_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid apisix_nginx_module_ver: $apisix_nginx_module_ver" >&2
     exit 1
 fi
-apisix_nginx_module_commit=${apisix_nginx_module_commit:-""}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -73,29 +71,6 @@ install_openssl_3(){
     cd ..
 }
 
-verify_module_commit() {
-    local module_dir=$1
-    local expected_commit=$2
-    local current_commit
-
-    if ! git -C "$module_dir" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        echo "ERROR: $module_dir is not a git worktree; cannot verify pinned commit ($expected_commit)" >&2
-        exit 1
-    fi
-
-    current_commit=$(git -C "$module_dir" rev-parse HEAD)
-    if [ "$current_commit" != "$expected_commit" ]; then
-        echo "ERROR: $module_dir HEAD ($current_commit) does not match pinned commit ($expected_commit)" >&2
-        exit 1
-    fi
-
-    if [ -n "$(git -C "$module_dir" status --porcelain --untracked-files=all)" ]; then
-        echo "ERROR: $module_dir has uncommitted changes; cannot verify pinned commit ($expected_commit)" >&2
-        exit 1
-    fi
-}
-
-
 if ([ $# -gt 0 ] && [ "$1" == "latest" ]) || [ "$runtime_version" == "0.0.0" ]; then
     debug_args="--with-debug"
 fi
@@ -120,23 +95,11 @@ else
 fi
 
 if [ "$repo" == ngx_multi_upstream_module ]; then
-    ngx_multi_upstream_module_cloned=0
     cp -r "$prev_workdir" ./ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
 else
-    ngx_multi_upstream_module_cloned=1
-    ngx_multi_upstream_module_clone_ref="$ngx_multi_upstream_module_ver"
-    git clone --depth=1 -b $ngx_multi_upstream_module_clone_ref \
+    git clone --depth=1 -b $ngx_multi_upstream_module_ver \
         https://github.com/api7/ngx_multi_upstream_module.git \
         ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}
-fi
-if [ -n "$ngx_multi_upstream_module_commit" ] && [ "$ngx_multi_upstream_module_cloned" = 1 ]; then
-    git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} fetch --depth=1 \
-        origin "$ngx_multi_upstream_module_commit"
-    git -C ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} checkout \
-        "$ngx_multi_upstream_module_commit"
-elif [ -n "$ngx_multi_upstream_module_commit" ]; then
-    verify_module_commit "ngx_multi_upstream_module-${ngx_multi_upstream_module_ver}" \
-        "$ngx_multi_upstream_module_commit"
 fi
 
 if [ "$repo" == mod_dubbo ]; then
@@ -148,23 +111,11 @@ else
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
-    apisix_nginx_module_cloned=0
     cp -r "$prev_workdir" "./apisix-nginx-module-${apisix_nginx_module_ver}"
 else
-    apisix_nginx_module_cloned=1
-    apisix_nginx_module_clone_ref="$apisix_nginx_module_ver"
-    git clone --depth=1 -b "$apisix_nginx_module_clone_ref" -- \
+    git clone --depth=1 -b "$apisix_nginx_module_ver" -- \
         https://github.com/api7/apisix-nginx-module.git \
         "apisix-nginx-module-${apisix_nginx_module_ver}"
-fi
-if [ -n "$apisix_nginx_module_commit" ] && [ "$apisix_nginx_module_cloned" = 1 ]; then
-    git -C "apisix-nginx-module-${apisix_nginx_module_ver}" fetch --depth=1 \
-        origin "$apisix_nginx_module_commit"
-    git -C "apisix-nginx-module-${apisix_nginx_module_ver}" checkout \
-        "$apisix_nginx_module_commit"
-elif [ -n "$apisix_nginx_module_commit" ]; then
-    verify_module_commit "apisix-nginx-module-${apisix_nginx_module_ver}" \
-        "$apisix_nginx_module_commit"
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
