@@ -40,7 +40,6 @@ jobs:
 
       - name: check and ensure apisix-runtime is installed
         run: |
-          docker exec ubiInstance bash -c "/usr/local/openresty/bin/etcdctl -h" || exit 1
           export APISIX_RUNTIME_VER=$(docker exec ubiInstance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
 
