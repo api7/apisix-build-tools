@@ -26,16 +26,15 @@ if [[ ! "$OPENRESTY_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
     echo "ERROR: invalid OPENRESTY_VERSION: $OPENRESTY_VERSION" >&2
     exit 1
 fi
-ngx_multi_upstream_module_ver="openresty-1.29.2-patches"
-ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-"125e594a1a400165fa40d21288e4eea8952bbf89"}
+ngx_multi_upstream_module_ver="1.3.3"
+ngx_multi_upstream_module_commit=${ngx_multi_upstream_module_commit:-""}
 mod_dubbo_ver="1.0.2"
-apisix_nginx_module_ver=${apisix_nginx_module_ver:-"openresty-1.29.2.4-patches"}
+apisix_nginx_module_ver=${apisix_nginx_module_ver:-"1.19.5"}
 if [[ ! "$apisix_nginx_module_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid apisix_nginx_module_ver: $apisix_nginx_module_ver" >&2
     exit 1
 fi
-# TODO: switch back to an apisix-nginx-module release tag after the 1.29.2.4 patches are released.
-apisix_nginx_module_commit=${apisix_nginx_module_commit:-"c4b38ecbb54a47223112ba5d406f1dd392d44409"}
+apisix_nginx_module_commit=${apisix_nginx_module_commit:-""}
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
