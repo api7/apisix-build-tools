@@ -35,12 +35,15 @@ install_dependencies_deb() {
 
 install_openresty_deb() {
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libpcre2-dev libldap2-dev perl build-essential
+    # libxml2-dev is required to build xmlsec1 (a lua-resty-saml dependency).
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libreadline-dev lsb-release libpcre3 libpcre3-dev libpcre2-dev libldap2-dev libxml2-dev perl build-essential
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends wget gnupg ca-certificates
 }
 
 install_openresty_rpm() {
-    yum install -y pcre pcre-devel pcre2 pcre2-devel openldap-devel
+    # libxml2-devel is required to build xmlsec1 (a lua-resty-saml dependency);
+    # diffutils provides cmp/diff used by its configure script (absent on UBI).
+    yum install -y pcre pcre-devel pcre2 pcre2-devel openldap-devel libxml2 libxml2-devel diffutils
 }
 
 install_luarocks() {
