@@ -55,14 +55,34 @@ build_apisix_base_apk() {
 }
 
 build_apisix_runtime_rpm() {
-    dnf install -y yum-utils
-    yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
+    if [[ "$IMAGE_BASE" == "rockylinux" || "$IMAGE_BASE" == "centos" ]]; then
+        # RHEL/Rocky/CentOS el8/el9 toolchain. perl-core provides the core
+        # modules OpenSSL's Configure needs (FindBin, Pod::Usage, ...); the
+        # granular perl-FindBin is hidden by modular filtering on el8.
+        # perl-App-cpanminus (cpanm, from EPEL) is required by
+        # build-apisix-runtime.sh.
+        yum install -y epel-release || true
+        yum install -y --allowerasing \
+            sudo git patch readline-devel perl-core perl-IPC-Cmd perl-App-cpanminus \
+            gcc gcc-c++ make xz curl wget gnupg2 ca-certificates which tar findutils yum-utils
+    else
+        # UBI (default)
+        dnf install -y yum-utils
+        yum -y install --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms gcc gcc-c++ patch wget git make sudo xz cpanminus
+    fi
 
     command -v gcc
     gcc --version
 
-    yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
-    yum -y install --nogpgcheck openresty-pcre-devel openresty-zlib-devel
+    # OpenResty signs el8 packages with the legacy (SHA1) key and el9+ packages
+    # with the new pubkey2 (RSA/SHA256). el8's crypto policy still accepts SHA1
+    # but el9's rejects it, so pick the matching repo to keep GPG verification on.
+    if [[ "$IMAGE_TAG" == "8" ]]; then
+        yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+    else
+        yum-config-manager --add-repo https://openresty.org/package/centos/openresty2.repo
+    fi
+    yum -y install openresty-pcre-devel openresty-zlib-devel
 
     export_openresty_variables
     ${BUILD_PATH}/build-apisix-runtime.sh
