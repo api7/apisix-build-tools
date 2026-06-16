@@ -11,6 +11,12 @@ then
 elif [ "${IMAGE_BASE}" == "registry.access.redhat.com/ubi9/ubi" ]
 then
     dist="ubi${IMAGE_TAG}"
+elif [ "${IMAGE_BASE}" == "rockylinux" ]
+then
+    dist="el${IMAGE_TAG}"
+elif [ "${IMAGE_BASE}" == "centos" ]
+then
+    dist="el${IMAGE_TAG}"
 fi
 
 echo "${dist}" > /tmp/dist
