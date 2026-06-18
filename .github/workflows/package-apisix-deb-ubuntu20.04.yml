@@ -41,7 +41,11 @@ jobs:
 
       - name: start apisix and test
         run: |
-          docker run -d --name apisix-${PACKAGE_APISIX_VERSION}-deb-test -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
+          # local httpbin upstream so the smoke test never depends on the public httpbin.org
+          docker network create apisix-deb-test-net
+          docker run -d --name httpbin --network apisix-deb-test-net kennethreitz/httpbin
+
+          docker run -d --name apisix-${PACKAGE_APISIX_VERSION}-deb-test --network apisix-deb-test-net -v $(pwd)/test/apisix/config.yaml:/usr/local/apisix/conf/config.yaml -p 9180:9180 -p 9080:9080 -p 9443:9443 apache/apisix:${PACKAGE_APISIX_VERSION}-deb-test
           sleep 20
 
           docker ps -a
@@ -54,7 +58,7 @@ jobs:
               "upstream": {
                   "type": "roundrobin",
                   "nodes": {
-                      "httpbin.org:80": 1
+                      "httpbin:80": 1
                   }
               }
             }'
