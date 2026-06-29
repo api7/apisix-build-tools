@@ -25,6 +25,13 @@ if [ "$PACKAGE_TYPE" == "deb" ]
 then
 	dep_which="debianutils"
 fi
+# saml-auth plugin's saml.so links libxml2 and libxslt
+dep_libxml2="libxml2"
+dep_libxslt="libxslt"
+if [ "$PACKAGE_TYPE" == "deb" ]
+then
+	dep_libxslt="libxslt1.1"
+fi
 
 # Determine the min version of openresty or apisix-base
 if [ "$OPENRESTY" == "apisix-base" ]
@@ -62,6 +69,8 @@ then
         -d "$dep_pcre" \
         -d "$dep_which" \
         -d "$dep_libyaml" \
+        -d "$dep_libxml2" \
+        -d "$dep_libxslt" \
         --post-install post-install-apisix-runtime.sh \
         --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
         --license "ASL 2.0" \
@@ -83,6 +92,8 @@ else
         -d "$dep_ldap" \
         -d "$dep_pcre" \
         -d "$dep_which" \
+        -d "$dep_libxml2" \
+        -d "$dep_libxslt" \
         --description 'Apache APISIX is a distributed gateway for APIs and Microservices, focused on high performance and reliability.' \
         --license "ASL 2.0" \
         -C /tmp/build/output/apisix \
