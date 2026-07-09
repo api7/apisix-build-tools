@@ -11,6 +11,7 @@ Type=forking
 Restart=on-failure
 WorkingDirectory=/usr/local/apisix
 ExecStartPre=/bin/rm -f /usr/local/apisix/logs/worker_events.sock
+ExecStartPre=/bin/rm -f /usr/local/apisix/logs/stream_worker_events.sock
 ExecStart=/usr/bin/apisix start
 ExecStop=/usr/bin/apisix stop
 ExecReload=/usr/bin/apisix reload
