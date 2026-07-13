@@ -114,12 +114,14 @@ jobs:
 
       - name: DEB repo package update
         env:
-          DEB_GPG_MAIL: ${{ secrets.DEB_GPG_MAIL }}
-          GPG_NAME: ${{ secrets.GPG_NAME }}
-          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+          # DEB is signed with the SAME key as RPM (RPM_GPG_* below); the two
+          # pipelines historically used separate secrets, which led to a
+          # throwaway personal key being minted for DEB. Key uid email is
+          # published in KEYS — not a secret.
+          DEB_GPG_MAIL: dev@apisix.apache.org
         run: |
-          echo "${{ secrets.DEB_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
-          echo "${{ secrets.DEB_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
+          echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
+          echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
           sudo -E ./utils/publish-deb.sh init_freight_utils
           sudo -E ./utils/publish-deb.sh init_gpg
 
