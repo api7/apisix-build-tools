@@ -1,10 +1,10 @@
-name: package apisix rpm for Amazon Linux 2023 ARM64
+name: package apisix rpm for Amazon Linux 2023
 
 on:
   push:
     branches: [ master ]
     paths:
-      - '.github/workflows/package-apisix-rpm-amazonlinux2023-arm64.yml'
+      - '.github/workflows/package-apisix-rpm-amazonlinux2023.yml'
       - 'dockerfiles/Dockerfile.apisix.rpm'
       - 'dockerfiles/Dockerfile.apisix-runtime.rpm'
       - 'dockerfiles/Dockerfile.package.apisix'
@@ -18,7 +18,7 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-      - '.github/workflows/package-apisix-rpm-amazonlinux2023-arm64.yml'
+      - '.github/workflows/package-apisix-rpm-amazonlinux2023.yml'
       - 'dockerfiles/Dockerfile.apisix.rpm'
       - 'dockerfiles/Dockerfile.apisix-runtime.rpm'
       - 'dockerfiles/Dockerfile.package.apisix'
@@ -32,7 +32,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            docker_arch: linux/amd64
+            rpm_arch: x86_64
+          - runner: ubuntu-24.04-arm
+            docker_arch: linux/arm64/v8
+            rpm_arch: aarch64
+    runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 180
     env:
       APISIX_VERSION: master
@@ -53,17 +63,17 @@ jobs:
           test -n "$runtime_version"
           echo "APISIX_RUNTIME_VERSION=$runtime_version" >> "$GITHUB_ENV"
 
-      - name: build Amazon Linux 2023 ARM64 RPM
+      - name: build Amazon Linux 2023 ${{ matrix.platform.rpm_arch }} RPM
         env:
           BUILDKIT_PROGRESS: plain
         run: |
           make package type=rpm app=apisix version=${APISIX_VERSION} checkout=${APISIX_VERSION} \
-            image_base=amazonlinux image_tag=2023 arch=linux/arm64/v8 \
+            image_base=amazonlinux image_tag=2023 arch=${{ matrix.platform.docker_arch }} \
             openresty=apisix-runtime runtime_version=${APISIX_RUNTIME_VERSION} runtime_code_path=./
 
-      - name: smoke install on Amazon Linux 2023 ARM64
+      - name: smoke install on Amazon Linux 2023 ${{ matrix.platform.rpm_arch }}
         run: |
-          RPM="apisix-${APISIX_VERSION}-0.amzn2023.aarch64.rpm"
+          RPM="apisix-${APISIX_VERSION}-0.amzn2023.${{ matrix.platform.rpm_arch }}.rpm"
           docker run --rm -v "$PWD/output:/output" amazonlinux:2023 bash -euxc "
             dnf -y localinstall /output/${RPM}
             rpm -q apisix
@@ -76,7 +86,7 @@ jobs:
       - name: publish artifact
         uses: actions/upload-artifact@v4
         with:
-          name: apisix-${{ env.APISIX_VERSION }}-0.amzn2023.aarch64.rpm
-          path: output/apisix-${{ env.APISIX_VERSION }}-0.amzn2023.aarch64.rpm
+          name: apisix-${{ env.APISIX_VERSION }}-0.amzn2023.${{ matrix.platform.rpm_arch }}.rpm
+          path: output/apisix-${{ env.APISIX_VERSION }}-0.amzn2023.${{ matrix.platform.rpm_arch }}.rpm
           retention-days: 5
           if-no-files-found: error

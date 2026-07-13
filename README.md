@@ -44,8 +44,15 @@ ls output/
 apisix-2.2-0.el8.x86_64.rpm
 ```
 
-Packaging an Amazon Linux 2023 ARM64 package of Apache APISIX
+Packaging an Amazon Linux 2023 package of Apache APISIX (set `arch` to
+`linux/amd64` for x86_64 or `linux/arm64/v8` for ARM64)
 ```sh
+make package type=rpm app=apisix version=master checkout=master \
+  image_base=amazonlinux image_tag=2023 arch=linux/amd64 \
+  openresty=apisix-runtime runtime_version=1.3.8 runtime_code_path=./
+ls output/
+apisix-master-0.amzn2023.x86_64.rpm
+
 make package type=rpm app=apisix version=master checkout=master \
   image_base=amazonlinux image_tag=2023 arch=linux/arm64/v8 \
   openresty=apisix-runtime runtime_version=1.3.8 runtime_code_path=./
