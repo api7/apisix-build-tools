@@ -167,12 +167,11 @@ jobs:
 
       - name: RPM repo package update 
         env:
-          GPG_NAME: ${{ secrets.GPG_NAME }}
-          GPG_MAIL: ${{ secrets.GPG_MAIL }}
+          # Signing key uid email, published in KEYS — not a secret.
+          GPG_MAIL: dev@apisix.apache.org
         run: |
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
-          echo "${{ secrets.RPM_GPG_PUB_KEY }}" >> /tmp/rpm-gpg-publish.public
           sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
           sudo -E ./utils/publish-rpm.sh repo_package_sync
 
