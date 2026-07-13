@@ -23,6 +23,7 @@ image_base="registry.access.redhat.com/ubi9/ubi"
 image_tag="9.6"
 iteration=0
 local_code_path=0
+runtime_code_path=0
 openresty="apisix-runtime"
 artifact="0"
 runtime_version=0
@@ -260,12 +261,16 @@ package-dashboard-deb:
 .PHONY: build-apisix-runtime-rpm
 build-apisix-runtime-rpm:
 ifeq ($(app),apisix)
+ifneq ($(runtime_code_path),0)
+	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,$(runtime_code_path))
+else
 ifneq ($(runtime_version),0)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
 	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./apisix-runtime")
 	rm -fr ./apisix-runtime
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
+endif
 endif
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,rpm,"./")
@@ -274,12 +279,16 @@ endif
 .PHONY: build-apisix-runtime-deb
 build-apisix-runtime-deb:
 ifeq ($(app),apisix)
+ifneq ($(runtime_code_path),0)
+	$(call build_runtime,apisix-runtime,apisix-runtime,deb,$(runtime_code_path))
+else
 ifneq ($(runtime_version),0)
 	git clone -b apisix-runtime/$(runtime_version) $(apisix_runtime_repo) ./apisix-runtime
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./apisix-runtime")
 	rm -fr ./apisix-runtime
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")
+endif
 endif
 else
 	$(call build_runtime,apisix-runtime,apisix-runtime,deb,"./")

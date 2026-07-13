@@ -55,7 +55,19 @@ build_apisix_base_apk() {
 }
 
 build_apisix_runtime_rpm() {
-    if [[ "$IMAGE_BASE" == "rockylinux" || "$IMAGE_BASE" == "centos" ]]; then
+    if [[ "$IMAGE_BASE" == "amazonlinux" && "$IMAGE_TAG" == "2023" ]]; then
+        # AL2023 ships curl-minimal and gnupg2-minimal, which provide the
+        # required commands and conflict with their full package variants.
+        # cpanminus is not available in the AL2023 repositories, so install
+        # the pinned upstream fatpacked executable instead.
+        dnf install -y \
+            sudo git patch readline-devel perl perl-devel perl-IPC-Cmd perl-ExtUtils-Embed \
+            gcc gcc-c++ make xz wget ca-certificates which tar findutils dnf-plugins-core
+        curl --fail --silent --show-error --location \
+            https://raw.githubusercontent.com/miyagawa/cpanminus/1.7048/cpanm \
+            --output /usr/local/bin/cpanm
+        chmod 0755 /usr/local/bin/cpanm
+    elif [[ "$IMAGE_BASE" == "rockylinux" || "$IMAGE_BASE" == "centos" ]]; then
         # RHEL/Rocky/CentOS el8/el9 toolchain. perl-core provides the core
         # modules OpenSSL's Configure needs (FindBin, Pod::Usage, ...); the
         # granular perl-FindBin is hidden by modular filtering on el8.
@@ -77,7 +89,9 @@ build_apisix_runtime_rpm() {
     # OpenResty signs el8 packages with the legacy (SHA1) key and el9+ packages
     # with the new pubkey2 (RSA/SHA256). el8's crypto policy still accepts SHA1
     # but el9's rejects it, so pick the matching repo to keep GPG verification on.
-    if [[ "$IMAGE_TAG" == "8" ]]; then
+    if [[ "$IMAGE_BASE" == "amazonlinux" ]]; then
+        dnf config-manager --add-repo https://openresty.org/package/amazon/openresty.repo
+    elif [[ "$IMAGE_TAG" == "8" ]]; then
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
     else
         yum-config-manager --add-repo https://openresty.org/package/centos/openresty2.repo

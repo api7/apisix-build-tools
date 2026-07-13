@@ -13,10 +13,11 @@
 | checkout        | True     | the code branch or tag of the app which you want to package                                                                                                                       | checkout=2.1 or checkout=v2.1        |
 | version         | True     | the version of the package                                                                                                                                                        | version=10.10                        |
 | local_code_path | False    | the path of local code diretory of apisix or dashboard, which depends on the app parameter                                                                                        | local_code_path=/home/vagrant/apisix |
+| runtime_code_path | False  | the path of a local apisix-build-tools checkout to use when building the APISIX runtime                                                                                           | runtime_code_path=./                 |
 | openresty       | False    | the openresty type that apisix depends on, its value can be `openresty`, `apisix-base` or `apisix-runtime`, the default is `openresty`                                            | openresty=apisix-base                |
 | artifact        | False    | the final name of the generated artifact, if not specified, this will be the same as `app`                                                                                        | artifact=apisix                      |
-| image_base      | False    | the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`                                           | image_base=centos                    |
-| image_tag       | False    | the environment for packaging, it's value can be `16.04\|18.04\|20.04\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `20.04` | image_tag=7                          |
+| image_base      | False    | the environment for packaging, such as `amazonlinux`, `rockylinux`, `ubuntu`, or `debian`                                                                                          | image_base=amazonlinux               |
+| image_tag       | False    | the base image tag used for packaging                                                                                                                                             | image_tag=2023                       |
 | buildx          | False    | if `True`, use buildx to build docker images, which may speed up GitHub Actions                                                                                                   | buildx=True                          |
 
 ## Example
@@ -41,6 +42,15 @@ Packaging a Centos 8 package of Apache APISIX
 make package type=rpm app=apisix version=2.2 checkout=2.2 image_base=centos image_tag=8
 ls output/
 apisix-2.2-0.el8.x86_64.rpm
+```
+
+Packaging an Amazon Linux 2023 ARM64 package of Apache APISIX
+```sh
+make package type=rpm app=apisix version=master checkout=master \
+  image_base=amazonlinux image_tag=2023 arch=linux/arm64/v8 \
+  openresty=apisix-runtime runtime_version=1.3.8 runtime_code_path=./
+ls output/
+apisix-master-0.amzn2023.aarch64.rpm
 ```
 
 Packaging an Ubuntu 20.04 package of Apache APISIX

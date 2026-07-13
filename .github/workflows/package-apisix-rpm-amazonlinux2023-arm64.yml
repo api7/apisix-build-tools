@@ -1,0 +1,82 @@
+name: package apisix rpm for Amazon Linux 2023 ARM64
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/package-apisix-rpm-amazonlinux2023-arm64.yml'
+      - 'dockerfiles/Dockerfile.apisix.rpm'
+      - 'dockerfiles/Dockerfile.apisix-runtime.rpm'
+      - 'dockerfiles/Dockerfile.package.apisix'
+      - 'dockerfiles/Dockerfile.package.apisix-runtime'
+      - 'Makefile'
+      - 'build-apisix-dashboard.sh'
+      - 'package-apisix.sh'
+      - 'package-apisix-runtime.sh'
+      - 'post-install-apisix-runtime.sh'
+      - 'utils/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '.github/workflows/package-apisix-rpm-amazonlinux2023-arm64.yml'
+      - 'dockerfiles/Dockerfile.apisix.rpm'
+      - 'dockerfiles/Dockerfile.apisix-runtime.rpm'
+      - 'dockerfiles/Dockerfile.package.apisix'
+      - 'dockerfiles/Dockerfile.package.apisix-runtime'
+      - 'Makefile'
+      - 'build-apisix-dashboard.sh'
+      - 'package-apisix.sh'
+      - 'package-apisix-runtime.sh'
+      - 'post-install-apisix-runtime.sh'
+      - 'utils/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 180
+    env:
+      APISIX_VERSION: master
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: install dashboard build dependencies
+        run: |
+          sudo n lts
+          corepack enable pnpm
+
+      - name: resolve APISIX runtime version
+        run: |
+          wget -q https://raw.githubusercontent.com/apache/apisix/${APISIX_VERSION}/.requirements
+          runtime_version=$(sed -n 's/^APISIX_RUNTIME=//p' .requirements)
+          test -n "$runtime_version"
+          echo "APISIX_RUNTIME_VERSION=$runtime_version" >> "$GITHUB_ENV"
+
+      - name: build Amazon Linux 2023 ARM64 RPM
+        env:
+          BUILDKIT_PROGRESS: plain
+        run: |
+          make package type=rpm app=apisix version=${APISIX_VERSION} checkout=${APISIX_VERSION} \
+            image_base=amazonlinux image_tag=2023 arch=linux/arm64/v8 \
+            openresty=apisix-runtime runtime_version=${APISIX_RUNTIME_VERSION} runtime_code_path=./
+
+      - name: smoke install on Amazon Linux 2023 ARM64
+        run: |
+          RPM="apisix-${APISIX_VERSION}-0.amzn2023.aarch64.rpm"
+          docker run --rm -v "$PWD/output:/output" amazonlinux:2023 bash -euxc "
+            dnf -y localinstall /output/${RPM}
+            rpm -q apisix
+            test -x /usr/bin/apisix
+            test -x /usr/local/openresty/bin/openresty
+            apisix version
+            /usr/local/openresty/bin/openresty -V 2>&1 | grep -q APISIX_RUNTIME_VER
+          "
+
+      - name: publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apisix-${{ env.APISIX_VERSION }}-0.amzn2023.aarch64.rpm
+          path: output/apisix-${{ env.APISIX_VERSION }}-0.amzn2023.aarch64.rpm
+          retention-days: 5
+          if-no-files-found: error

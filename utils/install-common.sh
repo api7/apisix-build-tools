@@ -21,6 +21,10 @@ install_dependencies_rpm() {
     if [[ $IMAGE_BASE == "registry.access.redhat.com/ubi9/ubi" ]]; then
         yum install -y --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms wget tar gcc gcc-c++ automake autoconf libtool make git which unzip sudo
         yum install -y --disablerepo=* --enablerepo=ubi-9-appstream-rpms --enablerepo=ubi-9-baseos-rpms yum-utils
+    elif [[ $IMAGE_BASE == "amazonlinux" && $IMAGE_TAG == "2023" ]]; then
+        # curl-minimal is installed in the base image and conflicts with curl.
+        yum install -y wget tar gcc gcc-c++ automake autoconf libtool make git which unzip sudo
+        yum install -y dnf-plugins-core
     else
         yum install -y wget tar gcc gcc-c++ automake autoconf libtool make curl git which unzip sudo
         yum install -y yum-utils

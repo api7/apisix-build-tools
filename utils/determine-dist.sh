@@ -17,6 +17,9 @@ then
 elif [ "${IMAGE_BASE}" == "centos" ]
 then
     dist="el${IMAGE_TAG}"
+elif [ "${IMAGE_BASE}" == "amazonlinux" ] && [ "${IMAGE_TAG}" == "2023" ]
+then
+    dist="amzn2023"
 fi
 
 echo "${dist}" > /tmp/dist

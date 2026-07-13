@@ -8,7 +8,9 @@ if [ -z "${APISIX_DASHBOARD_COMMIT:-}" ]; then
     echo "Error: APISIX_DASHBOARD_COMMIT is not set or empty"
     exit 1
 fi
-git clone --revision=${APISIX_DASHBOARD_COMMIT} --depth 1 https://github.com/apache/apisix-dashboard.git
+git clone --no-checkout --filter=blob:none https://github.com/apache/apisix-dashboard.git
+git -C apisix-dashboard fetch --depth 1 origin "${APISIX_DASHBOARD_COMMIT}"
+git -C apisix-dashboard checkout --detach FETCH_HEAD
 pushd apisix-dashboard
 # compile
 pnpm install --frozen-lockfile
