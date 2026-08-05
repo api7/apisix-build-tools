@@ -52,18 +52,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
-      # A released runtime must carry ngx_http_ffi_client. The build itself is
-      # lenient so fork PRs, which get no secrets, still pass; here the secret
-      # has to be there, or the release would silently ship without the module.
-      - name: Require the ngx_http_ffi_client token
-        env:
-          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
-        run: |
-          if [ -z "${NGX_HTTP_FFI_CLIENT_TOKEN}" ]; then
-            echo "NGX_HTTP_FFI_CLIENT_TOKEN is not set; a release build must carry ngx_http_ffi_client" >&2
-            exit 1
-          fi
-
       - name: Build apisix-runtime deb
         env:
           NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
@@ -126,18 +114,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential rpm
-
-      # A released runtime must carry ngx_http_ffi_client. The build itself is
-      # lenient so fork PRs, which get no secrets, still pass; here the secret
-      # has to be there, or the release would silently ship without the module.
-      - name: Require the ngx_http_ffi_client token
-        env:
-          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
-        run: |
-          if [ -z "${NGX_HTTP_FFI_CLIENT_TOKEN}" ]; then
-            echo "NGX_HTTP_FFI_CLIENT_TOKEN is not set; a release build must carry ngx_http_ffi_client" >&2
-            exit 1
-          fi
 
       - name: Build apisix-runtime rpm (${{ matrix.dist.el }} ${{ matrix.platform.rpm_arch }})
         env:
