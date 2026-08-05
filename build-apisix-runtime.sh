@@ -44,7 +44,15 @@ if [[ ! "$ngx_http_ffi_client_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid ngx_http_ffi_client_ver: $ngx_http_ffi_client_ver" >&2
     exit 1
 fi
+# the trace stays off around the token, and only the derived yes/no reaches it
+set +x
 NGX_HTTP_FFI_CLIENT_TOKEN=${NGX_HTTP_FFI_CLIENT_TOKEN:-}
+if [ -n "$NGX_HTTP_FFI_CLIENT_TOKEN" ]; then
+    ngx_http_ffi_client_have_token="yes"
+else
+    ngx_http_ffi_client_have_token="no"
+fi
+set -x
 ngx_http_ffi_client_dir="ngx_http_ffi_client-${ngx_http_ffi_client_ver}"
 
 
@@ -146,7 +154,7 @@ fi
 
 if [ "$repo" == ngx_http_ffi_client ]; then
     cp -r "$prev_workdir" "./$ngx_http_ffi_client_dir"
-elif [ -n "$NGX_HTTP_FFI_CLIENT_TOKEN" ]; then
+elif [ "$ngx_http_ffi_client_have_token" == "yes" ]; then
     # A private repository pinned by commit, so fetch rather than clone -b.
     # The token stays off the trace and out of the repository's git config.
     mkdir "$ngx_http_ffi_client_dir"
