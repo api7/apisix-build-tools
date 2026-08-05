@@ -56,6 +56,7 @@ jobs:
         env:
           # Stream inner docker build output so a failing build step surfaces in CI.
           BUILDKIT_PROGRESS: plain
+          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           make package type=rpm app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} \
             image_base=rockylinux image_tag=${{ matrix.dist.image_tag }} arch=linux/amd64

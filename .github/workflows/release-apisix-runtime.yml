@@ -53,10 +53,14 @@ jobs:
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
       - name: Build apisix-runtime deb
+        env:
+          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           make package type=deb app=apisix-runtime runtime_version="${VERSION}" image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }}
 
       - name: Build apisix-runtime-debug deb
+        env:
+          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           make package type=deb app=apisix-runtime runtime_version="${VERSION}" image_base=debian image_tag=bookworm-slim arch=${{ matrix.platform.build_arch }} build_latest=latest artifact=apisix-runtime-debug
 
@@ -115,6 +119,7 @@ jobs:
         env:
           # Stream inner docker build output so a failing build step surfaces in CI.
           BUILDKIT_PROGRESS: plain
+          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           make package type=rpm app=apisix-runtime runtime_version="${VERSION}" \
             image_base=rockylinux image_tag=${{ matrix.dist.image_tag }} \

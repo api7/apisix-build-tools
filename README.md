@@ -18,6 +18,7 @@
 | image_base      | False    | the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`                                           | image_base=centos                    |
 | image_tag       | False    | the environment for packaging, it's value can be `16.04\|18.04\|20.04\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `20.04` | image_tag=7                          |
 | buildx          | False    | if `True`, use buildx to build docker images, which may speed up GitHub Actions                                                                                                   | buildx=True                          |
+| NGX_HTTP_FFI_CLIENT_TOKEN | False | environment variable holding a token that can read `api7/ngx_http_ffi_client`. It is passed to the runtime build as a BuildKit secret and never as a build arg. Without it the runtime is built without that module | NGX_HTTP_FFI_CLIENT_TOKEN=ghp_xxx make package ... |
 
 ## Example
 
@@ -105,6 +106,23 @@ make package type=deb app=apisix-runtime version=1.0.0
 ls output/
 apisix-runtime_1.0.0-0~ubuntu20.04_amd64.deb
 ```
+
+### ngx_http_ffi_client
+
+`ngx_http_ffi_client` is the C HTTP client the AI plugins use for outbound LLM
+requests. `api7/ngx_http_ffi_client` is a private repository, so the runtime
+build fetches it only when `NGX_HTTP_FFI_CLIENT_TOKEN` is set, and otherwise
+prints a warning and builds the runtime without it. `ai-proxy` falls back to
+`lua-resty-http` on a runtime that does not carry the module, so both runtimes
+work; only the outbound CPU cost differs.
+
+```sh
+NGX_HTTP_FFI_CLIENT_TOKEN=<token> \
+  make package type=deb app=apisix-runtime version=1.0.0
+```
+
+The commit is pinned by `ngx_http_ffi_client_ver` in `build-apisix-runtime.sh`,
+since the repository carries no tags yet.
 
 ## Details
 

@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 ARG IMAGE_BASE="registry.access.redhat.com/ubi9/ubi"
 ARG IMAGE_TAG="9.6"
 
@@ -18,7 +19,11 @@ ENV runtime_version=${RUNTIME_VERSION}
 
 COPY ${CODE_PATH} ./
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+# the secret is optional: without it the runtime is built without
+# ngx_http_ffi_client
+RUN --mount=type=secret,id=ngx_http_ffi_client_token \
+    export NGX_HTTP_FFI_CLIENT_TOKEN="$(cat /run/secrets/ngx_http_ffi_client_token 2>/dev/null || true)" \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && source "$HOME/.cargo/env" \
     && rustup install 1.69 \
     && rustup default 1.69 \
