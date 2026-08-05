@@ -33,6 +33,9 @@ if [[ ! "$apisix_nginx_module_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid apisix_nginx_module_ver: $apisix_nginx_module_ver" >&2
     exit 1
 fi
+# a branch ref carries slashes, which would turn the checkout into a nested
+# directory and break every path relative to it
+apisix_nginx_module_dir="apisix-nginx-module-${apisix_nginx_module_ver//\//-}"
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
@@ -111,11 +114,11 @@ else
 fi
 
 if [ "$repo" == apisix-nginx-module ]; then
-    cp -r "$prev_workdir" "./apisix-nginx-module-${apisix_nginx_module_ver}"
+    cp -r "$prev_workdir" "./${apisix_nginx_module_dir}"
 else
     git clone --depth=1 -b "$apisix_nginx_module_ver" -- \
         https://github.com/api7/apisix-nginx-module.git \
-        "apisix-nginx-module-${apisix_nginx_module_ver}"
+        "${apisix_nginx_module_dir}"
 fi
 
 if [ "$repo" == wasm-nginx-module ]; then
@@ -138,7 +141,7 @@ cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
 ./patch.sh ../openresty-${OPENRESTY_VERSION}
 cd ..
 
-cd "apisix-nginx-module-${apisix_nginx_module_ver}/patch" || exit 1
+cd "${apisix_nginx_module_dir}/patch" || exit 1
 ./patch.sh ../../openresty-${OPENRESTY_VERSION}
 cd ../..
 
@@ -171,9 +174,9 @@ fi
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
     --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
-    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}" \
-    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}/src/stream" \
-    --add-module="../apisix-nginx-module-${apisix_nginx_module_ver}/src/meta" \
+    --add-module="../${apisix_nginx_module_dir}" \
+    --add-module="../${apisix_nginx_module_dir}/src/stream" \
+    --add-module="../${apisix_nginx_module_dir}/src/meta" \
     --add-module=../wasm-nginx-module-${wasm_nginx_module_ver} \
     --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
     --add-module=../lua-resty-events-${lua_resty_events_ver} \
@@ -220,7 +223,7 @@ sudo install -d "$OR_PREFIX"/lualib/resty/events/compat/
 sudo install -m 644 lualib/resty/events/compat/*.lua "$OR_PREFIX"/lualib/resty/events/compat/
 cd ..
 
-cd "apisix-nginx-module-${apisix_nginx_module_ver}" || exit 1
+cd "${apisix_nginx_module_dir}" || exit 1
 sudo OPENRESTY_PREFIX="$OR_PREFIX" make install
 cd ..
 
