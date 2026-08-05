@@ -10,11 +10,14 @@ ARG RUNTIME_VERSION
 ARG IMAGE_BASE
 ARG IMAGE_TAG
 ARG CODE_PATH
+ARG APISIX_NGINX_MODULE_VER
 
 ENV IMAGE_BASE=${IMAGE_BASE}
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
 ENV runtime_version=${RUNTIME_VERSION}
+# empty keeps the default pinned in build-apisix-runtime.sh
+ENV apisix_nginx_module_ver=${APISIX_NGINX_MODULE_VER:-}
 
 COPY ${CODE_PATH} ./
 

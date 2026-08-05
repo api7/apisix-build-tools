@@ -13,15 +13,57 @@ on:
       - '*.md'
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      runtime_version:
+        description: "apisix-runtime version to stamp into the package"
+        required: false
+        default: "1.0.1"
+      apisix_nginx_module_ver:
+        description: "apisix-nginx-module tag or branch (empty = the pinned default)"
+        required: false
+        default: ""
+      iteration:
+        description: "package revision, e.g. 0 or 0mybranch"
+        required: false
+        default: "0"
+      image_base:
+        description: "base image"
+        required: false
+        default: "ubuntu"
+      image_tag:
+        description: "base image tag"
+        required: false
+        default: "24.04"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      BUILD_APISIX_RUNTIME_VERSION: ${{ inputs.runtime_version || '1.0.1' }}
+      APISIX_NGINX_MODULE_VER: ${{ inputs.apisix_nginx_module_ver || '' }}
+      ITERATION: ${{ inputs.iteration || '0' }}
+      IMAGE_BASE: ${{ inputs.image_base || 'ubuntu' }}
+      IMAGE_TAG: ${{ inputs.image_tag || '24.04' }}
+      BUILDKIT_PROGRESS: plain
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: validate inputs
+        run: |
+          if [[ ! "$BUILD_APISIX_RUNTIME_VERSION" =~ ^[0-9A-Za-z._-]+$ ]]; then
+            echo "invalid runtime_version: $BUILD_APISIX_RUNTIME_VERSION" >&2
+            exit 1
+          fi
+          if [[ -n "$APISIX_NGINX_MODULE_VER" && ! "$APISIX_NGINX_MODULE_VER" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+            echo "invalid apisix_nginx_module_ver: $APISIX_NGINX_MODULE_VER" >&2
+            exit 1
+          fi
+          if [[ ! "$ITERATION" =~ ^[0-9A-Za-z._+-]+$ ]]; then
+            echo "invalid iteration: $ITERATION" >&2
+            exit 1
+          fi
 
       - name: install dependencies
         run: |
@@ -29,25 +71,32 @@ jobs:
 
       - name: build apisix-runtime deb
         run: |
-          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=24.04
+          make package type=deb app=apisix-runtime \
+            runtime_version="$BUILD_APISIX_RUNTIME_VERSION" \
+            apisix_nginx_module_ver="$APISIX_NGINX_MODULE_VER" \
+            iteration="$ITERATION" \
+            image_base="$IMAGE_BASE" image_tag="$IMAGE_TAG"
 
-      - name: run ubuntu 24.04 docker and mapping apisix-runtime deb into container
+      - name: locate the built deb
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu24.04Instance --net="host" docker.io/ubuntu:24.04 /bin/bash
+          deb=$(ls output/apisix-runtime_*.deb)
+          echo "DEB_PATH=$deb" >> "$GITHUB_ENV"
+          echo "DEB_NAME=$(basename "$deb")" >> "$GITHUB_ENV"
 
-      - name: install deb in container
+      - name: install the deb in a clean container and check the runtime version
         run: |
-          docker exec ubuntu24.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu24.04_amd64.deb"
-
-      - name: check and ensure apisix-runtime is installed
-        run: |
-          export APISIX_RUNTIME_VER=$(docker exec ubuntu24.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
-          if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
+          docker run --rm -v "$PWD/output:/output" "$IMAGE_BASE:$IMAGE_TAG" bash -c '
+            set -e
+            dpkg -i "/output/$1"
+            openresty -V 2>&1 | tr " " "\n" | grep -o "APISIX_RUNTIME_VER=.*" > /tmp/ver
+            cat /tmp/ver
+            test "$(cut -d= -f2 /tmp/ver)" = "$2"
+          ' _ "$DEB_NAME" "$BUILD_APISIX_RUNTIME_VERSION"
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
-          retention-days: 5
+          name: ${{ env.DEB_NAME }}
+          path: ${{ env.DEB_PATH }}
+          retention-days: 14
           if-no-files-found: error
