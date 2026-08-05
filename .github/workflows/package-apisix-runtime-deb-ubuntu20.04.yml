@@ -23,6 +23,10 @@ on:
         description: "apisix-nginx-module tag or branch (empty = the pinned default)"
         required: false
         default: ""
+      iteration:
+        description: "package revision, e.g. 0 or 0mybranch"
+        required: false
+        default: "0"
       image_base:
         description: "base image"
         required: false
@@ -39,6 +43,7 @@ jobs:
     env:
       BUILD_APISIX_RUNTIME_VERSION: ${{ inputs.runtime_version || '1.0.1' }}
       APISIX_NGINX_MODULE_VER: ${{ inputs.apisix_nginx_module_ver || '' }}
+      ITERATION: ${{ inputs.iteration || '0' }}
       IMAGE_BASE: ${{ inputs.image_base || 'ubuntu' }}
       IMAGE_TAG: ${{ inputs.image_tag || '24.04' }}
       BUILDKIT_PROGRESS: plain
@@ -55,6 +60,10 @@ jobs:
             echo "invalid apisix_nginx_module_ver: $APISIX_NGINX_MODULE_VER" >&2
             exit 1
           fi
+          if [[ ! "$ITERATION" =~ ^[0-9A-Za-z._+-]+$ ]]; then
+            echo "invalid iteration: $ITERATION" >&2
+            exit 1
+          fi
 
       - name: install dependencies
         run: |
@@ -65,6 +74,7 @@ jobs:
           make package type=deb app=apisix-runtime \
             runtime_version="$BUILD_APISIX_RUNTIME_VERSION" \
             apisix_nginx_module_ver="$APISIX_NGINX_MODULE_VER" \
+            iteration="$ITERATION" \
             image_base="$IMAGE_BASE" image_tag="$IMAGE_TAG"
 
       - name: locate the built deb
