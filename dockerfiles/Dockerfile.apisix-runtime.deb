@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 ARG IMAGE_BASE="debian"
 ARG IMAGE_TAG="bullseye-slim"
 
@@ -21,11 +20,7 @@ ENV build_latest=${BUILD_LATEST:-}
 
 COPY ${CODE_PATH} ./
 
-# the secret is optional: without it the runtime is built without
-# ngx_http_ffi_client
-RUN --mount=type=secret,id=ngx_http_ffi_client_token \
-    export NGX_HTTP_FFI_CLIENT_TOKEN="$(cat /run/secrets/ngx_http_ffi_client_token 2>/dev/null || true)" \
-    && mv ./utils/build-common.sh ./utils/determine-dist.sh ./ \
+RUN mv ./utils/build-common.sh ./utils/determine-dist.sh ./ \
     && ./build-common.sh build_apisix_runtime_deb  ${build_latest} \
     # determine dist and write it into /tmp/dist file
     && ./determine-dist.sh

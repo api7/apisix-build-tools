@@ -28,8 +28,6 @@ jobs:
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
       - name: build apisix-runtime deb
-        env:
-          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=24.04
 

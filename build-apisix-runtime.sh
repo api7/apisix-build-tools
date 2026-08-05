@@ -36,23 +36,11 @@ fi
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
-# ngx_http_ffi_client is required: the AI plugins send every outbound LLM
-# request through it. api7/ngx_http_ffi_client is private, so the clone carries
-# a token; the version is a tag, as it is for every other module here.
 ngx_http_ffi_client_ver=${ngx_http_ffi_client_ver:-"v0.1.0"}
 if [[ ! "$ngx_http_ffi_client_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid ngx_http_ffi_client_ver: $ngx_http_ffi_client_ver" >&2
     exit 1
 fi
-# the trace stays off around the token, and only the derived yes/no reaches it
-set +x
-NGX_HTTP_FFI_CLIENT_TOKEN=${NGX_HTTP_FFI_CLIENT_TOKEN:-}
-if [ -n "$NGX_HTTP_FFI_CLIENT_TOKEN" ]; then
-    ngx_http_ffi_client_have_token="yes"
-else
-    ngx_http_ffi_client_have_token="no"
-fi
-set -x
 ngx_http_ffi_client_dir="ngx_http_ffi_client-${ngx_http_ffi_client_ver}"
 
 
@@ -95,14 +83,6 @@ fi
 
 prev_workdir="$PWD"
 repo=$(basename "$prev_workdir")
-
-# fail here rather than after the OpenSSL and OpenResty builds
-if [ "$repo" != ngx_http_ffi_client ] && [ "$ngx_http_ffi_client_have_token" == "no" ]; then
-    echo "ERROR: NGX_HTTP_FFI_CLIENT_TOKEN is required to fetch" \
-         "api7/ngx_http_ffi_client, which this runtime must carry." >&2
-    exit 1
-fi
-
 workdir=$(mktemp -d)
 cd "$workdir" || exit 1
 
@@ -163,16 +143,9 @@ fi
 if [ "$repo" == ngx_http_ffi_client ]; then
     cp -r "$prev_workdir" "./$ngx_http_ffi_client_dir"
 else
-    # the repository is private, so the token rides along on this one clone; it
-    # stays off the trace and out of the clone's git config
-    (
-        set +x
-        git -c "http.extraheader=Authorization: Basic $(printf 'x-access-token:%s' \
-                "$NGX_HTTP_FFI_CLIENT_TOKEN" | base64 | tr -d '\n')" \
-            clone --depth=1 -b "$ngx_http_ffi_client_ver" \
-            https://github.com/api7/ngx_http_ffi_client.git \
-            "$ngx_http_ffi_client_dir"
-    )
+    git clone --depth=1 -b "$ngx_http_ffi_client_ver" \
+        https://github.com/api7/ngx_http_ffi_client.git \
+        "$ngx_http_ffi_client_dir"
 fi
 
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1

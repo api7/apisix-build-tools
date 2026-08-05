@@ -18,7 +18,6 @@
 | image_base      | False    | the environment for packaging, if type is `rpm` the default image_base is `centos`, if type is `deb` the default image_base is `ubuntu`                                           | image_base=centos                    |
 | image_tag       | False    | the environment for packaging, it's value can be `16.04\|18.04\|20.04\|6\|7\|8`, if type is `rpm` the default image_tag is `7`, if type is `deb` the default image_tag is `20.04` | image_tag=7                          |
 | buildx          | False    | if `True`, use buildx to build docker images, which may speed up GitHub Actions                                                                                                   | buildx=True                          |
-| NGX_HTTP_FFI_CLIENT_TOKEN | True for `app=apisix-runtime` | environment variable holding a token that can read `api7/ngx_http_ffi_client`. It is passed to the runtime build as a BuildKit secret and never as a build arg. The build fails without it | NGX_HTTP_FFI_CLIENT_TOKEN=ghp_xxx make package ... |
 
 ## Example
 
@@ -110,22 +109,12 @@ apisix-runtime_1.0.0-0~ubuntu20.04_amd64.deb
 ### ngx_http_ffi_client
 
 `ngx_http_ffi_client` is the C HTTP client the AI plugins use for outbound LLM
-requests, and the runtime must carry it. `api7/ngx_http_ffi_client` is a private
-repository, so the build needs `NGX_HTTP_FFI_CLIENT_TOKEN` to fetch it and
-**fails immediately without one**, before the OpenSSL and OpenResty builds
-start.
+requests. The version is pinned by `ngx_http_ffi_client_ver` in
+`build-apisix-runtime.sh`, as it is for every other module. Set it to build
+against a different tag or branch:
 
 ```sh
-NGX_HTTP_FFI_CLIENT_TOKEN=<token> \
-  make package type=deb app=apisix-runtime version=1.0.0
-```
-
-The version is pinned by `ngx_http_ffi_client_ver` in
-`build-apisix-runtime.sh` and is a tag, as it is for every other module. Set it
-to build against a different tag or branch:
-
-```sh
-NGX_HTTP_FFI_CLIENT_TOKEN=<token> ngx_http_ffi_client_ver=v0.2.0 \
+ngx_http_ffi_client_ver=v0.2.0 \
   make package type=deb app=apisix-runtime version=1.0.0
 ```
 

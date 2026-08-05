@@ -39,16 +39,6 @@ endif
 # Set arch to linux/amd64 if it's not defined
 arch ?= linux/amd64
 
-# api7/ngx_http_ffi_client is private, so the runtime build reads a token from
-# a BuildKit secret rather than a build arg, which would land in image history.
-# Without the token the runtime is built without that module.
-NGX_HTTP_FFI_CLIENT_TOKEN ?=
-ifneq ($(NGX_HTTP_FFI_CLIENT_TOKEN),)
-ffi_client_secret=--secret id=ngx_http_ffi_client_token,env=NGX_HTTP_FFI_CLIENT_TOKEN
-else
-ffi_client_secret=
-endif
-
 # Detect the CPU architecture
 CPU_ARCH := $(shell uname -m)
 # Map the architecture to Docker platform
@@ -104,7 +94,7 @@ endif
 ### $(4) is code path
 ifneq ($(buildx), True)
 define build_runtime
-	DOCKER_BUILDKIT=1 docker build -t apache/$(1)-$(3):$(runtime_version) \
+	docker build -t apache/$(1)-$(3):$(runtime_version) \
 		--build-arg checkout_v=$(checkout) \
 		--build-arg VERSION=$(version) \
 		--build-arg RUNTIME_VERSION=$(runtime_version) \
@@ -112,7 +102,6 @@ define build_runtime
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
-		$(ffi_client_secret) \
     --platform $(arch) \
 		-f ./dockerfiles/Dockerfile.$(2).$(3) .
 endef
@@ -126,7 +115,6 @@ define build_runtime
 		--build-arg IMAGE_TAG=$(image_tag) \
 		--build-arg BUILD_LATEST=$(build_latest) \
 		--build-arg CODE_PATH=$(4) \
-		$(ffi_client_secret) \
 		--load \
 		--cache-from=$(cache_from) \
 		--cache-to=$(cache_to) \

@@ -35,8 +35,6 @@ jobs:
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
       - name: Build apisix-runtime deb
-        env:
-          NGX_HTTP_FFI_CLIENT_TOKEN: ${{ secrets.NGX_HTTP_FFI_CLIENT_TOKEN }}
         run: |
           if [ "${{ matrix.platform.arch }}" == "arm64" ]; then
             make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=debian image_tag=bullseye-slim arch=linux/arm64/v8
