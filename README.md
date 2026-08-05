@@ -120,8 +120,14 @@ NGX_HTTP_FFI_CLIENT_TOKEN=<token> \
   make package type=deb app=apisix-runtime version=1.0.0
 ```
 
-The commit is pinned by `ngx_http_ffi_client_ver` in `build-apisix-runtime.sh`,
-since the repository carries no tags yet.
+The version is pinned by `ngx_http_ffi_client_ver` in
+`build-apisix-runtime.sh` and is a tag, as it is for every other module. Set it
+to build against a different tag or branch:
+
+```sh
+NGX_HTTP_FFI_CLIENT_TOKEN=<token> ngx_http_ffi_client_ver=v0.2.0 \
+  make package type=deb app=apisix-runtime version=1.0.0
+```
 
 ## Details
 

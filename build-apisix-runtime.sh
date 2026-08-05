@@ -37,9 +37,9 @@ wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
 # ngx_http_ffi_client is required: the AI plugins send every outbound LLM
-# request through it. api7/ngx_http_ffi_client is still a private repository and
-# carries no tags, so it is pinned by commit and fetched with a token.
-ngx_http_ffi_client_ver=${ngx_http_ffi_client_ver:-"f13fcfa4e923ad82844bf49d9d3b3d283371ef66"}
+# request through it. api7/ngx_http_ffi_client is private, so the clone carries
+# a token; the version is a tag, as it is for every other module here.
+ngx_http_ffi_client_ver=${ngx_http_ffi_client_ver:-"v0.1.0"}
 if [[ ! "$ngx_http_ffi_client_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid ngx_http_ffi_client_ver: $ngx_http_ffi_client_ver" >&2
     exit 1
@@ -162,19 +162,16 @@ fi
 
 if [ "$repo" == ngx_http_ffi_client ]; then
     cp -r "$prev_workdir" "./$ngx_http_ffi_client_dir"
-elif [ "$ngx_http_ffi_client_have_token" == "yes" ]; then
-    # A private repository pinned by commit, so fetch rather than clone -b.
-    # The token stays off the trace and out of the repository's git config.
-    mkdir "$ngx_http_ffi_client_dir"
+else
+    # the repository is private, so the token rides along on this one clone; it
+    # stays off the trace and out of the clone's git config
     (
         set +x
-        cd "$ngx_http_ffi_client_dir" || exit 1
-        git init -q
         git -c "http.extraheader=Authorization: Basic $(printf 'x-access-token:%s' \
                 "$NGX_HTTP_FFI_CLIENT_TOKEN" | base64 | tr -d '\n')" \
-            fetch -q --depth=1 \
-            https://github.com/api7/ngx_http_ffi_client.git "$ngx_http_ffi_client_ver"
-        git checkout -q FETCH_HEAD
+            clone --depth=1 -b "$ngx_http_ffi_client_ver" \
+            https://github.com/api7/ngx_http_ffi_client.git \
+            "$ngx_http_ffi_client_dir"
     )
 fi
 
