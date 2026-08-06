@@ -106,6 +106,18 @@ ls output/
 apisix-runtime_1.0.0-0~ubuntu20.04_amd64.deb
 ```
 
+### ngx_http_ffi_client
+
+`ngx_http_ffi_client` is the C HTTP client the AI plugins use for outbound LLM
+requests. The version is pinned by `ngx_http_ffi_client_ver` in
+`build-apisix-runtime.sh`, as it is for every other module. Set it to build
+against a different tag or branch:
+
+```sh
+ngx_http_ffi_client_ver=v0.2.0 \
+  make package type=deb app=apisix-runtime version=1.0.0
+```
+
 ## Details
 
 - `Makefile` the entrance of the packager
