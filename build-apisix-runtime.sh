@@ -36,7 +36,7 @@ fi
 wasm_nginx_module_ver="0.7.0"
 lua_var_nginx_module_ver="v0.5.3"
 lua_resty_events_ver="0.2.0"
-ngx_http_ffi_client_ver=${ngx_http_ffi_client_ver:-"v0.1.0"}
+ngx_http_ffi_client_ver=${ngx_http_ffi_client_ver:-"v0.1.1"}
 if [[ ! "$ngx_http_ffi_client_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     echo "ERROR: invalid ngx_http_ffi_client_ver: $ngx_http_ffi_client_ver" >&2
     exit 1
