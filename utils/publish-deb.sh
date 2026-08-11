@@ -19,6 +19,10 @@ COS_GLOBAL_REGION=${COS_GLOBAL_REGION:-"accelerate"}
 COS_PART_SIZE=${COS_PART_SIZE:-"10"}
 VAR_COS_REGION_DNS="cos.${COS_REGION}.myqcloud.com"
 VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
+# Every coscmd transfer goes through this wrapper so a transient COS failure is
+# retried instead of failing the publish; see utils/cos-retry.sh.
+COS_RETRY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/cos-retry.sh"
+export COS_RETRY
 
 TAG_DATE=$(date +%Y%m%d)
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
@@ -76,7 +80,7 @@ func_dists_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscmd copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${2}/dists" "/packages/${arch_path}backup/${2}_dists_${3}"
+    "${COS_RETRY}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${2}/dists" "/packages/${arch_path}backup/${2}_dists_${3}"
 }
 
 func_pool_clone() {
@@ -89,7 +93,7 @@ func_pool_clone() {
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    coscmd -b "${1}" -r "${COS_GLOBAL_REGION}" download -r "/packages/${arch_path}${2}/pool" "${3}"
+    "${COS_RETRY}" -b "${1}" -r "${COS_GLOBAL_REGION}" download -r "/packages/${arch_path}${2}/pool" "${3}"
 }
 
 func_dists_rebuild() {
@@ -124,7 +128,23 @@ func_dists_rebuild() {
 
 func_dists_upload_ci_repo() {
     coscmd -b "${2}" delete -r -f "/packages/${arch_path}${3}" || true
-    coscmd -b "${2}" -r "${COS_GLOBAL_REGION}" upload -r "${1}" "/packages/${arch_path}${3}/dists"
+    "${COS_RETRY}" -b "${2}" -r "${COS_GLOBAL_REGION}" upload -r "${1}" "/packages/${arch_path}${3}/dists"
+}
+
+func_deb_upload_one() {
+    # ${1} - local path
+    # ${2} - deb file name pattern
+    # ${3} - package directory under pool/<codename>/main/a
+
+    # `find -exec` reports success even when the command it runs fails, which used
+    # to hide failed uploads and leave the repo published with packages missing.
+    # Feed the matches through a loop so a failed upload aborts the publish.
+    find "${1}" -type f -name "${2}" -print0 |
+    while IFS= read -r -d '' deb_file; do
+        echo "upload : ${deb_file}"
+        "${COS_RETRY}" -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload "${deb_file}" \
+            "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/${3}/${UPLOAD_TARGET_FILE}"
+    done
 }
 
 func_deb_upload() {
@@ -142,18 +162,10 @@ func_deb_upload() {
     export CODENAME=$4
     export COS_GLOBAL_REGION=$COS_GLOBAL_REGION
     export UPLOAD_TARGET_FILE=$UPLOAD_TARGET_FILE
-    find "${1}" -type f -name "apisix_*.deb" \
-        -exec echo "upload : {}" \; \
-        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix/${UPLOAD_TARGET_FILE}"' \;
 
-    find "${1}" -type f -name "apisix-base*.deb" \
-        -exec echo "upload : {}" \; \
-        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-base/${UPLOAD_TARGET_FILE}"' \;
-
-    find "${1}" -type f -name "apisix-runtime*.deb" \
-        -exec echo "upload : {}" \; \
-        -exec sh -c 'coscmd -b "${BUCKET}" -r "${COS_GLOBAL_REGION}" upload {} "/packages/${arch_path}${OS}/pool/${CODENAME}/main/a/apisix-runtime/${UPLOAD_TARGET_FILE}"' \;
-
+    func_deb_upload_one "${1}" "apisix_*.deb" "apisix"
+    func_deb_upload_one "${1}" "apisix-base*.deb" "apisix-base"
+    func_deb_upload_one "${1}" "apisix-runtime*.deb" "apisix-runtime"
 }
 
 func_repo_publish() {
@@ -161,7 +173,7 @@ func_repo_publish() {
     # ${2} - repo publish bucket
     # ${3} - COS path
     coscmd delete -r -f "/packages/${arch_path}${3}/dists" || true
-    coscmd -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${3}/dists" "/packages/${arch_path}${3}/dists"
+    "${COS_RETRY}" -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${arch_path}${3}/dists" "/packages/${arch_path}${3}/dists"
 }
 
 func_repo_backup_remove() {

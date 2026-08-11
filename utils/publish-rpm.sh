@@ -19,6 +19,10 @@ COS_GLOBAL_REGION=${COS_GLOBAL_REGION:-"accelerate"}
 COS_PART_SIZE=${COS_PART_SIZE:-"10"}
 VAR_COS_REGION_DNS="cos.${COS_REGION}.myqcloud.com"
 VAR_COS_GLOBAL_REGION_DNS="cos.${COS_GLOBAL_REGION}.myqcloud.com"
+# Every coscmd transfer goes through this wrapper so a transient COS failure is
+# retried instead of failing the publish; see utils/cos-retry.sh.
+COS_RETRY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/cos-retry.sh"
+export COS_RETRY
 
 # =======================================
 # GPG extension
@@ -72,14 +76,14 @@ func_repo_clone() {
     # when uploading/downloading the file in chunks, it will enable breakpoint transfer by default,
     # which will generate cosresumabletask file and interfere with the file integrity.
     # ref: https://cloud.tencent.com/document/product/436/63669
-    coscmd -b "${1}"  -r "${COS_GLOBAL_REGION}" download -r "/packages/${2}" "${3}"
+    "${COS_RETRY}" -b "${1}"  -r "${COS_GLOBAL_REGION}" download -r "/packages/${2}" "${3}"
 }
 
 func_repo_backup() {
     # ${1} - bucket name
     # ${2} - COS path
     # ${3} - backup tag
-    coscmd copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${2}" "/packages/backup/${2}_${3}"
+    "${COS_RETRY}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${2}" "/packages/backup/${2}_${3}"
 }
 
 func_repo_backup_remove() {
@@ -109,7 +113,7 @@ func_repo_upload() {
     # ${2} - bucket name
     # ${3} - COS path
     coscmd -b "${2}"  delete -r -f "/packages/${3}" || true
-    coscmd -b "${2}" -r ${COS_GLOBAL_REGION} upload -r "${1}" "/packages/${3}"
+    "${COS_RETRY}" -b "${2}" -r ${COS_GLOBAL_REGION} upload -r "${1}" "/packages/${3}"
 }
 
 func_repo_publish() {
@@ -117,7 +121,7 @@ func_repo_publish() {
     # ${2} - repo publish bucket
     # ${3} - COS path
     coscmd delete -r -f "/packages/${3}" || true
-    coscmd -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${3}" "packages/${3}"
+    "${COS_RETRY}" -b "${2}" copy -r "${1}.${VAR_COS_REGION_DNS}/packages/${3}" "packages/${3}"
 }
 
 # =======================================
