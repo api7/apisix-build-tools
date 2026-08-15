@@ -30,7 +30,7 @@ install_dependencies_rpm() {
 install_dependencies_deb() {
     # install basic dependencies
     DEBIAN_FRONTEND=noninteractive apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip sudo libreadline-dev lsb-release gawk
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wget tar gcc automake autoconf libtool make curl git unzip sudo libreadline-dev lsb-release gawk libyaml-dev
 }
 
 install_openresty_deb() {
