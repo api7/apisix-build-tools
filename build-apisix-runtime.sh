@@ -21,7 +21,7 @@ ld_opt=${ld_opt:-"-L$zlib_prefix/lib -L$pcre_prefix/lib -L$OPENSSL_PREFIX/lib -W
 
 # dependencies for building openresty
 OPENSSL_VERSION=${OPENSSL_VERSION:-"3.4.1"}
-OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.29.2.4"}
+OPENRESTY_VERSION=${OPENRESTY_VERSION:-"1.31.1.1"}
 if [[ ! "$OPENRESTY_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
     echo "ERROR: invalid OPENRESTY_VERSION: $OPENRESTY_VERSION" >&2
     exit 1
