@@ -26,7 +26,7 @@ if [[ ! "$OPENRESTY_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
     echo "ERROR: invalid OPENRESTY_VERSION: $OPENRESTY_VERSION" >&2
     exit 1
 fi
-ngx_multi_upstream_module_ver="1.3.3"
+ngx_multi_upstream_module_ver="1.3.4"
 mod_dubbo_ver="1.0.2"
 apisix_nginx_module_ver=${apisix_nginx_module_ver:-"1.19.10"}
 if [[ ! "$apisix_nginx_module_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
