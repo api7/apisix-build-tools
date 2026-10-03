@@ -126,7 +126,7 @@ else
 fi
 
 ./configure --prefix="$OR_PREFIX" \
-    --with-cc-opt="-DAPISIX_BASE_VER=$version $cc_opt" \
+    --with-cc-opt="-DAPISIX_BASE_VER=$version -Werror $cc_opt" \
     --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
