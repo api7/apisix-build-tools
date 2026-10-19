@@ -96,7 +96,17 @@ install_apisix() {
 
     # build the lib and specify the storage path of the package installed
     # To be removed after https://github.com/luarocks/luarocks/issues/1797 is fixed
-    luarocks make ./apisix-master-${iteration}.rockspec --tree=/tmp/build/output/apisix/usr/local/apisix/deps --local
+    apisix_rockspec="./apisix-master-${iteration}.rockspec"
+    apisix_deps_tree="/tmp/build/output/apisix/usr/local/apisix/deps"
+    if grep -Eq '"rapidjson[[:space:]]*=' "${apisix_rockspec}"; then
+        rapidjson_installer="./ci/install-lua-rapidjson.sh"
+        if [[ ! -f "${rapidjson_installer}" ]]; then
+            echo "error: ${apisix_rockspec} requires rapidjson but ${rapidjson_installer} is missing" >&2
+            exit 1
+        fi
+        bash "${rapidjson_installer}" "${apisix_deps_tree}"
+    fi
+    luarocks make "${apisix_rockspec}" --tree="${apisix_deps_tree}" --local
     chown -R "$(whoami)":"$(whoami)" /tmp/build/output
     cd ..
     # copy the compiled files to the package install directory
