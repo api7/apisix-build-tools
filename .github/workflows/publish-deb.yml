@@ -106,11 +106,11 @@ jobs:
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
           sudo pip install coscmd
-          sudo -E ./utils/publish-deb.sh init_cos_utils
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh init_cos_utils
 
       - name: DEB repo init for debian
         run: |
-          sudo -E ./utils/publish-deb.sh repo_clone
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh repo_clone
 
       - name: DEB repo package update
         env:
@@ -122,21 +122,21 @@ jobs:
         run: |
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/deb-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/deb-gpg-publish.passphrase
-          sudo -E ./utils/publish-deb.sh init_freight_utils
-          sudo -E ./utils/publish-deb.sh init_gpg
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh init_freight_utils
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh init_gpg
 
       - name: DEB repo backup for debian
         run: |
-          sudo -E ./utils/publish-deb.sh dists_backup
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh dists_backup
 
       - name: DEB repo refresh for debian
         run: |
-          sudo -E ./utils/publish-deb.sh repo_rebuild
-          sudo -E ./utils/publish-deb.sh repo_ci_upload
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh repo_rebuild
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh repo_ci_upload
 
       - name: DEB repo publish for debian
         env:
           UPLOAD_TARGET_FILE: "${{ env.TAG_TYPE }}_${{ env.TAG_VERSION }}-0_${{ env.ARCH }}.deb"
         run: |
-          sudo -E ./utils/publish-deb.sh repo_upload
-          sudo -E ./utils/publish-deb.sh repo_publish
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh repo_upload
+          ./utils/sudo-publish.sh ./utils/publish-deb.sh repo_publish
