@@ -42,7 +42,50 @@ if [[ ! "$ngx_http_ffi_client_ver" =~ ^[A-Za-z0-9._/-]+$ ]]; then
     exit 1
 fi
 ngx_http_ffi_client_dir="ngx_http_ffi_client-${ngx_http_ffi_client_ver}"
+coraza_nginx_ver=${coraza_nginx_ver:-"v0.23.0"}
+libcoraza_ver=${libcoraza_ver:-"v1.8.0"}
+# Coraza core linked into libcoraza. Pinned to the core shipped by
+# coraza-proxy-wasm 0.6.0 so the native module and the Wasm filter run the
+# same engine; empty keeps the core libcoraza's go.mod requires.
+libcoraza_core_ver=${libcoraza_core_ver-"v3.3.3"}
+go_ver=${go_ver:-"1.26.3"}
+coraza_prefix="$OR_PREFIX/coraza"
 
+
+install_libcoraza(){
+    local go_arch="amd64"
+    case "$(uname -m)" in
+        aarch64|arm64) go_arch="arm64" ;;
+    esac
+    wget -q "https://go.dev/dl/go${go_ver}.linux-${go_arch}.tar.gz"
+    tar -xzf "go${go_ver}.linux-${go_arch}.tar.gz"
+    local go_bin="$PWD/go/bin/go"
+    export GOPATH="$PWD/gopath" GOCACHE="$PWD/gocache" GOTOOLCHAIN=local
+
+    git clone --depth=1 -b "$libcoraza_ver" \
+        https://github.com/corazawaf/libcoraza.git "libcoraza-${libcoraza_ver}"
+    cd "libcoraza-${libcoraza_ver}" || exit 1
+    if [ -n "$libcoraza_core_ver" ]; then
+        "$go_bin" mod edit -require="github.com/corazawaf/coraza/v3@${libcoraza_core_ver}"
+        "$go_bin" mod tidy
+        # experimental.WAFWithRules only exists in newer cores; fall back to
+        # the rule count libcoraza tracks itself
+        if ! grep -rqs "type WAFWithRules" "$GOPATH/pkg/mod/github.com/corazawaf/coraza/v3@${libcoraza_core_ver}/experimental/"; then
+            perl -0pi -e 's/\trules, ok := handle\.waf\.\(experimental\.WAFWithRules\)\n\tif !ok \{\n\t\treturn C\.int\(handle\.rulesCount\)\n\t\}\n\treturn C\.int\(rules\.RulesCount\(\)\)/\treturn C.int(handle.rulesCount)/' libcoraza/coraza.go
+            perl -ni -e 'print unless m{"github.com/corazawaf/coraza/v3/experimental"}' libcoraza/coraza.go
+        fi
+    fi
+    mkdir -p coraza
+    "$go_bin" tool cgo -exportheader coraza/coraza.h libcoraza/coraza.go libcoraza/log.go
+    "$go_bin" build -trimpath -buildmode=c-shared \
+        -tags "memoize_builders coraza.rule.multiphase_evaluation" \
+        -o libcoraza.so libcoraza/coraza.go libcoraza/log.go
+    "$go_bin" version -m libcoraza.so | grep -E "coraza/v3|-tags"
+    sudo install -d "$coraza_prefix"/lib "$coraza_prefix"/include/coraza
+    sudo install -m 755 libcoraza.so "$coraza_prefix"/lib/
+    sudo install -m 644 coraza/coraza.h "$coraza_prefix"/include/coraza/
+    cd ..
+}
 
 install_openssl_3(){
     local fips=""
@@ -88,6 +131,7 @@ cd "$workdir" || exit 1
 
 
 install_openssl_3
+install_libcoraza
 
 wget --no-check-certificate "https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz"
 tar -zxvpf "openresty-${OPENRESTY_VERSION}.tar.gz" > /dev/null
@@ -148,6 +192,10 @@ else
         "$ngx_http_ffi_client_dir"
 fi
 
+git clone --depth=1 -b "$coraza_nginx_ver" \
+    https://github.com/corazawaf/coraza-nginx.git \
+    "coraza-nginx-${coraza_nginx_ver}"
+
 cd ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} || exit 1
 ./patch.sh ../openresty-${OPENRESTY_VERSION}
 cd ..
@@ -185,8 +233,8 @@ ngx_lua_bundle_dir=$(find bundle -maxdepth 1 -type d -name 'ngx_lua-*' | head -n
 export NGX_HTTP_LUA_MODULE_DIR="$PWD/$ngx_lua_bundle_dir"
 
 ./configure --prefix="$OR_PREFIX" \
-    --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $cc_opt" \
-    --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib $ld_opt" \
+    --with-cc-opt="-DAPISIX_RUNTIME_VER=$runtime_version $cc_opt -I$coraza_prefix/include -Wno-unused-function" \
+    --with-ld-opt="-Wl,-rpath,$OR_PREFIX/wasmtime-c-api/lib:$coraza_prefix/lib $ld_opt" \
     $debug_args \
     --add-module=../mod_dubbo-${mod_dubbo_ver} \
     --add-module=../ngx_multi_upstream_module-${ngx_multi_upstream_module_ver} \
@@ -197,6 +245,7 @@ export NGX_HTTP_LUA_MODULE_DIR="$PWD/$ngx_lua_bundle_dir"
     --add-module=../lua-var-nginx-module-${lua_var_nginx_module_ver} \
     --add-module=../lua-resty-events-${lua_resty_events_ver} \
     --add-module=../${ngx_http_ffi_client_dir} \
+    --add-dynamic-module="../coraza-nginx-${coraza_nginx_ver}" \
     --with-poll_module \
     --with-pcre-jit \
     --without-http_rds_json_module \
