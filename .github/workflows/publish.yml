@@ -158,12 +158,12 @@ jobs:
           TENCENT_COS_SECRETKEY: ${{ secrets.TENCENT_COS_SECRETKEY }}
         run: |
           sudo pip install coscmd
-          sudo -E ./utils/publish-rpm.sh init_cos_utils
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh init_cos_utils
 
       - name: RPM repo init for redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_init
-          sudo -E ./utils/publish-rpm.sh repo_clone
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_init
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_clone
 
       - name: RPM repo package update 
         env:
@@ -172,18 +172,18 @@ jobs:
         run: |
           echo "${{ secrets.RPM_GPG_PRIV_KEY }}" >> /tmp/rpm-gpg-publish.private
           echo "${{ secrets.RPM_GPG_PASSPHRASE }}" >> /tmp/rpm-gpg-publish.passphrase
-          sudo -E ./utils/publish-rpm.sh rpm_gpg_sign
-          sudo -E ./utils/publish-rpm.sh repo_package_sync
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh rpm_gpg_sign
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_package_sync
 
       - name: RPM repo backup for redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_backup 
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_backup 
 
       - name: RPM repo refresh for redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_repodata_rebuild
-          sudo -E ./utils/publish-rpm.sh repo_upload
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_repodata_rebuild
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_upload
 
       - name: RPM repo publish for redhat
         run: |
-          sudo -E ./utils/publish-rpm.sh repo_publish
+          ./utils/sudo-publish.sh ./utils/publish-rpm.sh repo_publish
