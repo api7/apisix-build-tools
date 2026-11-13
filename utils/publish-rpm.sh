@@ -33,9 +33,23 @@ func_rpmsign_macros_init() {
 %_signature gpg
 %_gpg_path ${HOME}/.gnupg
 %_gpg_name ${GPG_MAIL}
-%_gpgbin /usr/bin/gpg
-%__gpg_sign_cmd %{__gpg} gpg --batch --verbose --no-armor --pinentry-mode loopback --passphrase-file ${VAR_GPG_PASSPHRASE} --no-secmem-warning -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
+%__gpg /usr/bin/gpg
+%_gpg_digest_algo sha256
+%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback --passphrase-file ${VAR_GPG_PASSPHRASE}
 _EOC_
+}
+
+func_rpm_sign() {
+    # ${1} - rpm directory
+    gpg --armor --export "${GPG_MAIL}" > /tmp/rpm-gpg-publish.public
+    rpm --import /tmp/rpm-gpg-publish.public
+
+    while IFS= read -r -d '' rpm_file; do
+        echo "rpmsign for: ${rpm_file}"
+        rpmsign --addsign "${rpm_file}"
+        # rpmsign can exit 0 without signing, so check the signature
+        rpm -Kv "${rpm_file}" | grep -iE 'signature, key (ID|fingerprint):? [0-9a-f]+: OK'
+    done < <(find "${1}" -type f -name "*.rpm" -print0)
 }
 
 func_gpg_key_load() {
@@ -103,9 +117,11 @@ func_repo_repodata_rebuild() {
 
 func_repo_repodata_sign() {
     # ${1} - repo parent path
-    find "${1}" -type f -name "*repomd.xml" \
-        -exec echo "sign repodata for: {}" \; \
-        -exec gpg --batch --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor {} \;
+    # only this arch's repodata is rebuilt, the others keep their signature
+    while IFS= read -r -d '' repomd; do
+        echo "sign repodata for: ${repomd}"
+        gpg --batch --pinentry-mode loopback --passphrase-file "${VAR_GPG_PASSPHRASE}" --detach-sign --armor "${repomd}"
+    done < <(find "${1}" -type f -path "*/${ARCH}/repodata/repomd.xml" -print0)
 }
 
 func_repo_upload() {
@@ -164,10 +180,7 @@ repo_backup_remove)
 rpm_gpg_sign)
     func_rpmsign_macros_init
     func_gpg_key_load "${VAR_GPG_PRIV_KET}" "${VAR_GPG_PASSPHRASE}"
-
-    find "${VAR_RPM_WORKBENCH_DIR}" -type f -name "*.rpm" \
-        -exec echo "rpmsign for: {}" \; \
-        -exec rpmsign --addsign {} \;
+    func_rpm_sign "${VAR_RPM_WORKBENCH_DIR}"
     ;;
 *)
     echo "Unknown method!"
