@@ -44,6 +44,10 @@ jobs:
           export APISIX_RUNTIME_VER=$(docker exec ubuntu24.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
           if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
 
+      - name: check coraza-nginx module and libcoraza are packaged
+        run: |
+          docker exec ubuntu24.04Instance bash -c "test -f /usr/local/openresty/nginx/modules/ngx_http_coraza_module.so && test -f /usr/local/openresty/coraza/lib/libcoraza.so"
+
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
