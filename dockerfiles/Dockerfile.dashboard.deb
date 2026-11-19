@@ -3,11 +3,12 @@ ARG IMAGE_TAG="20.04"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
+COPY ./utils/apt-mirror.sh /apt-mirror.sh
 COPY ./utils/install-common.sh /install-common.sh
 COPY ./utils/determine-dist.sh /determine-dist.sh
 
 # install dependencies
-RUN /install-common.sh install_dashboard_dependencies_deb
+RUN /apt-mirror.sh && /install-common.sh install_dashboard_dependencies_deb
 
 ARG checkout_v="v2.3"
 ARG iteration="0"

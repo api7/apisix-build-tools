@@ -3,6 +3,7 @@ ARG IMAGE_TAG="bullseye-slim"
 
 FROM ${IMAGE_BASE}:${IMAGE_TAG} as build
 
+COPY ./utils/apt-mirror.sh /tmp/apt-mirror.sh
 COPY ./utils/build-common.sh /tmp/build-common.sh
 COPY build-apisix-base.sh /tmp/build-apisix-base.sh
 COPY ./utils/determine-dist.sh /tmp/determine-dist.sh
@@ -19,7 +20,8 @@ ENV IMAGE_TAG=${IMAGE_TAG}
 ENV version=${VERSION}
 ENV build_latest=${BUILD_LATEST:-}
 
-RUN ./build-common.sh build_apisix_base_deb ${build_latest} \
+RUN ./apt-mirror.sh \
+    && ./build-common.sh build_apisix_base_deb ${build_latest} \
     # determine dist and write it into /tmp/dist file
     && /tmp/determine-dist.sh
 

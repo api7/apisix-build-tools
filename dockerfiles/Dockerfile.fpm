@@ -1,5 +1,16 @@
 FROM ubuntu:focal
 
+# Same as utils/apt-mirror.sh, inline because this image is built without a
+# context: retry downloads and try the Azure mirror next to the GitHub runners
+# before the official archive and security servers.
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries \
+    && printf '%s\tpriority:%s\n' \
+        http://azure.archive.ubuntu.com/ubuntu/ 1 \
+        http://archive.ubuntu.com/ubuntu/ 2 \
+        http://security.ubuntu.com/ubuntu/ 3 \
+        > /etc/apt/apt-mirrors.txt \
+    && sed -i -E 's#http://(archive|security)\.ubuntu\.com/ubuntu/?#mirror+file:/etc/apt/apt-mirrors.txt#g' /etc/apt/sources.list
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y git \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y ruby ruby-dev rubygems build-essential rpm \
