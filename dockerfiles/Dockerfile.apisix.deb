@@ -8,6 +8,7 @@ FROM ${IMAGE_BASE}:${IMAGE_TAG}
 
 
 
+COPY ./utils/apt-mirror.sh /apt-mirror.sh
 COPY ./utils/install-common.sh /install-common.sh
 COPY ./utils/determine-dist.sh /determine-dist.sh
 COPY --from=APISIX-RUNTIME /usr/local/openresty /usr/local/openresty
@@ -22,7 +23,7 @@ ARG IMAGE_TAG
 ARG CODE_PATH
 
 # install dependencies
-RUN apt-get update && apt-get install -y libyaml-dev
+RUN /apt-mirror.sh && apt-get update && apt-get install -y libyaml-dev
 RUN /install-common.sh install_apisix_dependencies_deb
 
 ENV checkout_v=${checkout_v}
