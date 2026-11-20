@@ -1,0 +1,59 @@
+name: Build apisix-base
+
+on:
+  pull_request:
+    branches:
+      - release/apisix-base
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rpm-el7:
+    name: el7 rpm (x86_64)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build rpm
+        run: make package type=rpm app=apisix-base version=${version} image_base=centos image_tag=7
+
+      - name: Smoke test rpm
+        run: ./utils/test-apisix-base.sh rpm ./output/apisix-base-${version}-0.el7.x86_64.rpm
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apisix-base-${{ env.version }}-0.el7.x86_64.rpm
+          path: ./output/apisix-base-${{ env.version }}-0.el7.x86_64.rpm
+          if-no-files-found: error
+
+  image-apk:
+    name: apk image (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            arch: amd64
+          - runner: ubuntu-22.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build image
+        run: |
+          docker build -t apisix-base:${version} --build-arg VERSION=${version} \
+            -f ./dockerfiles/Dockerfile.apisix-base.apk .
+
+      - name: Smoke test image
+        run: ./utils/test-apisix-base.sh image apisix-base:${version}

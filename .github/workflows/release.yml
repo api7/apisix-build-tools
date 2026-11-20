@@ -1,0 +1,123 @@
+name: Release apisix-base
+
+on:
+  push:
+    branches:
+      - release/apisix-base
+    paths:
+      - VERSION
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: api7/apisix-base
+
+jobs:
+  rpm-el7:
+    name: el7 rpm (x86_64)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: |
+          version=$(cat VERSION)
+          echo "version=${version}" >> "$GITHUB_ENV"
+          echo "rpm=apisix-base-${version}-0.el7.x86_64.rpm" >> "$GITHUB_ENV"
+
+      - name: Refuse to replace a released rpm
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "apisix-base/${version}" -R "${{ github.repository }}" --json assets \
+              -q '.assets[].name' 2>/dev/null | grep -qx "${rpm}"; then
+            echo "${rpm} is already released" >&2
+            exit 1
+          fi
+
+      - name: Build rpm
+        run: make package type=rpm app=apisix-base version=${version} image_base=centos image_tag=7
+
+      - name: Smoke test rpm
+        run: ./utils/test-apisix-base.sh rpm ./output/${rpm}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apisix-base/${{ env.version }}
+          name: apisix-base/${{ env.version }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            Release apisix-base ${{ env.version }}
+          files: ./output/${{ env.rpm }}
+          fail_on_unmatched_files: true
+
+  image-apk:
+    name: apk image (${{ matrix.arch }})
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            arch: amd64
+          - runner: ubuntu-22.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_ENV"
+
+      - name: Refuse to replace a released image
+        run: |
+          if docker manifest inspect "${IMAGE}:${version}" >/dev/null 2>&1; then
+            echo "${IMAGE}:${version} is already released" >&2
+            exit 1
+          fi
+
+      - name: Build image
+        run: |
+          docker build -t "${IMAGE}:${version}-${{ matrix.arch }}" --build-arg VERSION=${version} \
+            -f ./dockerfiles/Dockerfile.apisix-base.apk .
+
+      - name: Smoke test image
+        run: ./utils/test-apisix-base.sh image "${IMAGE}:${version}-${{ matrix.arch }}"
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push image
+        run: docker push "${IMAGE}:${version}-${{ matrix.arch }}"
+
+  image-manifest:
+    name: image manifest
+    needs: image-apk
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read VERSION
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create multi-arch tag
+        run: |
+          docker buildx imagetools create -t "${IMAGE}:${version}" \
+            "${IMAGE}:${version}-amd64" "${IMAGE}:${version}-arm64"
+          docker buildx imagetools inspect "${IMAGE}:${version}"

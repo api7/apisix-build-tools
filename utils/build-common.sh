@@ -5,9 +5,23 @@ set -x
 ARCH=${ARCH:-`(uname -m | tr '[:upper:]' '[:lower:]')`}
 BUILD_PATH=${BUILD_PATH:-`pwd`}
 
+# CentOS 7 is EOL and mirror.centos.org is gone. vault.centos.org rate-limits
+# with HTTP 403, so each repo also lists a second mirror for yum to fall back to.
+use_centos7_vault() {
+    local f
+    for f in /etc/yum.repos.d/CentOS-*.repo; do
+        sed -i -E \
+            -e 's@^mirrorlist=@#mirrorlist=@' \
+            -e 's@^#[[:space:]]*baseurl=http://mirror\.centos\.org/centos/(\$releasever|7)/(.*)$@baseurl=https://vault.centos.org/7.9.2009/\2\n        https://mirrors.aliyun.com/centos-vault/7.9.2009/\2@' \
+            "$f"
+    done
+}
+
 build_apisix_base_rpm() {
     if [[ $(rpm --eval '%{centos_ver}') == "7" ]]; then
+        use_centos7_vault
         yum -y install centos-release-scl
+        use_centos7_vault
         yum -y install devtoolset-9 patch wget git make sudo
         set +eu
         source scl_source enable devtoolset-9
@@ -88,5 +102,8 @@ build_apisix_base_deb)
     ;;
 build_apisix_base_apk)
     build_apisix_base_apk
+    ;;
+use_centos7_vault)
+    use_centos7_vault
     ;;
 esac
