@@ -51,8 +51,8 @@ RUN apk add --no-cache \
         bash \
         libstdc++
 
-# install latest Rust to build wasmtime
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# wasmtime is built from source on musl; pin the Rust that built 1.21.4.2.2
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.73.0
 
 RUN cd /tmp \
     && if [ -n "${RESTY_EVAL_PRE_CONFIGURE}" ]; then eval $(echo ${RESTY_EVAL_PRE_CONFIGURE}); fi \
@@ -108,7 +108,7 @@ RUN apk add --no-cache \
         curl \
         make \
         sudo \
-    && curl https://raw.githubusercontent.com/apache/apisix/master/utils/linux-install-luarocks.sh -sL | sh - \
+    && curl https://raw.githubusercontent.com/apache/apisix/ed8e7d4837f524a1c1042abc09104f0d9b889cdc/utils/linux-install-luarocks.sh -sL | sh - \
     && apk del .build-deps
 
 
