@@ -17,9 +17,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
-      BUILD_APISIX_RUNTIME_VERSION: 1.0.1
+      BUILD_APISIX_RUNTIME_VERSION: 1.4.4
     steps:
       - uses: actions/checkout@v2
 
@@ -27,27 +27,33 @@ jobs:
         run: |
           sudo apt-get install -y make ruby ruby-dev rubygems build-essential
 
+      # Same base image and packages as release-apisix-runtime.yml, so the
+      # gateway CI can install the debug package as it does a released one.
       - name: build apisix-runtime deb
         run: |
-          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=ubuntu image_tag=24.04
+          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=debian image_tag=bookworm-slim arch=linux/amd64
 
-      - name: run ubuntu 24.04 docker and mapping apisix-runtime deb into container
+      - name: build apisix-runtime-debug deb
         run: |
-          docker run -itd -v /home/runner/work/apisix-build-tools/apisix-build-tools/output:/output --name ubuntu24.04Instance --net="host" docker.io/ubuntu:24.04 /bin/bash
+          make package type=deb app=apisix-runtime runtime_version=${BUILD_APISIX_RUNTIME_VERSION} image_base=debian image_tag=bookworm-slim arch=linux/amd64 build_latest=latest artifact=apisix-runtime-debug
 
-      - name: install deb in container
+      - name: check the bundled nginx version
         run: |
-          docker exec ubuntu24.04Instance bash -c "dpkg -i /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~ubuntu24.04_amd64.deb"
-
-      - name: check and ensure apisix-runtime is installed
-        run: |
-          export APISIX_RUNTIME_VER=$(docker exec ubuntu24.04Instance bash -c "openresty -V" 2>&1 | awk '/-O2 -DAPISIX_RUNTIME_VER=/{print $5}' | awk -v FS="=" '{print $2}')
-          if [ "$APISIX_RUNTIME_VER" != "${BUILD_APISIX_RUNTIME_VERSION}" ]; then exit 1; fi
+          docker run --rm -v "$PWD/output:/output" debian:bookworm-slim bash -c \
+            "apt-get update -qq && apt-get install -y -qq /output/apisix-runtime_${BUILD_APISIX_RUNTIME_VERSION}-0~debianbookworm-slim_amd64.deb >/dev/null && /usr/local/openresty/nginx/sbin/nginx -V"
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
-          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~ubuntu24.04_amd64.deb
+          name: apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbookworm-slim_amd64.deb
+          path: output/apisix-runtime_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbookworm-slim_amd64.deb
+          retention-days: 5
+          if-no-files-found: error
+
+      - name: Publish Debug Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: apisix-runtime-debug_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbookworm-slim_amd64.deb
+          path: output/apisix-runtime-debug_${{ env.BUILD_APISIX_RUNTIME_VERSION }}-0~debianbookworm-slim_amd64.deb
           retention-days: 5
           if-no-files-found: error
